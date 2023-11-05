@@ -8,9 +8,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf ./dist && microbundle --tsconfig tsconfig.json --no-sourcemap",
-    "dev": "ts-node-dev index.ts",
+    "dev": "ts-node-dev lib/index.ts",
     "test": "npx playwright test",
-    "dev-test": "ts-node-dev test.ts"
+    "dev-test": "ts-node-dev lib/test.ts"
   },
   "exports": {
     "require": "./dist/index.js",

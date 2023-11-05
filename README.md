@@ -1,5 +1,5 @@
 # 11holidays
-Global holidays API for public holidays, bank holidays and observances from 230+ countries
+Global holidays API for public holidays, bank holidays and observances from 230+ countries. 
 
 ## Holidays API
 To retrieve the complete holidays list by specific country code and year

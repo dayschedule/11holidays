@@ -1,7 +1,21 @@
 # 11holidays
-Global holidays API for public holidays, bank holidays and observances from 230+ countries. 
+
+Global [holidays API](https://11holidays.com/) for public holidays, bank holidays and observances from 230+ countries.
+
+## Installation
+
+```
+npm i 11holidays
+```
+
+## Api Key
+
+You can use the SDK without API key to access past holidays(Free plan) or for testing.
+
+- Signup to [get your api key](https://11holidays.com/pricing) for full access to fetch holidays by country, year etc.
 
 ## Holidays API
+
 To retrieve the complete holidays list by specific country code and year
 
 ```
@@ -39,10 +53,12 @@ console.log(holidays);
 ```
 
 ### Parameters
+
 country (2 char) - Required. 2 character ISO country code.
 year (integer) - Required. Year in 4 digit format.
 
 ## Countries API
+
 To retrieve the complete list of countries
 
 ```
@@ -56,3 +72,8 @@ console.log(countries);
    {"country":"IN","name":"India"}
 ]
 ```
+
+## Support
+
+- If you have any question related to API key, access etc. [contact support](https://11holidays.com/contact).
+- Open an issue on Github for question related to SDK

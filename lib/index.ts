@@ -2,7 +2,7 @@ import Api from "./api";
 import Holidays from "./holidays";
 import Countries from "./countries";
 
-class DaySchedule {
+class HolidaysApi {
   private api: Api;
 
   public holidays: Holidays;
@@ -15,4 +15,4 @@ class DaySchedule {
   }
 }
 
-export default DaySchedule;
+export default HolidaysApi;

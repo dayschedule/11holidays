@@ -1,6 +1,6 @@
 {
   "name": "11holidays",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Global holidays API for public holidays, bank holidays and observances from 230+ countries",
   "main": "dist/index.js",
   "module": "dist/index.m.js",

@@ -1,0 +1,16 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "@hono/zod-openapi": "^1.2.0",
+    "hono": "^4.11.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.4.0"
+  }
+}

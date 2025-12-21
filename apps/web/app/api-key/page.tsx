@@ -6,7 +6,7 @@ import { Key, Mail } from "lucide-react"
 
 export const metadata = {
   title: "Get Free API Key - 11holidays.com",
-  description: "Sign up for a free API key to access holiday data for 30+ countries. Start integrating today.",
+  description: "Sign up for a free API key to access holiday data for 230+ countries. Start integrating today.",
 }
 
 export default function ApiKeyPage() {
@@ -18,7 +18,7 @@ export default function ApiKeyPage() {
             Get Your Free API Key
           </h1>
           <p className="text-lg text-muted-foreground">
-            Access holiday data for 30+ countries with our free API
+            Access holiday data for 230+ countries with our free API
           </p>
         </div>
 

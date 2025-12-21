@@ -1,9 +1,10 @@
+import { addYears, format, startOfYear } from 'date-fns';
+
 export interface Holiday {
   date: string;
   name: string;
   type: string;
-  localName?: string;
-  countryCode: string;
+  description?: string;
 }
 
 export interface HolidaysResponse {
@@ -13,75 +14,58 @@ export interface HolidaysResponse {
 }
 
 export async function fetchHolidays(
+  env: CloudflareEnv,
   countryCode: string,
   year: number
 ): Promise<HolidaysResponse> {
-  const mockHolidays: Record<string, Holiday[]> = {
-    US: [
-      { date: `${year}-01-01`, name: "New Year's Day", type: "Public", countryCode: "US" },
-      { date: `${year}-01-15`, name: "Martin Luther King Jr. Day", type: "Public", countryCode: "US" },
-      { date: `${year}-02-19`, name: "Presidents' Day", type: "Public", countryCode: "US" },
-      { date: `${year}-05-27`, name: "Memorial Day", type: "Public", countryCode: "US" },
-      { date: `${year}-06-19`, name: "Juneteenth", type: "Public", countryCode: "US" },
-      { date: `${year}-07-04`, name: "Independence Day", type: "Public", countryCode: "US" },
-      { date: `${year}-09-02`, name: "Labor Day", type: "Public", countryCode: "US" },
-      { date: `${year}-10-14`, name: "Columbus Day", type: "Public", countryCode: "US" },
-      { date: `${year}-11-11`, name: "Veterans Day", type: "Public", countryCode: "US" },
-      { date: `${year}-11-28`, name: "Thanksgiving", type: "Public", countryCode: "US" },
-      { date: `${year}-12-25`, name: "Christmas Day", type: "Public", countryCode: "US" },
-    ],
-    GB: [
-      { date: `${year}-01-01`, name: "New Year's Day", type: "Public", countryCode: "GB" },
-      { date: `${year}-04-07`, name: "Good Friday", type: "Public", countryCode: "GB" },
-      { date: `${year}-04-10`, name: "Easter Monday", type: "Public", countryCode: "GB" },
-      { date: `${year}-05-06`, name: "Early May Bank Holiday", type: "Public", countryCode: "GB" },
-      { date: `${year}-05-27`, name: "Spring Bank Holiday", type: "Public", countryCode: "GB" },
-      { date: `${year}-08-26`, name: "Summer Bank Holiday", type: "Public", countryCode: "GB" },
-      { date: `${year}-12-25`, name: "Christmas Day", type: "Public", countryCode: "GB" },
-      { date: `${year}-12-26`, name: "Boxing Day", type: "Public", countryCode: "GB" },
-    ],
-    CA: [
-      { date: `${year}-01-01`, name: "New Year's Day", type: "Public", countryCode: "CA" },
-      { date: `${year}-04-07`, name: "Good Friday", type: "Public", countryCode: "CA" },
-      { date: `${year}-05-20`, name: "Victoria Day", type: "Public", countryCode: "CA" },
-      { date: `${year}-07-01`, name: "Canada Day", type: "Public", countryCode: "CA" },
-      { date: `${year}-09-02`, name: "Labour Day", type: "Public", countryCode: "CA" },
-      { date: `${year}-10-14`, name: "Thanksgiving", type: "Public", countryCode: "CA" },
-      { date: `${year}-12-25`, name: "Christmas Day", type: "Public", countryCode: "CA" },
-      { date: `${year}-12-26`, name: "Boxing Day", type: "Public", countryCode: "CA" },
-    ],
-  };
+  // Use start - end date to utilize sql index for better query performance
+  const baseDate = new Date(year, 0, 1);
+  const start = format(startOfYear(baseDate), 'yyyy-MM-dd');
+  const end = format(addYears(startOfYear(baseDate), 1), 'yyyy-MM-dd');
 
-  const holidays = mockHolidays[countryCode.toUpperCase()] || [];
+  const sqlQuery = env.DB.prepare(
+    `
+        SELECT h.holiday_id, o.name, h.date, o.description, h.occasion_id, h.country, h.type, 
+        h.created_at, h.updated_at
+        FROM Holidays as h
+        Left Join Occasions as o
+        ON h.occasion_id = o.occasion_id
+        WHERE h.country = ?
+        AND h.date >= ?
+        AND h.date < ?
+        ORDER BY h.date;`
+  ).bind(countryCode, start, end);
+
+  const { results } = await sqlQuery.all<Holiday>();
 
   return {
-    holidays: holidays.sort((a, b) => a.date.localeCompare(b.date)),
-    country: countryCode.toUpperCase(),
+    holidays: results,
+    country: countryCode,
     year,
   };
 }
 
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   }).format(date);
 }
 
 export function getDayOfWeek(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(date);
+  return new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
 }
 
 export function downloadJSON(data: any, filename: string) {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
+    type: 'application/json',
   });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);

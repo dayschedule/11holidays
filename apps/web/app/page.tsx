@@ -15,7 +15,7 @@ import { Calendar, Globe, Code, Zap } from 'lucide-react';
 export const metadata = {
   title: `Holidays API & Calendar for ${new Date().getFullYear()} - 11holiday.com`,
   description:
-    'Access public holidays for 240+ countries. Get holiday data via API with our free service. Perfect for developers and businesses.',
+    'Access public holidays for 230+ countries. Get holiday data via API with our free service. Perfect for developers and businesses.',
   keywords: [
     'holidays',
     'public holidays',
@@ -47,7 +47,7 @@ export default function Home() {
           <Card>
             <CardHeader className="space-y-1 pb-4">
               <Calendar className="h-10 w-10 mb-2" />
-              <CardTitle className="text-xl">30+ Countries</CardTitle>
+              <CardTitle className="text-xl">230+ Countries</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">

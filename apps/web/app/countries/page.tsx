@@ -1,13 +1,14 @@
-import { CountryList } from "@/components/country-list"
-import { COUNTRIES } from "@/lib/countries-data"
+import { CountryList } from '@/components/country-list';
+import { COUNTRIES } from '@/lib/countries-data';
 
 export const metadata = {
-  title: "All Countries - 11holidays.com",
-  description: "Browse public holidays for 30+ countries. Select a country to view its holiday calendar.",
-}
+  title: 'All Countries - 11holidays.com',
+  description:
+    'Browse public holidays for 230+ countries. Select a country to view its holiday calendar.',
+};
 
 export default function CountriesPage() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="container py-8 md:py-12">
@@ -24,5 +25,5 @@ export default function CountriesPage() {
         <CountryList countries={COUNTRIES} currentYear={currentYear} />
       </div>
     </div>
-  )
+  );
 }

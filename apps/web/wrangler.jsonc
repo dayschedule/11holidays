@@ -3,6 +3,7 @@
   "main": ".open-next/worker.js",
   "name": "11holidays",
   "compatibility_date": "2024-12-30",
+  "keep_vars": true,
   "compatibility_flags": [
     // Enable Node.js API
     // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag
@@ -10,6 +11,13 @@
     // Allow to fetch URLs in your app
     // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
     "global_fetch_strictly_public",
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "holidays",
+      "database_id": "c66f0973-0a27-479a-b2b1-8b288de01a75",
+    },
   ],
   "assets": {
     "directory": ".open-next/assets",

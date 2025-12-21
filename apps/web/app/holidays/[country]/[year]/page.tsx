@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { fetchHolidays } from '@/lib/holidays-api';
 import { getCountryByCode } from '@/lib/countries-data';
 import { HolidayPageContent } from './holiday-page-content';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 
 interface PageProps {
   params: Promise<{
@@ -36,7 +37,8 @@ export default async function HolidayPage({ params }: PageProps) {
     notFound();
   }
 
-  const holidaysData = await fetchHolidays(country.code, year);
+  const { env } = getCloudflareContext();
+  const holidaysData = await fetchHolidays(env, country.code, year);
 
   return (
     <HolidayPageContent

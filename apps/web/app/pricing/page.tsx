@@ -39,7 +39,7 @@ export default function PricingPage() {
                 </li>
                 <li className="flex items-start">
                   <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Access to all 30+ countries</span>
+                  <span>Access to all 230+ countries</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
@@ -138,7 +138,7 @@ export default function PricingPage() {
               <div>
                 <h3 className="font-semibold mb-2">Data Coverage</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>30+ countries worldwide</li>
+                  <li>230+ countries worldwide</li>
                   <li>Multiple holiday types</li>
                   <li>Updated annually</li>
                   <li>Historical data available</li>

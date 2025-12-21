@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://11holidays.com/sitemap.xml

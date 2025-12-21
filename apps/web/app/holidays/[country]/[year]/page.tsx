@@ -10,20 +10,6 @@ interface PageProps {
   }>;
 }
 
-// export async function generateStaticParams() {
-//   const currentYear = new Date().getFullYear();
-//   const years = [currentYear, currentYear + 1];
-
-//   const paths = countries.flatMap((country) =>
-//     years.map((year) => ({
-//       country: country.code.toLowerCase(),
-//       year: year.toString(),
-//     }))
-//   );
-
-//   return paths;
-// }
-
 export async function generateMetadata({ params }: PageProps) {
   const { country: countryParam, year } = await params;
 

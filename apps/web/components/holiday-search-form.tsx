@@ -1,31 +1,33 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { CountryFlag } from "@/components/country-flag"
-import { countries } from "@/lib/countries-data"
-import { Search } from "lucide-react"
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CountryFlag } from '@/components/country-flag';
+import { Search } from 'lucide-react';
+import { COUNTRIES } from '@/lib/countries-data';
 
 export function HolidaySearchForm() {
-  const router = useRouter()
-  const [selectedCountry, setSelectedCountry] = useState<string>("US")
-  const [year, setYear] = useState<string>(new Date().getFullYear().toString())
+  const currentYear = new Date().getFullYear();
+
+  const router = useRouter();
+  const [selectedCountry, setSelectedCountry] = useState<string>('US');
+  const [year, setYear] = useState<string>(new Date().getFullYear().toString());
 
   const handleSearch = () => {
     if (selectedCountry && year) {
-      router.push(`/holidays/${selectedCountry.toLowerCase()}/${year}`)
+      router.push(`/holidays/${selectedCountry.toLowerCase()}/${year}`);
     }
-  }
+  };
 
   return (
     <div className="w-full max-w-2xl space-y-4">
@@ -37,10 +39,13 @@ export function HolidaySearchForm() {
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
             <SelectContent>
-              {countries.map((country) => (
+              {COUNTRIES.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   <span className="flex items-center gap-2">
-                    <CountryFlag countryCode={country.code} className="w-6 h-4 rounded" />
+                    <CountryFlag
+                      countryCode={country.code}
+                      className="w-6 h-4 rounded"
+                    />
                     <span>{country.name}</span>
                   </span>
                 </SelectItem>
@@ -57,7 +62,7 @@ export function HolidaySearchForm() {
             max="2100"
             value={year}
             onChange={(e) => setYear(e.target.value)}
-            placeholder="2025"
+            placeholder={currentYear.toString()}
           />
         </div>
       </div>
@@ -66,5 +71,5 @@ export function HolidaySearchForm() {
         Get Holidays
       </Button>
     </div>
-  )
+  );
 }

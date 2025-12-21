@@ -12,6 +12,19 @@ import {
 } from '@/components/ui/card';
 import { Calendar, Globe, Code, Zap } from 'lucide-react';
 
+export const metadata = {
+  title: `Holidays API & Calendar for ${new Date().getFullYear()} - 11holiday.com`,
+  description:
+    'Access public holidays for 240+ countries. Get holiday data via API with our free service. Perfect for developers and businesses.',
+  keywords: [
+    'holidays',
+    'public holidays',
+    'API',
+    'calendar',
+    'international holidays',
+  ],
+};
+
 export default function Home() {
   const currentYear = new Date().getFullYear();
 
@@ -23,8 +36,8 @@ export default function Home() {
             Holidays API for Developers
           </h1>
           <p className="max-w-[750px] text-lg text-muted-foreground sm:text-xl">
-            Global holidays API for fetch public holidays list by countries, cities and
-            region to integrate easily in any app.
+            Global holidays API for fetch public holidays list by countries,
+            cities and region to integrate easily in any app.
           </p>
         </div>
 

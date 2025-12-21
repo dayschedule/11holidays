@@ -1,5 +1,5 @@
-import { countries } from "@/lib/countries-data"
 import { CountryList } from "@/components/country-list"
+import { COUNTRIES } from "@/lib/countries-data"
 
 export const metadata = {
   title: "All Countries - 11holidays.com",
@@ -21,7 +21,7 @@ export default function CountriesPage() {
           </p>
         </div>
 
-        <CountryList countries={countries} currentYear={currentYear} />
+        <CountryList countries={COUNTRIES} currentYear={currentYear} />
       </div>
     </div>
   )

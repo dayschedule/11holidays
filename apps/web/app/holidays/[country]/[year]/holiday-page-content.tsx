@@ -8,9 +8,10 @@ import { CountryFlag } from '@/components/country-flag';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { UpgradeDialog } from '@/components/upgrade-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Country } from '@/lib/countries-data';
 
 interface HolidayPageContentProps {
-  country: any;
+  country: Country;
   year: number;
   holidaysData: any;
 }

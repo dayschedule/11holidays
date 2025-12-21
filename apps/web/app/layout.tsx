@@ -1,5 +1,4 @@
 import './globals.css';
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -7,19 +6,6 @@ import { Header } from '@/components/header';
 import { Toaster } from '../components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: '11holidays.com - Public Holidays API & Calendar',
-  description:
-    'Access public holidays for 30+ countries. Get holiday data via API with our free service. Perfect for developers and businesses.',
-  keywords: [
-    'holidays',
-    'public holidays',
-    'API',
-    'calendar',
-    'international holidays',
-  ],
-};
 
 export default function RootLayout({
   children,
@@ -52,7 +38,11 @@ export default function RootLayout({
             <footer className="border-t py-6">
               <div className="mx-auto max-w-[1200px] flex flex-col items-center justify-between gap-4 md:flex-row">
                 <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-                  Built with ❤️ by <a className='text-blue-600' href="https://dayschedule.com/">DaySchedule</a> for the love of holidays 🎉
+                  Built with ❤️ by{' '}
+                  <a className="text-blue-600" href="https://dayschedule.com/">
+                    DaySchedule
+                  </a>{' '}
+                  for the love of holidays 🎉
                 </p>
                 <div className="flex gap-4 text-sm text-muted-foreground">
                   <Link

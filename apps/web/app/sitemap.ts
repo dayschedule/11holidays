@@ -5,7 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const year = new Date().getFullYear();
 
   const countryEntries = COUNTRIES.map((x) => ({
-    url: `https://11holidays.com/holidays/${x.code}/${year}`,
+    url: `https://11holidays.com/holidays/${x.code.toLowerCase()}/${year}`,
     lastModified: new Date(),
     changeFrequency: 'daily',
     priority: 0.7,

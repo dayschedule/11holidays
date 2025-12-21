@@ -43,7 +43,7 @@ export default function Home() {
 
         <HolidaySearchForm />
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 w-full mt-8 text-left">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full mt-8 text-left">
           <Card>
             <CardHeader className="space-y-1 pb-4">
               <Calendar className="h-10 w-10 mb-2" />
@@ -52,6 +52,8 @@ export default function Home() {
             <CardContent>
               <p className="text-sm text-muted-foreground">
                 Comprehensive holiday data for major countries worldwide
+                including the USA, UK, Canada, France, Germany, China, Japan,
+                India and more.
               </p>
             </CardContent>
           </Card>
@@ -63,8 +65,10 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Regularly updated with official holiday information
-              </p>
+                Over 7000+ holidays data accessible via API on federal, state,
+                and local levels with simple GET requests regularly updated from
+                official sources
+              </p>  
             </CardContent>
           </Card>
 
@@ -75,19 +79,9 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Simple REST API with JSON responses
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="space-y-1 pb-4">
-              <Zap className="h-10 w-10 mb-2" />
-              <CardTitle className="text-xl">Fast & Reliable</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                High-performance API with 99.9% uptime
+                Simple REST API with JSON responses with all holidays for an
+                year, country code or type of holidays, e.g national holidays,
+                bank holidays etc.
               </p>
             </CardContent>
           </Card>

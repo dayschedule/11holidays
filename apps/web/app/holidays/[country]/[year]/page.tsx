@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   return {
-    title: `${country.name} Public Holidays ${year} - 11holidays.com`,
-    description: `Complete list of public holidays in ${country.name} for ${year}. View, download, and integrate holiday data via API.`,
+    title: `${country.name} Holidays in ${year} - 11holidays`,
+    description: `Complete list of public holidays in ${country.name} for ${year}. View, download, and integrate ${country.code} holiday data via API.`,
   };
 }
 

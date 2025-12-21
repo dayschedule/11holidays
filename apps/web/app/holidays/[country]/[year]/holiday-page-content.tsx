@@ -43,7 +43,7 @@ export function HolidayPageContent({
           items={[
             { label: 'Home', href: '/' },
             { label: 'Countries', href: '/countries' },
-            { label: `${country.name} ${year}` },
+            { label: `${country.name} ${year} Holidays` },
           ]}
         />
 
@@ -54,8 +54,8 @@ export function HolidayPageContent({
                 countryCode={country.code}
                 className="w-16 h-12 rounded"
               />
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-                {country.name}
+              <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
+                {country.name} {year} holiday&apos;s calendar
               </h1>
             </div>
             <p className="text-lg text-muted-foreground">

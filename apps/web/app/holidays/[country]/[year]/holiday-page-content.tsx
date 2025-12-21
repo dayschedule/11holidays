@@ -38,7 +38,7 @@ export function HolidayPageContent({
         onOpenChange={setShowUpgradeDialog}
       />
 
-      <div className="mx-auto max-w-[1400px] space-y-8">
+      <div className="mx-auto space-y-8">
         <Breadcrumb
           items={[
             { label: 'Home', href: '/' },

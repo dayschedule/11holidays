@@ -1,6 +1,7 @@
-import Link from "next/link"
-import { ThemeToggle } from "./theme-toggle"
-import { Globe } from "lucide-react"
+import Link from 'next/link';
+import { ThemeToggle } from './theme-toggle';
+import { Github, Globe } from 'lucide-react';
+import { Button } from './ui/button';
 
 export function Header() {
   return (
@@ -44,8 +45,19 @@ export function Header() {
             </Link>
           </nav>
         </div>
-        <ThemeToggle />
+        <div className="gap-3">
+          <Button variant="ghost" size="icon" asChild>
+            <a
+              href="https://github.com/dayschedule/11holidays"
+              target="_blank"
+              rel="nofollow noreferrer"
+            >
+              <Github className="h-5 w-5" />
+            </a>
+          </Button>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
-  )
+  );
 }

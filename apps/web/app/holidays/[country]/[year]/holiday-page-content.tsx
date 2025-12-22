@@ -9,12 +9,23 @@ import { Breadcrumb } from '@/components/breadcrumb';
 import { UpgradeDialog } from '@/components/upgrade-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Country } from '@/lib/countries-data';
+import { AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 interface HolidayPageContentProps {
   country: Country;
   year: number;
   holidaysData: any;
 }
+
+const publicHolidays = ['public', 'gazetted', 'national', 'federal'];
+
+const countPublicHolidays = (holidays: any[]) => {
+  return holidays.filter((h) =>
+    publicHolidays.some((x) => h.type.toLowerCase().includes(x))
+  ).length;
+};
 
 export function HolidayPageContent({
   country,
@@ -106,6 +117,118 @@ export function HolidayPageContent({
               country={country}
               year={year}
             />
+
+            <div className="flex items-start gap-3 rounded-lg border border-muted bg-muted/30 p-4 text-sm">
+              <AlertCircle className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+              <p className="text-muted-foreground leading-relaxed">
+                We strive to provide an accurate and up-to-date holiday list for{' '}
+                {country.name}. However, please note that some holiday dates may
+                change. If you discover any discrepancies, kindly{' '}
+                <Link
+                  target="_blank"
+                  rel="nofollow"
+                  href="https://github.com/dayschedule/11holidays/issues"
+                  className="text-primary hover:underline"
+                >
+                  report to us
+                </Link>
+                .
+              </p>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Holiday Type Color Legend</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Holidays are color-coded based on their types:
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3">
+                    <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30">
+                      Public Holiday
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      Public, National, Federal, and Gazetted holidays
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30">
+                      Local Holiday
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      Local, Regional, State, and Provincial holidays
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                      Other Holiday
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      Observances and other types of holidays
+                    </span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Frequently Asked Questions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">
+                    How many holidays in {country.name} this year in {year}?
+                  </h3>
+                  <p className="text-muted-foreground">
+                    There are {countPublicHolidays(holidaysData.holidays)}{' '}
+                    public holidays in {country.name} in {year}.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">
+                    How to retrieve the {country.name} holidays list via API?
+                  </h3>
+                  <p className="text-muted-foreground mb-3">
+                    Simply make a GET request to{' '}
+                    <code className="px-2 py-1 bg-muted rounded text-sm">
+                      v1/holidays?country={country.code}&year={year}
+                    </code>{' '}
+                    API to retrieve this list of {country.name} holidays.
+                  </p>
+                  <p className="text-muted-foreground mb-3">
+                    Here is an example using Node.js and our{' '}
+                    <a
+                      href="https://www.npmjs.com/package/11holidays"
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      official package on NPM
+                    </a>
+                    :
+                  </p>
+                  <div className="rounded-lg bg-slate-950 p-4 overflow-x-auto">
+                    <pre className="text-sm text-slate-50">
+                      <code>{`// Install the 11holidays package from NPM
+// npm i 11holidays
+
+import HolidaysApi from '11holidays';
+
+const instance = new HolidaysApi(API_KEY);
+const holidays = await instance.holidays.list({
+  country: '${country.code}',
+  year: '${year}'
+});
+console.log(holidays);`}</code>
+                    </pre>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <ApiExamples countryCode={country.code} year={year.toString()} />
           </div>

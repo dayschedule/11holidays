@@ -15,11 +15,11 @@ export function ApiExamples({ countryCode = "US", year = "2025" }: ApiExamplesPr
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
   const examples = {
-    curl: `curl -X GET "https://api.11holidays.com/v1/holidays/${countryCode}/${year}" \\
-  -H "X-API-Key: YOUR_API_KEY"`,
-    javascript: `fetch('https://api.11holidays.com/v1/holidays/${countryCode}/${year}', {
+    curl: `curl -X GET "https://api.11holidays.com/v1/holidays?country=${countryCode}&year=${year}" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    javascript: `fetch('https://api.11holidays.com/v1/holidays?country=${countryCode}&year=${year}', {
   headers: {
-    'X-API-Key': 'YOUR_API_KEY'
+    'Authorization': 'Bearer YOUR_API_KEY'
   }
 })
   .then(response => response.json())
@@ -27,18 +27,18 @@ export function ApiExamples({ countryCode = "US", year = "2025" }: ApiExamplesPr
     python: `import requests
 
 response = requests.get(
-    f'https://api.11holidays.com/v1/holidays/${countryCode}/${year}',
-    headers={'X-API-Key': 'YOUR_API_KEY'}
+    f'https://api.11holidays.com/v1/holidays?country=${countryCode}&year=${year}',
+    headers={'Authorization': 'Bearer YOUR_API_KEY'}
 )
 data = response.json()
 print(data)`,
     node: `const axios = require('axios');
 
 const response = await axios.get(
-  'https://api.11holidays.com/v1/holidays/${countryCode}/${year}',
+  'https://api.11holidays.com/v1/holidays?country=${countryCode}&year=${year}',
   {
     headers: {
-      'X-API-Key': 'YOUR_API_KEY'
+      'Authorization': 'Bearer YOUR_API_KEY'
     }
   }
 );

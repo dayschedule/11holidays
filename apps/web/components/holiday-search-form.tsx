@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CountryFlag } from '@/components/country-flag';
 import { Search } from 'lucide-react';
-import { COUNTRIES } from '@/lib/countries-data';
+import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 
 export function HolidaySearchForm() {
   const currentYear = new Date().getFullYear();
@@ -39,7 +39,7 @@ export function HolidaySearchForm() {
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
             <SelectContent>
-              {COUNTRIES.map((country) => (
+              {COUNTRIES_WITH_SLUG.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   <span className="flex items-center gap-2">
                     <CountryFlag

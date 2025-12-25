@@ -66,7 +66,11 @@ export function CountryList({
               </Button>
 
               <Button variant="outline" size="sm" asChild className="flex-1">
-                <Link href={`/calendars/${country.slug}/list`}>View List</Link>
+                <Link
+                  href={`/holidays/${country.code.toLowerCase()}/${currentYear}`}
+                >
+                  View List
+                </Link>
               </Button>
             </div>
           </div>

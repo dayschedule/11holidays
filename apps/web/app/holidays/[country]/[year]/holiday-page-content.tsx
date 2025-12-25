@@ -75,7 +75,7 @@ export function HolidayPageContent({
               </h1>
             </div>
             <p className="text-lg text-muted-foreground">
-              {country.name} public holidays calendar for year {year}
+              List of public holidays in {country.name} for year {year}
             </p>
           </div>
           <YearSelector

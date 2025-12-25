@@ -42,31 +42,34 @@ export function CountryList({
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredCountries.map((country) => (
-          <Button
+          <div
             key={country.code}
-            variant="outline"
-            asChild
-            className="h-auto justify-start p-4 hover:bg-accent"
+            className="flex flex-col gap-4 rounded-lg border p-4 hover:bg-accent transition"
           >
-            <Link
-              href={
-                type === 'holidays'
-                  ? `/holidays/${country.code.toLowerCase()}/${currentYear}`
-                  : `/calendars/${country.slug}`
-              }
-            >
+            {/* Country info */}
+            <div className="flex items-center">
               <CountryFlag
                 countryCode={country.code}
                 className="w-12 h-8 mr-4 rounded"
               />
-              <div className="flex flex-col items-start">
+              <div className="flex flex-col">
                 <span className="font-semibold text-base">{country.name}</span>
                 <span className="text-xs text-muted-foreground">
                   {country.code}
                 </span>
               </div>
-            </Link>
-          </Button>
+            </div>
+
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" asChild className="flex-1">
+                <Link href={`/calendars/${country.slug}`}>View Calendar</Link>
+              </Button>
+
+              <Button variant="outline" size="sm" asChild className="flex-1">
+                <Link href={`/calendars/${country.slug}/list`}>View List</Link>
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
 

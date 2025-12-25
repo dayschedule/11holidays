@@ -3,6 +3,7 @@ import { CalendarGenerator } from '../components/calendar-generator';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { fetchHolidays } from '@/lib/holidays-api';
+import { Breadcrumb } from '../../../components/breadcrumb';
 
 interface PageProps {
   params: Promise<{
@@ -40,6 +41,13 @@ export default async function CalendarGeneratorPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-[1200px] space-y-8">
+      <Breadcrumb
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Calendars', href: '/calendars' },
+          { label: `${country.name} Calendar` },
+        ]}
+      />
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
           {country.name} Holidays Calendar

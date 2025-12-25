@@ -5,6 +5,7 @@ export interface Holiday {
   name: string;
   type: string;
   description?: string;
+  countryCode?: string;
 }
 
 export interface HolidaysResponse {

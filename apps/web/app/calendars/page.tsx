@@ -2,9 +2,9 @@ import { CountryList } from '@/components/country-list';
 import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 
 export const metadata = {
-  title: 'All Countries - 11holidays.com',
+  title: 'Calendars for All Countries - 11holidays.com',
   description:
-    'Browse public holidays for 230+ countries. Select a country to view its holiday list.',
+    'Browse public holidays calendar for 230+ countries. Select a country to view its holiday calendar.',
 };
 
 export default function CountriesPage() {
@@ -17,14 +17,16 @@ export default function CountriesPage() {
           Browse Countries
         </h1>
         <p className="text-lg text-muted-foreground">
-          Select a country to view its public holidays for {currentYear}
+          Select a country to view its public holidays calendar for{' '}
+          {currentYear} and customize your own holiday calendar to donwload
+          image or PDF.
         </p>
       </div>
 
       <CountryList
         countries={COUNTRIES_WITH_SLUG}
         currentYear={currentYear}
-        type="holidays"
+        type="calendars"
       />
     </div>
   );

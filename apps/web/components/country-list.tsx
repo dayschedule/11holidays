@@ -1,25 +1,31 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import Link from "next/link"
-import { Country } from "@/lib/countries-data"
-import { CountryFlag } from "@/components/country-flag"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { useState } from 'react';
+import Link from 'next/link';
+import { Country } from '@/lib/countries-data';
+import { CountryFlag } from '@/components/country-flag';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 interface CountryListProps {
-  countries: Country[]
-  currentYear: number
+  countries: Country[];
+  currentYear: number;
+  type: 'holidays' | 'calendars';
 }
 
-export function CountryList({ countries, currentYear }: CountryListProps) {
-  const [searchQuery, setSearchQuery] = useState("")
+export function CountryList({
+  countries,
+  currentYear,
+  type,
+}: CountryListProps) {
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredCountries = countries.filter((country) =>
-    country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    country.code.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredCountries = countries.filter(
+    (country) =>
+      country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      country.code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -42,8 +48,17 @@ export function CountryList({ countries, currentYear }: CountryListProps) {
             asChild
             className="h-auto justify-start p-4 hover:bg-accent"
           >
-            <Link href={`/holidays/${country.code.toLowerCase()}/${currentYear}`}>
-              <CountryFlag countryCode={country.code} className="w-12 h-8 mr-4 rounded" />
+            <Link
+              href={
+                type === 'holidays'
+                  ? `/holidays/${country.code.toLowerCase()}/${currentYear}`
+                  : `/calendars/${country.slug}`
+              }
+            >
+              <CountryFlag
+                countryCode={country.code}
+                className="w-12 h-8 mr-4 rounded"
+              />
               <div className="flex flex-col items-start">
                 <span className="font-semibold text-base">{country.name}</span>
                 <span className="text-xs text-muted-foreground">
@@ -58,10 +73,10 @@ export function CountryList({ countries, currentYear }: CountryListProps) {
       {filteredCountries.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
-            No countries found matching "{searchQuery}"
+            No countries found matching &quot;{searchQuery}&quot;
           </p>
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -12,16 +12,21 @@ import { Country } from '@/lib/countries-data';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { Holiday } from '@/lib/holidays-api';
 
 interface HolidayPageContentProps {
   country: Country;
   year: number;
-  holidaysData: any;
+  holidaysData: {
+    holidays: Holiday[];
+    country: string;
+    year: number;
+  };
 }
 
 const publicHolidays = ['public', 'gazetted', 'national', 'federal'];
 
-const countPublicHolidays = (holidays: any[]) => {
+const countPublicHolidays = (holidays: Holiday[]) => {
   return holidays.filter((h) =>
     publicHolidays.some((x) => h.type.toLowerCase().includes(x))
   ).length;
@@ -66,7 +71,7 @@ export function HolidayPageContent({
                 className="w-16 h-12 rounded"
               />
               <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
-                {country.name} {year} holiday&apos;s
+                {country.name} {year} Holidays
               </h1>
             </div>
             <p className="text-lg text-muted-foreground">

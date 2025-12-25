@@ -12,6 +12,7 @@ export interface Country {
   region_code: string;
   sub_region_code: string;
   intermediate_region_code: string;
+  slug?: string;
 }
 
 export function getCountryByCode(code: string): Country | undefined {
@@ -23,7 +24,16 @@ export function getCountryName(code: string): string {
   return country ? country.name : code;
 }
 
-export const COUNTRIES: Country[] = [
+export function toSlug(value: string) {
+  return value
+    .toLowerCase()
+    .normalize('NFD') // handle Å, É, etc.
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+const COUNTRIES: Country[] = [
   {
     name: 'Afghanistan',
     code: 'AF',
@@ -3262,3 +3272,16 @@ export const COUNTRIES: Country[] = [
     intermediate_region_code: '014',
   },
 ];
+
+export const COUNTRIES_WITH_SLUG: Country[] = COUNTRIES.map((c) => ({
+  ...c,
+  slug: toSlug(c.name),
+}));
+
+const countryBySlugMap: Record<string, Country> = Object.fromEntries(
+  COUNTRIES_WITH_SLUG.map((c) => [c.slug!, c])
+);
+
+export function getCountryBySlug(slug: string): Country | undefined {
+  return countryBySlugMap[toSlug(slug)];
+}

@@ -4,6 +4,8 @@ import { getCountryByCode } from '@/lib/countries-data';
 import { HolidayPageContent } from './holiday-page-content';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 
+export const revalidate = 86400;
+
 interface PageProps {
   params: Promise<{
     country: string;

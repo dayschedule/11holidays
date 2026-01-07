@@ -10,7 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Calendar, Globe, Code, Zap } from 'lucide-react';
+import { Calendar, Globe, Code } from 'lucide-react';
+
+export const revalidate = 86400;
 
 export const metadata = {
   title: `Holidays API & Calendar for ${new Date().getFullYear()} - 11holiday.com`,
@@ -68,7 +70,7 @@ export default function Home() {
                 Over 7000+ holidays data accessible via API on federal, state,
                 and local levels with simple GET requests regularly updated from
                 official sources
-              </p>  
+              </p>
             </CardContent>
           </Card>
 

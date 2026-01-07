@@ -1,6 +1,8 @@
 import { CountryList } from '@/components/country-list';
 import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: 'All Countries - 11holidays.com',
   description:

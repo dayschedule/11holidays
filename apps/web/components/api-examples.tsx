@@ -8,10 +8,10 @@ import { Check, Copy } from "lucide-react"
 
 interface ApiExamplesProps {
   countryCode?: string
-  year?: string
+  year?: number
 }
 
-export function ApiExamples({ countryCode = "US", year = "2025" }: ApiExamplesProps) {
+export function ApiExamples({ countryCode = "US", year }: ApiExamplesProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
   const examples = {

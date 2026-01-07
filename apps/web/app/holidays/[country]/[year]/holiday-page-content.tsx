@@ -235,7 +235,7 @@ console.log(holidays);`}</code>
               </CardContent>
             </Card>
 
-            <ApiExamples countryCode={country.code} year={year.toString()} />
+            <ApiExamples countryCode={country.code} year={year} />
           </div>
 
           <div className="lg:col-span-3">

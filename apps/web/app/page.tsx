@@ -109,7 +109,7 @@ export default function Home() {
         </Card>
 
         <div className="w-full mt-8">
-          <ApiExamples />
+          <ApiExamples year={currentYear} />
         </div>
 
         <div className="w-full mt-8 space-y-4 text-left">

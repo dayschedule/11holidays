@@ -5,9 +5,6 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { fetchHolidays } from '@/lib/holidays-api';
 import { Breadcrumb } from '../../../components/breadcrumb';
 
-export const revalidate = 86400;
-
-
 interface PageProps {
   params: Promise<{
     country: string;

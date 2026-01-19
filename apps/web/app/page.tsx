@@ -12,8 +12,6 @@ import {
 } from '@/components/ui/card';
 import { Calendar, Globe, Code } from 'lucide-react';
 
-export const revalidate = 86400;
-
 export const metadata = {
   title: `Holidays API & Calendar for ${new Date().getFullYear()} - 11holiday.com`,
   description:

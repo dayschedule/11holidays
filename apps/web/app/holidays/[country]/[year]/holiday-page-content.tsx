@@ -9,10 +9,12 @@ import { Breadcrumb } from '@/components/breadcrumb';
 import { UpgradeDialog } from '@/components/upgrade-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Country } from '@/lib/countries-data';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Check } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Holiday } from '@/lib/holidays-api';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 interface HolidayPageContentProps {
   country: Country;
@@ -28,7 +30,7 @@ const publicHolidays = ['public', 'gazetted', 'national', 'federal'];
 
 const countPublicHolidays = (holidays: Holiday[]) => {
   return holidays.filter((h) =>
-    publicHolidays.some((x) => h.type.toLowerCase().includes(x))
+    publicHolidays.some((x) => h.type.toLowerCase().includes(x)),
   ).length;
 };
 
@@ -239,13 +241,47 @@ console.log(holidays);`}</code>
           </div>
 
           <div className="lg:col-span-3">
-            <Card className="sticky top-20 bg-muted/50 border-dashed">
-              <CardHeader>
-                <CardTitle className="text-lg">Advertisement</CardTitle>
-              </CardHeader>
+            <Card className="sticky top-20 border-dashed">
               <CardContent>
-                <div className="flex items-center justify-center min-h-[600px] text-muted-foreground">
-                  <p>Ad Space</p>
+                <div className="flex flex-col items-center justify-center text-center">
+                  <Badge variant="outline" className="text-xs mb-4">Ads</Badge>
+                  <Image
+                    src="/img/dayschedule.svg"
+                    alt="DaySchedule"
+                    className="mb-4"
+                    width={180}
+                    height={40}
+                  />
+                  <p className="text-sm text-muted-foreground mb-8 max-w-xs">
+                    Create your free appointment booking page
+                  </p>
+                  <div className="space-y-3 mb-8 text-left">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span className="text-sm">Easy online booking</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span className="text-sm">Automated reminders</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span className="text-sm">Client management</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span className="text-sm">Free forever</span>
+                    </div>
+                  </div>
+                  <Button className="w-full max-w-xs" asChild>
+                    <Link
+                      href="https://dayschedule.com/?utm_source=11holidays"
+                      target="_blank"
+                      rel="nofollow noindex"
+                    >
+                      Create Appointment Page
+                    </Link>
+                  </Button>
                 </div>
               </CardContent>
             </Card>

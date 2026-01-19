@@ -1,4 +1,5 @@
 import { addYears, format, startOfYear } from 'date-fns';
+import { sampleHolidays } from './sample-data';
 
 export interface Holiday {
   date: string;
@@ -19,6 +20,15 @@ export async function fetchHolidays(
   countryCode: string,
   year: number
 ): Promise<HolidaysResponse> {
+
+  if (env.NEXTJS_ENV === 'development') {
+    return {
+      holidays: sampleHolidays,
+      country: countryCode,
+      year,
+    };
+  }
+
   // Use start - end date to utilize sql index for better query performance
   const baseDate = new Date(year, 0, 1);
   const start = format(startOfYear(baseDate), 'yyyy-MM-dd');

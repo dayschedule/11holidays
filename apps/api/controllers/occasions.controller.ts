@@ -7,6 +7,7 @@ import {
   deleteOccasion,
 } from '../services/occasion.service';
 import { Bindings } from '../types/binding';
+import { HTTPException } from 'hono/http-exception';
 
 const occasions = new Hono<{ Bindings: Bindings }>();
 
@@ -20,7 +21,9 @@ occasions.get('/:id', async (c) => {
   const id = c.req.param('id');
   const data = await getOccasionById(c, Number(id));
   if (!data) {
-    return c.json({ message: 'No occasion found' }, 400);
+    throw new HTTPException(404, {
+      message: `No occasion found`,
+    });
   }
   return c.json({ ...data }, 200);
 });
@@ -35,21 +38,26 @@ occasions.put('/:id', async (c) => {
   const id = c.req.param('id');
   const occasionData = await c.req.json();
   const success = await updateOccasion(c, Number(id), occasionData);
-  if (success) {
-    return c.json({ message: 'Occasion updated successfully' }, 200);
-  } else {
-    return c.json({ message: `No occasion found: ${id}` }, 404);
+  if (!success) {
+    throw new HTTPException(404, {
+      message: `No occasion found`,
+    });
   }
+  
+  return c.json({ message: 'Occasion updated successfully' }, 200);
 });
 
 occasions.delete('/:id', async (c) => {
   const id = c.req.param('id');
   const success = await deleteOccasion(c, Number(id));
-  if (success) {
-    return c.json({ message: 'Occasion deleted successfully' }, 200);
-  } else {
-    return c.json({ message: `No occasion found: ${id}` }, 404);
+  if (!success) {
+    throw new HTTPException(404, {
+      message: `No occasion found`,
+    });
   }
+
+  return c.json({ message: 'Occasion deleted successfully' }, 200);
+
 });
 
 export { occasions };

@@ -2,7 +2,6 @@ import { formatZodError } from '../helper/utility';
 import { HTTPException } from 'hono/http-exception';
 import { Bindings } from '../types/binding';
 import { Hono } from 'hono';
-import { userSchema } from '../schema/authSchema';
 import { validator } from 'hono/validator';
 import { activateUserAfterOtp, generateApiKey, getUserByEmail, signupWithEmail } from '../services/auth.service';
 import { sendMandrillEmail } from '../services/emailer.service';
@@ -13,7 +12,10 @@ const auth = new Hono<{ Bindings: Bindings }>();
 
 auth.post('/',
     validator("json", (value, ctx) => {
-        const parsed = userSchema.safeParse(value);
+        const parsed = z.object({
+            email: z.email(),
+        }).safeParse(value);
+
         if (parsed.success === false) {
             throw new HTTPException(400, { message: formatZodError(parsed.error) });
         }

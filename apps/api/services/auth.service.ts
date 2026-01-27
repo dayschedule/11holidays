@@ -63,3 +63,14 @@ export const getUserByEmail = async (env: Bindings, email: string) => {
     return await sqlQuery.first<User>();
 }
 
+export const getUserByApiKey = async (env: Bindings, apiKey: string) => {
+    const sqlQuery = env.DB.prepare(
+        `
+      SELECT *
+      FROM Users
+      WHERE api_key = ? and status = 'active'
+    `
+    ).bind(apiKey);
+
+    return await sqlQuery.first<User>();
+}

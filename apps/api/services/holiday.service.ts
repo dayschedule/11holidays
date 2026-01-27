@@ -2,12 +2,17 @@ import { Bindings } from '../types/binding';
 import { Holiday } from '../schema/holidaySchema';
 import { Occasion } from '../schema/occasoinSchema';
 import { escapeSQL, slugify } from '../helper/utility';
+import { addYears, format, startOfYear } from 'date-fns';
 
 export const getHolidaysByCountry = async (
   env: Bindings,
   country: string,
   year: number
 ): Promise<Array<Holiday>> => {
+  const baseDate = new Date(year, 0, 1);
+  const start = format(startOfYear(baseDate), 'yyyy-MM-dd');
+  const end = format(addYears(startOfYear(baseDate), 1), 'yyyy-MM-dd');
+
   const sqlQuery = env.DB.prepare(
     `
         SELECT h.holiday_id, o.name, h.date, o.description, h.occasion_id, h.country, h.type, 
@@ -16,9 +21,10 @@ export const getHolidaysByCountry = async (
         Left Join Occasions as o
         ON h.occasion_id = o.occasion_id
         WHERE h.country = ?
-        and CAST(strftime('%Y', h.date)  AS INTEGER) = ?
-        ORDER BY h.date`
-  ).bind(country.toUpperCase(), year);
+        AND h.date >= ?
+        AND h.date < ?
+        ORDER BY h.date;`
+  ).bind(country.toUpperCase(), start, end);
   const { results } = await sqlQuery.all();
   return results as unknown as Array<Holiday>;
 };
@@ -110,13 +116,13 @@ const bulkInsertHolidays = async (env: Bindings, holidays: Array<Holiday>) => {
   const multiQuery = `
       WITH TempHolidays(date, occasion_id, type, country) AS (
           VALUES ${holidays
-            .map(
-              (h) =>
-                `('${h.date}', ${h.occasion_id}, '${escapeSQL(
-                  h.type
-                )}', '${escapeSQL(h.country)}')`
-            )
-            .join(', ')}
+      .map(
+        (h) =>
+          `('${h.date}', ${h.occasion_id}, '${escapeSQL(
+            h.type
+          )}', '${escapeSQL(h.country)}')`
+      )
+      .join(', ')}
       )
       INSERT INTO Holidays (date, occasion_id, type, country)
           SELECT DISTINCT t.date, t.occasion_id, t.type, t.country
@@ -136,13 +142,12 @@ const bulkInsertOccassions = async (
   const multiQuery = `
       WITH TempOccasions(name, url, ref_url, description) AS (
           VALUES ${holidays
-            .map(
-              (h) =>
-                `('${escapeSQL(h.name)}', '${h.url}', '${
-                  h.ref_url
-                }', '${escapeSQL(h.description!)}')`
-            )
-            .join(', ')}
+      .map(
+        (h) =>
+          `('${escapeSQL(h.name)}', '${h.url}', '${h.ref_url
+          }', '${escapeSQL(h.description!)}')`
+      )
+      .join(', ')}
       )
       INSERT INTO Occasions (name, url, ref_url, description)
           SELECT DISTINCT t.name, t.url, t.ref_url, t.description
@@ -157,8 +162,8 @@ const bulkInsertOccassions = async (
   const { results } = await env.DB.prepare(
     `
       SELECT occasion_id, url FROM Occasions WHERE url IN (${holidays
-        .map((holiday) => `'${holiday.url}'`)
-        .join(', ')})
+      .map((holiday) => `'${holiday.url}'`)
+      .join(', ')})
   `
   ).run();
   return results as unknown as Array<Occasion>;

@@ -32,7 +32,17 @@ holidays.openapi(
     path: '/',
     description: 'Get all holidays',
     request: {
-      //params: pagedSchema,
+      query: z.object({
+        country: z
+          .string()
+          .length(2, { message: "Country must be a 2-character code" }),
+        year: z
+          .coerce
+          .number()
+          .int()
+          .min(1000, { message: "Year must be 4 digits" })
+          .max(9999, { message: "Year must be 4 digits" }),
+      })
     },
     responses: {
       200: {
@@ -44,14 +54,7 @@ holidays.openapi(
     },
   }),
   async (ctx) => {
-    const country = ctx.req.query('country');
-    const year = Number(ctx.req.query('year')) || new Date().getFullYear();
-
-    if (!country || country.length != 2) {
-      throw new HTTPException(400, {
-        message: `Invalid country: ${country}. Must be a valid ISO2 country code`,
-      });
-    }
+    const { country, year } = ctx.req.valid('query')
     const results = await getHolidaysByCountry(ctx.env, country, year);
     return ctx.json(results, 200);
   }
@@ -101,25 +104,25 @@ holidays.put('/:id', async (ctx) => {
   const id = ctx.req.param('id');
   const holidayData: Holiday = await ctx.req.json();
   const success = await updateHoliday(ctx.env, Number(id), holidayData);
-  if (success) {
-    return ctx.json({ message: 'Holiday updated successfully' }, 200);
-  } else {
+  if (!success) {
     throw new HTTPException(404, {
-      message: `No holiday found with id: ${id}`,
+      message: `No holiday found`,
     });
   }
+
+  return ctx.json({ message: 'Holiday updated successfully' }, 200);
 });
 
 holidays.delete('/:id', async (ctx) => {
   const id = ctx.req.param('id');
   const success = await deleteHoliday(ctx.env, Number(id));
-  if (success) {
-    return ctx.json({ message: 'Holiday deleted successfully' }, 200);
-  } else {
+  if (!success) {
     throw new HTTPException(404, {
-      message: `No holiday found with id: ${id}`,
+      message: `No holiday found`,
     });
   }
+
+  return ctx.json({ message: 'Holiday deleted successfully' }, 200);
 });
 
 export { holidays };

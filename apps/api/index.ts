@@ -5,8 +5,19 @@ import { holidays } from './controllers/holidays.controller';
 import { occasions } from './controllers/occasions.controller';
 import { auth } from './controllers/auth.controller';
 import { cors } from 'hono/cors';
+import { jwtAuth } from './middleware/auth';
+import { HTTPException } from 'hono/http-exception';
 
 const app = new OpenAPIHono<{ Bindings: Bindings }>().basePath('/v1');
+
+app.onError(async (err, ctx) => {
+    if (err instanceof HTTPException) {
+        return ctx.json({ message: err.message }, err.status);
+    } else {
+        console.error(`Server error`, err);
+        return ctx.json({ message: 'Server error' }, 500);
+    }
+});
 
 // API Routes
 const corsAllowed = ["11holidays.com", "localhost"];
@@ -31,6 +42,7 @@ app.use(
 // Public
 app.route(`/auth`, auth);
 
+app.use(jwtAuth());
 
 app.route(`/countries`, countries);
 app.route(`/holidays`, holidays);

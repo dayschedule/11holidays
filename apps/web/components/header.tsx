@@ -45,7 +45,7 @@ export function Header() {
             </Link>
           </nav>
         </div>
-        <div className="gap-3">
+        <div className="gap-3 flex items-center">
           <Button variant="ghost" size="icon" asChild>
             <a
               href="https://github.com/dayschedule/11holidays"
@@ -55,7 +55,12 @@ export function Header() {
               <Github className="h-5 w-5" />
             </a>
           </Button>
+
           <ThemeToggle />
+
+          <Button asChild>
+            <Link href="/api-key">Get API Key</Link>
+          </Button>
         </div>
       </div>
     </header>

@@ -4,11 +4,14 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "devsql": "wrangler d1 execute holidays --file=sql/users.sql --local"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.2.0",
-    "hono": "^4.11.1"
+    "hono": "^4.11.1",
+    "nanoid": "^5.1.6",
+    "stripe": "^20.2.0"
   },
   "devDependencies": {
     "wrangler": "^4.4.0"

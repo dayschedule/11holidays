@@ -1,4 +1,4 @@
-import { Bindings } from '../binding';
+import { Bindings } from '../types/binding';
 import { Holiday } from '../schema/holidaySchema';
 import { Occasion } from '../schema/occasoinSchema';
 import { escapeSQL, slugify } from '../helper/utility';

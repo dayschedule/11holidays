@@ -6,7 +6,7 @@ import {
   updateOccasion,
   deleteOccasion,
 } from '../services/occasion.service';
-import { Bindings } from '../binding';
+import { Bindings } from '../types/binding';
 
 const occasions = new Hono<{ Bindings: Bindings }>();
 

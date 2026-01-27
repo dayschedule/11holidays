@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, MessageSquare, HelpCircle } from 'lucide-react';
+import { Mail, MessageSquare, HelpCircle, Github } from 'lucide-react';
 
 export const metadata = {
   title: 'Contact Us - 11holidays.com',
@@ -28,8 +28,7 @@ export default function ContactPage() {
           Have a question or feedback? We'd love to hear from you.
         </p>
       </div>
-
-      <div className="grid gap-8 md:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-2">
         <Card>
           <CardHeader>
             <Mail className="h-8 w-8 mb-2 text-primary" />
@@ -40,121 +39,29 @@ export default function ContactPage() {
               For general inquiries
             </p>
             <a
-              href="mailto:hello@11holidays.com"
-              className="text-sm text-primary hover:underline"
+              href="mailto:support@dayschedule.com"
+              className="text-sm text-primary underline"
             >
-              hello@11holidays.com
+              support@dayschedule.com
             </a>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
-            <HelpCircle className="h-8 w-8 mb-2 text-primary" />
-            <CardTitle>Support</CardTitle>
+            <Github className="h-8 w-8 mb-2 text-primary" />
+            <CardTitle>Open an Issue</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-2">
               For technical support
             </p>
             <a
-              href="mailto:support@11holidays.com"
-              className="text-sm text-primary hover:underline"
+              href="https://github.com/dayschedule/11holidays/issues"
+              className="text-sm text-primary underline"
+              target="_blank"
+              rel="noreferrer"
             >
-              support@11holidays.com
-            </a>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <MessageSquare className="h-8 w-8 mb-2 text-primary" />
-            <CardTitle>Feedback</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-2">
-              Share your thoughts
-            </p>
-            <a
-              href="mailto:feedback@11holidays.com"
-              className="text-sm text-primary hover:underline"
-            >
-              feedback@11holidays.com
-            </a>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Send us a Message</CardTitle>
-          <CardDescription>
-            Fill out the form below and we'll get back to you as soon as
-            possible
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Your name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="your@email.com" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input id="subject" placeholder="What is this about?" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
-              <Textarea
-                id="message"
-                placeholder="Tell us more..."
-                className="min-h-[150px]"
-              />
-            </div>
-            <Button type="submit" size="lg" className="w-full md:w-auto">
-              Send Message
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Business Inquiries</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Interested in enterprise solutions or partnerships?
-            </p>
-            <a
-              href="mailto:business@11holidays.com"
-              className="text-sm text-primary hover:underline"
-            >
-              business@11holidays.com
-            </a>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Data Issues</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Found incorrect holiday information? Let us know.
-            </p>
-            <a
-              href="mailto:data@11holidays.com"
-              className="text-sm text-primary hover:underline"
-            >
-              data@11holidays.com
+              Go to Github
             </a>
           </CardContent>
         </Card>
@@ -179,8 +86,9 @@ export default function ContactPage() {
               What should I include in a support request?
             </h3>
             <p className="text-sm text-muted-foreground">
-              Please include your API key (if applicable), a description of the
-              issue, any error messages, and steps to reproduce the problem.
+              Please email from your original email you&apos;ve registered, a
+              description of the issue, any error messages, and steps to
+              reproduce the problem.
             </p>
           </div>
           <div>

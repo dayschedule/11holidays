@@ -70,12 +70,7 @@ export default function PricingPage() {
                 </li>
               </ul>
               <Button className="w-full" size="lg" asChild>
-                <Link
-                  href="https://buy.stripe.com/7sI4iGgfv0logOkdQX"
-                  target="_blank"
-                >
-                  Buy Now
-                </Link>
+                <Link href="/api-key">Buy Now</Link>
               </Button>
             </CardContent>
           </Card>
@@ -128,12 +123,7 @@ export default function PricingPage() {
                 </li>
               </ul>
               <Button className="w-full" size="lg" asChild>
-                <Link
-                  href="https://buy.stripe.com/5kA9D02oFece69G008"
-                  target="_blank"
-                >
-                  Buy Now
-                </Link>
+                <Link href="/api-key">Buy Now</Link>
               </Button>
             </CardContent>
           </Card>

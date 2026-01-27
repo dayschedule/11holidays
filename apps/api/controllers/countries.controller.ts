@@ -4,7 +4,7 @@ import { z } from '@hono/zod-openapi';
 import { countrySchema } from '../schema/countrySchema';
 import { formatZodError } from '../helper/utility';
 import { HTTPException } from 'hono/http-exception';
-import { Bindings } from '../binding';
+import { Bindings } from '../types/binding';
 
 const countries = new OpenAPIHono<{ Bindings: Bindings }>({
   defaultHook: (result, c) => {

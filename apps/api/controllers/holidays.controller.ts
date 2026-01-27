@@ -10,7 +10,7 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
 import { formatZodError } from '../helper/utility';
 import { Holiday, holidaySchema } from '../schema/holidaySchema';
 import { HTTPException } from 'hono/http-exception';
-import { Bindings } from '../binding';
+import { Bindings } from '../types/binding';
 
 const holidays = new OpenAPIHono<{ Bindings: Bindings }>({
   defaultHook: (result, c) => {

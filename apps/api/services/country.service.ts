@@ -1,5 +1,5 @@
 import { Country } from '../schema/countrySchema';
-import { Bindings } from '../binding';
+import { Bindings } from '../types/binding';
 
 export const getCountries = async (env: Bindings): Promise<Array<Country>> => {
   const sqlQuery = env.DB.prepare(

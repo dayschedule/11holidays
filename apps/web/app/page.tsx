@@ -89,7 +89,7 @@ export default function Home() {
 
         <Card className="w-full bg-primary/5 border-primary/20 mt-8">
           <CardHeader>
-            <CardTitle className="text-2xl">Get Your Free API Key</CardTitle>
+            <CardTitle className="text-2xl">Get Your API Key</CardTitle>
             <CardDescription className="text-base">
               Start integrating holiday data into your applications today
             </CardDescription>
@@ -97,7 +97,7 @@ export default function Home() {
           <CardContent className="flex flex-col items-center gap-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" asChild>
-                <Link href="/api-key">Get Free API Key</Link>
+                <Link href="/api-key">Get API Key</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link href="/countries">Browse Countries</Link>

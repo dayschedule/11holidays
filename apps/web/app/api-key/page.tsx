@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApiKeySignup from '@/components/signup';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: 'Get API Key for Holidays API - 11holidays.com',
@@ -8,7 +9,6 @@ export const metadata = {
 };
 
 export default function ApiKeyPage() {
-
   return (
     <div className="mx-auto space-y-8">
       <div className="space-y-2 text-center">
@@ -20,7 +20,9 @@ export default function ApiKeyPage() {
         </p>
       </div>
 
-      <ApiKeySignup />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ApiKeySignup />
+      </Suspense>
 
       <Card className="bg-muted/50">
         <CardHeader>

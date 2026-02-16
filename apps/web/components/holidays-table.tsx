@@ -1,10 +1,16 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Holiday, formatDate, getDayOfWeek, downloadJSON, copyToClipboard } from "@/lib/holidays-api"
-import { Country } from "@/lib/countries-data"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from 'react';
+import {
+  Holiday,
+  formatDate,
+  getDayOfWeek,
+  downloadJSON,
+  copyToClipboard,
+} from '@/lib/holidays-api';
+import { Country } from '@/lib/countries-data';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -12,49 +18,71 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from '@/components/ui/table';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Search, Download, Copy, Check, Calendar } from "lucide-react"
+} from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Search, Download, Copy, Check, Calendar } from 'lucide-react';
 
 interface HolidaysTableProps {
-  holidays: Holiday[]
-  country: Country
-  year: number
+  holidays: Holiday[];
+  country: Country;
+  year: number;
 }
 
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-]
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [typeFilter, setTypeFilter] = useState<string>("all")
-  const [monthFilter, setMonthFilter] = useState<string>("all")
-  const [copied, setCopied] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [monthFilter, setMonthFilter] = useState<string>('all');
+  const [copied, setCopied] = useState(false);
 
-  const monthCounts = holidays.reduce((acc, holiday) => {
-    const month = new Date(holiday.date).getMonth()
-    acc[month] = (acc[month] || 0) + 1
-    return acc
-  }, {} as Record<number, number>)
+  const monthCounts = holidays.reduce(
+    (acc, holiday) => {
+      const month = new Date(holiday.date).getMonth();
+      acc[month] = (acc[month] || 0) + 1;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   const filteredHolidays = holidays.filter((holiday) => {
-    const matchesSearch = holiday.name.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesType = typeFilter === "all" || holiday.type === typeFilter
-    const holidayMonth = new Date(holiday.date).getMonth()
-    const matchesMonth = monthFilter === "all" || parseInt(monthFilter) === holidayMonth
-    return matchesSearch && matchesType && matchesMonth
-  })
+    const matchesSearch = holiday.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesType = typeFilter === 'all' || holiday.type === typeFilter;
+    const holidayMonth = new Date(holiday.date).getMonth();
+    const matchesMonth =
+      monthFilter === 'all' || parseInt(monthFilter) === holidayMonth;
+    return matchesSearch && matchesType && matchesMonth;
+  });
 
-  const uniqueTypes = Array.from(new Set(holidays.map((h) => h.type)))
+  const uniqueTypes = Array.from(new Set(holidays.map((h) => h.type)));
 
   const handleDownloadJSON = () => {
     const data = {
@@ -62,43 +90,43 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
       countryCode: country.code,
       year: year,
       holidays: filteredHolidays,
-    }
-    downloadJSON(data, `holidays-${country.code}-${year}.json`)
+    };
+    downloadJSON(data, `holidays-${country.code}-${year}.json`);
     // toast({
     //   title: "Downloaded",
     //   description: "Holidays data downloaded as JSON",
     // })
-  }
+  };
 
   const handleDownloadCSV = () => {
-    const headers = ["Date", "Name", "Type", "Day of Week"]
+    const headers = ['Date', 'Name', 'Type', 'Day of Week'];
     const rows = filteredHolidays.map((holiday) => [
       holiday.date,
       holiday.name,
       holiday.type,
       getDayOfWeek(holiday.date),
-    ])
+    ]);
 
     const csv = [
-      headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-    ].join("\n")
+      headers.join(','),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+    ].join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = `holidays-${country.code}-${year}.csv`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `holidays-${country.code}-${year}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 
     // toast({
     //   title: "Downloaded",
     //   description: "Holidays data downloaded as CSV",
     // })
-  }
+  };
 
   const handleCopyJSON = async () => {
     const data = {
@@ -106,15 +134,15 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
       countryCode: country.code,
       year: year,
       holidays: filteredHolidays,
-    }
-    await copyToClipboard(JSON.stringify(data, null, 2))
-    setCopied(true)
+    };
+    await copyToClipboard(JSON.stringify(data, null, 2));
+    setCopied(true);
     // toast({
     //   title: "Copied",
     //   description: "JSON data copied to clipboard",
     // })
-    setTimeout(() => setCopied(false), 2000)
-  }
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <Card>
@@ -128,7 +156,11 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={handleCopyJSON}>
-              {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+              {copied ? (
+                <Check className="mr-2 h-4 w-4" />
+              ) : (
+                <Copy className="mr-2 h-4 w-4" />
+              )}
               Copy JSON
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownloadJSON}>
@@ -225,5 +257,5 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

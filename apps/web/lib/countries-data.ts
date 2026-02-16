@@ -16,7 +16,7 @@ export interface Country {
 }
 
 export function getCountryByCode(code: string): Country | undefined {
-  return COUNTRIES.find((c) => c.code.toLowerCase() === code.toLowerCase());
+  return COUNTRIES_WITH_SLUG.find((c) => c.code.toLowerCase() === code.toLowerCase());
 }
 
 export function getCountryName(code: string): string {

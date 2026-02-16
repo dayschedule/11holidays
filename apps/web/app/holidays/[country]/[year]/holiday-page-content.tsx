@@ -1,20 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useTransition } from 'react';
 import { HolidaysTable } from '@/components/holidays-table';
 import { ApiExamples } from '@/components/api-examples';
 import { YearSelector } from '@/components/year-selector';
 import { CountryFlag } from '@/components/country-flag';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { UpgradeDialog } from '@/components/upgrade-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Country } from '@/lib/countries-data';
-import { AlertCircle, Check } from 'lucide-react';
+import { COUNTRIES_WITH_SLUG, Country } from '@/lib/countries-data';
+import { AlertCircle, Calendar, Check, List } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Holiday } from '@/lib/holidays-api';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useRouter } from 'next/navigation';
 
 interface HolidayPageContentProps {
   country: Country;
@@ -39,23 +46,24 @@ export function HolidayPageContent({
   year,
   holidaysData,
 }: HolidayPageContentProps) {
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const router = useRouter();
 
-  useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    if (year > currentYear) {
-      setShowUpgradeDialog(true);
-    }
-  }, [year]);
+  const [, startTransition] = useTransition();
+
+  const handleCountryChange = (code: string) => {
+    startTransition(() => {
+      router.push(`/holidays/${code.toLowerCase()}/${year}`);
+    });
+  };
+
+  const handleYearChange = (newYear: string) => {
+    startTransition(() => {
+      router.push(`/holidays/${country.code.toLowerCase()}/${newYear}`);
+    });
+  };
 
   return (
     <div className="container">
-      <UpgradeDialog
-        year={year}
-        open={showUpgradeDialog}
-        onOpenChange={setShowUpgradeDialog}
-      />
-
       <div className="mx-auto space-y-8">
         <Breadcrumb
           items={[
@@ -80,43 +88,79 @@ export function HolidayPageContent({
               List of public holidays in {country.name} for year {year}
             </p>
           </div>
-          <YearSelector
-            currentCountry={country.code.toLowerCase()}
-            currentYear={year}
-          />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-9 space-y-8">
             <div className="grid gap-6 md:grid-cols-3">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Total Holidays</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">
-                    {holidaysData.holidays.length}
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="space-y-2">
+                <label
+                  htmlFor="country"
+                  className="text-sm font-medium text-muted-foreground"
+                >
+                  Country Code
+                </label>
+                <Select
+                  value={country.code}
+                  onValueChange={(y) => handleCountryChange(y)}
+                >
+                  <SelectTrigger id="country" className="w-full">
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COUNTRIES_WITH_SLUG.map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        <span className="flex items-center gap-2">
+                          <CountryFlag
+                            countryCode={country.code}
+                            className="w-6 h-4 rounded"
+                          />
+                          <span>{country.name}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Country Code</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{country.code}</p>
-                </CardContent>
-              </Card>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Year
+                </label>
+                <YearSelector currentYear={year} onChange={handleYearChange} />
+              </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Year</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{year}</p>
-                </CardContent>
-              </Card>
+              <div className="space-y-2 justify-end md:flex md:items-end">
+                <div className="inline-flex rounded-md shadow-sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="rounded-r-none border-r-0"
+                  >
+                    <Link
+                      href={`/holidays/${country.code.toLowerCase()}/${year}`}
+                      className="flex items-center justify-center"
+                    >
+                      <List className="w-4 h-4" />
+                    </Link>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="rounded-l-none"
+                  >
+                    <Link
+                      href={`/calendars/${country.slug}`}
+                      className="flex items-center justify-center"
+                    >
+                      <Calendar className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
 
             <HolidaysTable
@@ -244,7 +288,9 @@ console.log(holidays);`}</code>
             <Card className="sticky top-20 border-dashed">
               <CardContent>
                 <div className="flex flex-col items-center justify-center text-center">
-                  <Badge variant="outline" className="text-xs mb-4">Ads</Badge>
+                  <Badge variant="outline" className="text-xs mb-4">
+                    Ads
+                  </Badge>
                   <Image
                     src="/img/dayschedule.svg"
                     alt="DaySchedule"

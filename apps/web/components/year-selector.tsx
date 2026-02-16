@@ -1,30 +1,24 @@
-"use client"
+'use client';
 
-import { useRouter } from "next/navigation"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 
 interface YearSelectorProps {
-  currentCountry: string
-  currentYear: number
+  currentYear: number;
+  onChange: (year: string) => void;
 }
 
-export function YearSelector({ currentCountry, currentYear }: YearSelectorProps) {
-  const router = useRouter()
-  const currentYearNum = new Date().getFullYear()
-  const years = Array.from({ length: 5 }, (_, i) => currentYearNum - 2 + i)
-
-  const handleYearChange = (year: string) => {
-    router.push(`/holidays/${currentCountry}/${year}`)
-  }
+export function YearSelector({ currentYear, onChange }: YearSelectorProps) {
+  const currentYearNum = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => currentYearNum - 2 + i);
 
   return (
-    <Select value={currentYear.toString()} onValueChange={handleYearChange}>
+    <Select value={currentYear.toString()} onValueChange={onChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue />
       </SelectTrigger>
@@ -36,5 +30,5 @@ export function YearSelector({ currentCountry, currentYear }: YearSelectorProps)
         ))}
       </SelectContent>
     </Select>
-  )
+  );
 }

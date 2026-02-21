@@ -2,6 +2,7 @@ import { addYears, format, startOfYear } from 'date-fns';
 import { sampleHolidays } from './sample-data';
 
 export interface Holiday {
+  holiday_id: number;
   date: string;
   name: string;
   type: string;
@@ -71,7 +72,7 @@ export function getDayOfWeek(dateString: string): string {
   return new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
 }
 
-export function downloadJSON(data: any, filename: string) {
+export function downloadJSON(data: unknown, filename: string) {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: 'application/json',
   });

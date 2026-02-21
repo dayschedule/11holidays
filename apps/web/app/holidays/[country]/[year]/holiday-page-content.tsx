@@ -235,7 +235,14 @@ export function HolidayPageContent({
                   </h3>
                   <p className="text-muted-foreground">
                     There are {countPublicHolidays(holidaysData.holidays)}{' '}
-                    public holidays in {country.name} in {year}.
+                    public holidays in {country.name} in {year}. If you are
+                    planning ahead?{' '}
+                    <Link
+                      href={`/upcoming-holidays/${country.slug}`}
+                      className="underline"
+                    >
+                      Check upcoming holidays
+                    </Link>
                   </p>
                 </div>
 

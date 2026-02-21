@@ -4,12 +4,20 @@ import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 export default function sitemap(): MetadataRoute.Sitemap {
   const year = new Date().getFullYear();
 
-  const holidaysEntries = COUNTRIES_WITH_SLUG.map((x) => ({
-    url: `https://11holidays.com/holidays/${x.code.toLowerCase()}/${year}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily',
-    priority: 0.7,
-  })) satisfies MetadataRoute.Sitemap;
+  const holidaysEntries = COUNTRIES_WITH_SLUG.flatMap((x) => [
+    {
+      url: `https://11holidays.com/holidays/${x.code.toLowerCase()}/${year}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.7,
+    },
+    {
+      url: `https://11holidays.com/upcoming-holidays/${x.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+  ]) satisfies MetadataRoute.Sitemap;
 
   const calendarEntries = COUNTRIES_WITH_SLUG.map((x) => ({
     url: `https://11holidays.com/calendars/${x.slug}`,

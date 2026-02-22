@@ -63,7 +63,7 @@ export function HolidayPageContent({
   };
 
   return (
-    <div className="container">
+    <div className="w-full">
       <div className="mx-auto space-y-8">
         <Breadcrumb
           items={[
@@ -75,16 +75,16 @@ export function HolidayPageContent({
 
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
               <CountryFlag
                 countryCode={country.code}
-                className="w-16 h-12 rounded"
+                className="w-12 h-8 sm:w-16 sm:h-12 rounded"
               />
-              <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-5xl">
                 {country.name} {year} Holidays
               </h1>
             </div>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base sm:text-lg text-muted-foreground">
               List of public holidays in {country.name} for year {year}
             </p>
           </div>
@@ -92,8 +92,8 @@ export function HolidayPageContent({
 
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-9 space-y-8">
-            <div className="flex flex-wrap gap-6">
-              <div className="w-full sm:flex-1 min-w-[180px] space-y-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:flex-wrap lg:gap-6">
+              <div className="w-full sm:col-span-1 lg:flex-1 lg:min-w-[180px] space-y-2">
                 <label
                   htmlFor="country"
                   className="text-sm font-medium text-muted-foreground"
@@ -123,15 +123,15 @@ export function HolidayPageContent({
                 </Select>
               </div>
 
-              <div className="w-full sm:flex-1 min-w-[140px] space-y-2">
+              <div className="w-full sm:col-span-1 lg:flex-1 lg:min-w-[140px] space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">
                   Year
                 </label>
                 <YearSelector currentYear={year} onChange={handleYearChange} />
               </div>
 
-              <div className="w-full sm:w-auto sm:flex sm:items-end">
-                <div className="flex w-full sm:w-auto rounded-md shadow-sm">
+              <div className="w-full sm:col-span-2 lg:w-auto lg:flex lg:items-end">
+                <div className="flex w-full lg:w-auto rounded-md shadow-sm">
                   <Button
                     variant="outline"
                     size="sm"
@@ -269,8 +269,8 @@ export function HolidayPageContent({
                     </a>
                     :
                   </p>
-                  <div className="rounded-lg bg-slate-950 p-4 overflow-x-auto">
-                    <pre className="text-sm text-slate-50 overflow-hidden">
+                  <div className="rounded-lg bg-slate-950 p-3 sm:p-4 overflow-x-auto">
+                    <pre className="text-xs sm:text-sm text-slate-50 overflow-x-auto leading-tight sm:leading-normal">
                       <code>{`// Install the 11holidays package from NPM
 // npm i 11holidays
 
@@ -291,7 +291,7 @@ console.log(holidays);`}</code>
             <ApiExamples countryCode={country.code} year={year} />
           </div>
 
-          <div className="lg:col-span-3">
+          <div className="hidden lg:block lg:col-span-3">
             <Card className="sticky top-20 border-dashed">
               <CardContent>
                 <div className="flex flex-col items-center justify-center text-center">

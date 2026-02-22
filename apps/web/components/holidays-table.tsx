@@ -92,10 +92,6 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
       holidays: filteredHolidays,
     };
     downloadJSON(data, `holidays-${country.code}-${year}.json`);
-    // toast({
-    //   title: "Downloaded",
-    //   description: "Holidays data downloaded as JSON",
-    // })
   };
 
   const handleDownloadCSV = () => {
@@ -121,11 +117,6 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-
-    // toast({
-    //   title: "Downloaded",
-    //   description: "Holidays data downloaded as CSV",
-    // })
   };
 
   const handleCopyJSON = async () => {
@@ -137,10 +128,6 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
     };
     await copyToClipboard(JSON.stringify(data, null, 2));
     setCopied(true);
-    // toast({
-    //   title: "Copied",
-    //   description: "JSON data copied to clipboard",
-    // })
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -219,26 +206,36 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
           </div>
         </div>
 
-        <div className="rounded-md border">
-          <Table>
+        <div className="overflow-x-auto scroll-smooth">
+          <Table className="min-w-max">
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Day</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead className="whitespace-nowrap text-xs sm:text-sm min-w-[90px]">
+                  Date
+                </TableHead>
+                <TableHead className="whitespace-nowrap text-xs sm:text-sm min-w-[70px]">
+                  Day
+                </TableHead>
+                <TableHead className="text-xs sm:text-sm min-w-[150px]">Name</TableHead>
+                <TableHead className="whitespace-nowrap text-xs sm:text-sm min-w-[100px]">
+                  Type
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredHolidays.length > 0 ? (
                 filteredHolidays.map((holiday, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium whitespace-nowrap text-xs sm:text-sm py-2 sm:py-3 min-w-[90px]">
                       {formatDate(holiday.date)}
                     </TableCell>
-                    <TableCell>{getDayOfWeek(holiday.date)}</TableCell>
-                    <TableCell>{holiday.name}</TableCell>
-                    <TableCell>
+                    <TableCell className="whitespace-nowrap text-xs sm:text-sm py-2 sm:py-3 min-w-[70px]">
+                      {getDayOfWeek(holiday.date)}
+                    </TableCell>
+                    <TableCell className="text-xs sm:text-sm py-2 sm:py-3 min-w-[150px]">
+                      {holiday.name}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-xs sm:text-sm py-2 sm:py-3 min-w-[100px]">
                       <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                         {holiday.type}
                       </span>
@@ -247,7 +244,7 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
+                  <TableCell colSpan={4} className="text-center py-8">
                     No holidays found
                   </TableCell>
                 </TableRow>

@@ -92,8 +92,8 @@ export function HolidayPageContent({
 
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-9 space-y-8">
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="space-y-2">
+            <div className="flex flex-wrap gap-6">
+              <div className="w-full sm:flex-1 min-w-[180px] space-y-2">
                 <label
                   htmlFor="country"
                   className="text-sm font-medium text-muted-foreground"
@@ -123,20 +123,20 @@ export function HolidayPageContent({
                 </Select>
               </div>
 
-              <div className="space-y-2">
+              <div className="w-full sm:flex-1 min-w-[140px] space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">
                   Year
                 </label>
                 <YearSelector currentYear={year} onChange={handleYearChange} />
               </div>
 
-              <div className="space-y-2 justify-end md:flex md:items-end">
-                <div className="inline-flex rounded-md shadow-sm">
+              <div className="w-full sm:w-auto sm:flex sm:items-end">
+                <div className="flex w-full sm:w-auto rounded-md shadow-sm">
                   <Button
                     variant="outline"
                     size="sm"
                     asChild
-                    className="rounded-r-none border-r-0"
+                    className="flex-1 sm:flex-none rounded-r-none border-r-0"
                   >
                     <Link
                       href={`/holidays/${country.code.toLowerCase()}/${year}`}
@@ -150,7 +150,7 @@ export function HolidayPageContent({
                     variant="outline"
                     size="sm"
                     asChild
-                    className="rounded-l-none"
+                    className="flex-1 sm:flex-none rounded-l-none"
                   >
                     <Link
                       href={`/calendars/${country.slug}`}
@@ -270,7 +270,7 @@ export function HolidayPageContent({
                     :
                   </p>
                   <div className="rounded-lg bg-slate-950 p-4 overflow-x-auto">
-                    <pre className="text-sm text-slate-50">
+                    <pre className="text-sm text-slate-50 overflow-hidden">
                       <code>{`// Install the 11holidays package from NPM
 // npm i 11holidays
 

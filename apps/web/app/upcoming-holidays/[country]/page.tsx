@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function HolidayPage({ params }: PageProps) {
+export default async function UpcomingHolidayPage({ params }: PageProps) {
   const { country: countryParam } = await params;
 
   const country = getCountryBySlug(countryParam);

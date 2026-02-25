@@ -108,55 +108,106 @@ function expandToLongWeekend(
 }
 
 /**
+ * Build a concise tip when multiple occasions are merged.
+ */
+function buildMergedTip(
+    occasions: string[],
+    leavesNeeded: number,
+    startDate: string,
+    endDate: string,
+    days: number
+): string {
+    if (leavesNeeded === 0) return "";
+    const leaveWord = leavesNeeded === 1 ? "1 leave" : `${leavesNeeded} leaves`;
+    const combinedName = occasions.join(", ");
+    return `Take ${leaveWord} around ${combinedName} to enjoy a ${days}-day break (${format(parseISO(startDate), "d MMM")} – ${format(parseISO(endDate), "d MMM")}).`;
+}
+
+interface MergeEntry extends LongWeekend {
+    occasions: string[];
+}
+
+/**
  * Merge overlapping / adjacent long weekends so we don't show duplicates.
  */
-function mergeOverlapping(weekends: LongWeekend[]): LongWeekend[] {
-    if (weekends.length === 0) return [];
+function mergeOverlapping(
+    weekends: LongWeekend[]
+): LongWeekend[] {
+    if (!weekends.length) return [];
 
-    const sorted = [...weekends].sort(
+    // Sort by start date
+    const sorted: LongWeekend[] = [...weekends].sort(
         (a, b) =>
             parseISO(a.startDate).getTime() -
             parseISO(b.startDate).getTime()
     );
 
-    const merged: LongWeekend[] = [];
+    // Seed merged array
+    const merged: MergeEntry[] = [
+        {
+            ...sorted[0]!,
+            occasions: [sorted[0]!.occasion],
+        },
+    ];
 
-    for (const curr of sorted) {
-        if (merged.length === 0) {
-            merged.push({ ...curr });
-            continue;
-        }
-
-        const prev = merged[merged.length - 1]!; // safe because length checked
+    for (let i = 1; i < sorted.length; i++) {
+        const prev: MergeEntry = merged[merged.length - 1]!;
+        const curr: LongWeekend = sorted[i]!;
 
         const prevEnd = parseISO(prev.endDate);
         const currStart = parseISO(curr.startDate);
 
-        // If overlapping or adjacent (within 1 day)
+        // Overlapping OR adjacent (within 1 day)
         if (currStart.getTime() <= addDays(prevEnd, 1).getTime()) {
             const currEnd = parseISO(curr.endDate);
             const newEnd = currEnd > prevEnd ? currEnd : prevEnd;
             const newStart = parseISO(prev.startDate);
 
+            // Update end date
             prev.endDate = format(newEnd, "yyyy-MM-dd");
+
+            // Recalculate total days
             prev.days =
                 Math.round(
                     (newEnd.getTime() - newStart.getTime()) /
                     (1000 * 60 * 60 * 24)
                 ) + 1;
 
-            prev.occasion = `${prev.occasion} + ${curr.occasion}`;
+            // Merge occasions
+            prev.occasions.push(curr.occasion);
+            prev.occasion = prev.occasions.join(" + ");
+
+            // Keep max leaves needed
             prev.leavesNeeded = Math.max(
                 prev.leavesNeeded,
                 curr.leavesNeeded
             );
-            prev.tip = [prev.tip, curr.tip].filter(Boolean).join(" ");
         } else {
-            merged.push({ ...curr });
+            merged.push({
+                ...curr,
+                occasions: [curr.occasion],
+            });
         }
     }
 
-    return merged;
+    // Build final result without `occasions`
+    return merged.map(({ occasions, ...rest }) => {
+        const tip =
+            occasions.length > 1 || rest.leavesNeeded > 0
+                ? buildMergedTip(
+                    occasions,
+                    rest.leavesNeeded,
+                    rest.startDate,
+                    rest.endDate,
+                    rest.days
+                )
+                : "";
+
+        return {
+            ...rest,
+            tip,
+        };
+    });
 }
 
 export function generateLongWeekends(holidays: Holiday[]): LongWeekend[] {

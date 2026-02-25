@@ -10,16 +10,9 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { generateLongWeekends } from '@/lib/long-weekends';
 import { CountryFlag } from '@/components/country-flag';
+import { LongWeekendsTable } from '@/components/long-weekends-table';
 
 interface PageProps {
   params: Promise<{
@@ -154,61 +147,7 @@ export default async function LongWeekendsPage({ params }: PageProps) {
                 </p>
               </div>
 
-              <div className="rounded-md border">
-                {/* Desktop table */}
-                <div className="hidden sm:block rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Month</TableHead>
-                        <TableHead>Dates</TableHead>
-                        <TableHead>Days</TableHead>
-                        <TableHead>Occasion</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {longWeekends.map((lw) => (
-                        <TableRow key={lw.id}>
-                          <TableCell className="font-medium">
-                            {lw.month}
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {format(parseISO(lw.startDate), 'd MMM (EEE)')} –{' '}
-                            {format(parseISO(lw.endDate), 'd MMM (EEE)')}
-                          </TableCell>
-                          <TableCell>{lw.days}</TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {lw.occasion}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-
-                {/* Mobile cards */}
-                <div className="sm:hidden space-y-3">
-                  {longWeekends.map((lw) => (
-                    <Card key={lw.id}>
-                      <CardContent className="p-4 space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{lw.occasion}</span>
-                          <Badge variant="secondary" className="text-xs">
-                            {lw.days} days
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {format(parseISO(lw.startDate), 'd MMM (EEE)')} –{' '}
-                          {format(parseISO(lw.endDate), 'd MMM (EEE)')}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {lw.month}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+              <LongWeekendsTable longWeekends={longWeekends} />
 
               <Button variant="outline" asChild className="flex-1">
                 <Link href={`/holidays/${country.code.toLowerCase()}/${year}`}>

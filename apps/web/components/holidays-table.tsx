@@ -1,14 +1,6 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
-import {
-  Holiday,
-  formatDate,
-  getDayOfWeek,
-  downloadJSON,
-  copyToClipboard,
-} from '@/lib/holidays-api';
-import { Country } from '@/lib/countries-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -33,12 +25,23 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Search, Download, Copy, Check, Calendar } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  copyToClipboard,
+  downloadJSON,
+  formatDate,
+  getDayOfWeek,
+  Holiday,
+} from '@/lib/holidays-api';
+import { Country } from '@/lib/countries-data';
 
 interface HolidaysTableProps {
   holidays: Holiday[];
   country: Country;
   year: number;
+  filter: boolean;
 }
 
 const months = [
@@ -56,11 +59,17 @@ const months = [
   'December',
 ];
 
-export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
+export function HolidaysTable({
+  holidays,
+  country,
+  year,
+  filter,
+}: HolidaysTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [monthFilter, setMonthFilter] = useState<string>('all');
   const [copied, setCopied] = useState(false);
+  const isMobile = useIsMobile();
 
   const monthCounts = holidays.reduce(
     (acc, holiday) => {
@@ -92,10 +101,6 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
       holidays: filteredHolidays,
     };
     downloadJSON(data, `holidays-${country.code}-${year}.json`);
-    // toast({
-    //   title: "Downloaded",
-    //   description: "Holidays data downloaded as JSON",
-    // })
   };
 
   const handleDownloadCSV = () => {
@@ -121,11 +126,6 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-
-    // toast({
-    //   title: "Downloaded",
-    //   description: "Holidays data downloaded as CSV",
-    // })
   };
 
   const handleCopyJSON = async () => {
@@ -137,45 +137,61 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
     };
     await copyToClipboard(JSON.stringify(data, null, 2));
     setCopied(true);
-    // toast({
-    //   title: "Copied",
-    //   description: "JSON data copied to clipboard",
-    // })
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex gap-4 items-center justify-between">
           <div>
-            <CardTitle>Holidays List</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">
+              {country.name} - {year} Holidays
+            </CardTitle>
             <CardDescription>
               {filteredHolidays.length} of {holidays.length} holidays
             </CardDescription>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={handleCopyJSON}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyJSON}
+              className="hidden sm:inline-flex items-center whitespace-nowrap shrink-0"
+            >
               {copied ? (
-                <Check className="mr-2 h-4 w-4" />
+                <Check className="mr-1.5 h-3.5 w-3.5 shrink-0" />
               ) : (
-                <Copy className="mr-2 h-4 w-4" />
+                <Copy className="mr-1.5 h-3.5 w-3.5 shrink-0" />
               )}
-              Copy JSON
+              <span>Copy</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDownloadJSON}>
-              <Download className="mr-2 h-4 w-4" />
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadJSON}
+              className="hidden sm:inline-flex items-center whitespace-nowrap shrink-0"
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5 shrink-0" />
               JSON
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDownloadCSV}>
-              <Download className="mr-2 h-4 w-4" />
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadCSV}
+              className="inline-flex items-center whitespace-nowrap shrink-0"
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5 shrink-0" />
               CSV
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-4">
+        {/* Filters */}
+        <div className="space-y-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -187,74 +203,110 @@ export function HolidaysTable({ holidays, country, year }: HolidaysTableProps) {
             />
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row">
-            <Select value={monthFilter} onValueChange={setMonthFilter}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <Calendar className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Filter by month" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Months</SelectItem>
-                {months.map((month, index) => (
-                  <SelectItem key={index} value={index.toString()}>
-                    {month} ({monthCounts[index] || 0})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {filter === true && (
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Select value={monthFilter} onValueChange={setMonthFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Filter by month" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Months</SelectItem>
+                  {months.map((month, index) => (
+                    <SelectItem key={index} value={index.toString()}>
+                      {month} ({monthCounts[index] || 0})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {uniqueTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Filter by type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  {uniqueTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Day</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredHolidays.length > 0 ? (
-                filteredHolidays.map((holiday, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">
-                      {formatDate(holiday.date)}
-                    </TableCell>
-                    <TableCell>{getDayOfWeek(holiday.date)}</TableCell>
-                    <TableCell>{holiday.name}</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                        {holiday.type}
-                      </span>
+        {/* Mobile: Card layout */}
+        {isMobile ? (
+          <div className="space-y-3">
+            {filteredHolidays.length > 0 ? (
+              filteredHolidays.map((holiday, index) => (
+                <div
+                  key={index}
+                  className="rounded-lg border bg-card p-3 space-y-1.5"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-medium text-sm leading-snug">
+                      {holiday.name}
+                    </p>
+                    <Badge variant="secondary" className="shrink-0 text-xs">
+                      {holiday.type}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    <span>{formatDate(holiday.date)}</span>
+                    <span>·</span>
+                    <span>{getDayOfWeek(holiday.date)}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center py-8 text-muted-foreground text-sm">
+                No holidays found
+              </p>
+            )}
+          </div>
+        ) : (
+          /* Desktop: Table layout */
+          <div className="overflow-x-auto rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Day</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredHolidays.length > 0 ? (
+                  filteredHolidays.map((holiday, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium whitespace-nowrap">
+                        {formatDate(holiday.date)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {getDayOfWeek(holiday.date)}
+                      </TableCell>
+                      <TableCell>{holiday.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{holiday.type}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8">
+                      No holidays found
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    No holidays found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

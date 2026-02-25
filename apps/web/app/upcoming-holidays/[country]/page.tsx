@@ -3,7 +3,13 @@ import { fetchHolidays } from '@/lib/holidays-api';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { HolidaysTable } from '@/components/holidays-table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   addMonths,
   endOfDay,
@@ -37,7 +43,7 @@ export async function generateMetadata({ params }: PageProps) {
       title: 'Country Not Found',
     };
   }
- 
+
   const year = new Date().getFullYear();
   return {
     title: `Upcoming Holidays in ${country.name} - 11holidays`,
@@ -45,7 +51,7 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function HolidayPage({ params }: PageProps) {
+export default async function UpcomingHolidayPage({ params }: PageProps) {
   const { country: countryParam } = await params;
 
   const country = getCountryBySlug(countryParam);
@@ -105,14 +111,14 @@ export default async function HolidayPage({ params }: PageProps) {
                 <CardTitle className="flex items-center gap-2 text-lg">
                   Today&apos;s Holiday in {country.name}
                 </CardTitle>
+                <CardDescription>
+                  {format(new Date(), 'EEEE, MMMM d, yyyy')}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {todayHolidays.length === 0 ? (
                   <div className="flex items-center gap-3 text-muted-foreground">
-                    <p>
-                      No holiday in {country.name} today -{' '}
-                      {format(new Date(), 'EEEE, MMMM d, yyyy')}
-                    </p>
+                    <p>No holiday in {country.name} today</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -123,9 +129,6 @@ export default async function HolidayPage({ params }: PageProps) {
                       >
                         <div>
                           <p className="font-semibold text-lg">{h.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {h.description}
-                          </p>
                         </div>
                         <Badge
                           variant={
@@ -148,6 +151,7 @@ export default async function HolidayPage({ params }: PageProps) {
               holidays={upcomingHolidays}
               country={country}
               year={year}
+              filter={false}
             />
             <Button variant="outline" asChild className="flex-1">
               <Link href={`/holidays/${country.code.toLowerCase()}/${year}`}>

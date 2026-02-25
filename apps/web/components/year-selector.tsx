@@ -19,7 +19,7 @@ export function YearSelector({ currentYear, onChange }: YearSelectorProps) {
 
   return (
     <Select value={currentYear.toString()} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full sm:flex-1">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

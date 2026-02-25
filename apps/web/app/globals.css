@@ -114,11 +114,17 @@
 }
 
 @layer base {
+  html {
+    width: 100%;
+    overflow-x: hidden;
+  }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    width: 100%;
+    overflow-x: hidden;
   }
   button:not(:disabled),
   [role='button']:not(:disabled) {

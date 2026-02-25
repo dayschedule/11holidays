@@ -60,7 +60,6 @@ export async function fetchHolidays(
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat('en-US', {
-    weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric',

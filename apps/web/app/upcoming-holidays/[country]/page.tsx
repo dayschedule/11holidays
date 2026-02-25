@@ -95,7 +95,7 @@ export default async function UpcomingHolidayPage({ params }: PageProps) {
                 <div className="flex items-center gap-4">
                   <CountryFlag
                     countryCode={country.code}
-                    className="w-16 h-12 rounded"
+                    className="w-12 h-8 sm:w-16 sm:h-12 rounded"
                   />
                   <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
                     Upcoming Holidays in {country.name}

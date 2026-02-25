@@ -4,9 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Country } from '@/lib/countries-data';
 import { CountryFlag } from '@/components/country-flag';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Calendar, Sunset, Clock, CalendarDays } from 'lucide-react';
 
 interface CountryListProps {
   countries: Country[];
@@ -14,17 +13,13 @@ interface CountryListProps {
   type: 'holidays' | 'calendars';
 }
 
-export function CountryList({
-  countries,
-  currentYear,
-  type,
-}: CountryListProps) {
+export function CountryList({ countries, currentYear }: CountryListProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredCountries = countries.filter(
     (country) =>
       country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      country.code.toLowerCase().includes(searchQuery.toLowerCase())
+      country.code.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -44,13 +39,13 @@ export function CountryList({
         {filteredCountries.map((country) => (
           <div
             key={country.code}
-            className="flex flex-col gap-4 rounded-lg border p-4 hover:bg-accent transition"
+            className="flex flex-col gap-3 rounded-lg border p-4 hover:bg-accent/50 transition"
           >
             {/* Country info */}
             <div className="flex items-center">
               <CountryFlag
                 countryCode={country.code}
-                className="w-12 h-8 mr-4 rounded"
+                className="w-12 h-8 mr-3 rounded"
               />
               <div className="flex flex-col">
                 <span className="font-semibold text-base">{country.name}</span>
@@ -60,19 +55,38 @@ export function CountryList({
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" asChild className="flex-1">
-                <Link href={`/calendars/${country.slug}`}>View Calendar</Link>
-              </Button>
+            {/* Primary links */}
+            <Link
+              href={`/calendars/${country.slug}`}
+              className="flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium hover:bg-accent transition-colors"
+            >
+              <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              Calendar
+            </Link>
 
-              <Button variant="outline" size="sm" asChild className="flex-1">
-                <Link
-                  href={`/holidays/${country.code.toLowerCase()}/${currentYear}`}
-                >
-                  View List
-                </Link>
-              </Button>
-            </div>
+            <Link
+              href={`/upcoming-holidays/${country.slug}`}
+              className="flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium hover:bg-accent transition-colors"
+            >
+              <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              Upcoming
+            </Link>
+
+            <Link
+              href={`/long-weekends/${country.slug}`}
+              className="flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium hover:bg-accent transition-colors col-span-2"
+            >
+              <Sunset className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              Long Weekends
+            </Link>
+
+            <Link
+              href={`/holidays/${country.code.toLowerCase()}/${currentYear}`}
+              className="flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium hover:bg-accent transition-colors w-full"
+            >
+              <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              All holidays {currentYear}
+            </Link>
           </div>
         ))}
       </div>

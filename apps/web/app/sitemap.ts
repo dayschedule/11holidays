@@ -17,6 +17,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.8,
     },
+    {
+      url: `https://11holidays.com/long-weekends/${x.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
   ]) satisfies MetadataRoute.Sitemap;
 
   const calendarEntries = COUNTRIES_WITH_SLUG.map((x) => ({

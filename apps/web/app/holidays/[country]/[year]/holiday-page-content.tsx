@@ -167,6 +167,7 @@ export function HolidayPageContent({
               holidays={holidaysData.holidays}
               country={country}
               year={year}
+              filter={true}
             />
 
             <div className="flex items-start gap-3 rounded-lg border border-muted bg-muted/30 p-4 text-sm">

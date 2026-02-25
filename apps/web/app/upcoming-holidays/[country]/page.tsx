@@ -151,6 +151,7 @@ export default async function UpcomingHolidayPage({ params }: PageProps) {
               holidays={upcomingHolidays}
               country={country}
               year={year}
+              filter={false}
             />
             <Button variant="outline" asChild className="flex-1">
               <Link href={`/holidays/${country.code.toLowerCase()}/${year}`}>

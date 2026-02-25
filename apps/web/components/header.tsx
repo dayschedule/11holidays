@@ -13,7 +13,7 @@ export function Header() {
             <span className="hidden sm:inline font-bold text-sm sm:text-base md:text-lg lg:text-xl">
               11holidays.com
             </span>
-            <span className="sm:hidden font-bold text-sm">11h</span>
+            <span className="sm:hidden font-bold text-sm">11holidays.com</span>
           </Link>
           <nav className="hidden lg:flex gap-4 lg:gap-6">
             <Link

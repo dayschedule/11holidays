@@ -17,18 +17,10 @@
       "id": "cdcbd6e8e3be4a6f9f2f6e610ab43ab2"
     }
   ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-
-  // "ai": {
-  //   "binding": "AI"
-  // },
-  // "observability": {
-  //   "enabled": true,
-  //   "head_sampling_rate": 1
-  // }
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "remote": true
+    }
+  ]
 }

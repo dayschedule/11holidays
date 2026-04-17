@@ -1,10 +1,17 @@
 import { Context, MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { Bindings } from "../types/binding";
 import { getUserByApiKey } from "../services/auth.service";
+import { AuthUser } from "../schema/authSchema";
+
+type AuthContext = {
+    Bindings: CloudflareBindings;
+    Variables: {
+        user: AuthUser;
+    };
+};
 
 export const jwtAuth = (): MiddlewareHandler => {
-    return async (ctx: Context<{ Bindings: Bindings }>, next) => {
+    return async (ctx: Context<AuthContext>, next) => {
         const authHeader = ctx.req.header("Authorization");
         if (!authHeader) {
             throw new HTTPException(401, { message: "Missing Authorization header" });
@@ -16,13 +23,16 @@ export const jwtAuth = (): MiddlewareHandler => {
         }
 
         const authUser = await getUserByApiKey(ctx.env, apiKey);
+        if (!authUser) {
+            throw new HTTPException(401, { message: "Invalid API Key" });
+        }
 
         // ONLY admin can add, update, delete holidays
         if (ctx.req.method !== 'GET' && authUser.role !== 'admin') {
             throw new HTTPException(403, { message: 'Permission denied' })
         }
 
-        ctx.req["user"] = authUser;
+        ctx.set("user", authUser);
 
         await next();
     };

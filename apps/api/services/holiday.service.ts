@@ -1,11 +1,10 @@
-import { Bindings } from '../types/binding';
 import { Holiday } from '../schema/holidaySchema';
 import { Occasion } from '../schema/occasoinSchema';
 import { escapeSQL, slugify } from '../helper/utility';
 import { addYears, format, startOfYear } from 'date-fns';
 
 export const getHolidaysByCountry = async (
-  env: Bindings,
+  env: CloudflareBindings,
   country: string,
   year: number
 ): Promise<Array<Holiday>> => {
@@ -30,9 +29,9 @@ export const getHolidaysByCountry = async (
 };
 
 export const getHolidayById = async (
-  env: Bindings,
+  env: CloudflareBindings,
   holidayId: number
-): Promise<Holiday> => {
+): Promise<Holiday | null> => {
   const sqlQuery = env.DB.prepare(
     `
         SELECT * 
@@ -44,7 +43,7 @@ export const getHolidayById = async (
 };
 
 export const createHoliday = async (
-  env: Bindings,
+  env: CloudflareBindings,
   data: Holiday
 ): Promise<number> => {
   const { meta } = await env.DB.prepare(
@@ -55,11 +54,11 @@ export const createHoliday = async (
     .bind(data.date, data.occasion_id, data.type, data.country)
     .run();
 
-  return meta.lastInsertRowid;
+  return meta.lastInsertRowid as number;
 };
 
 export const updateHoliday = async (
-  env: Bindings,
+  env: CloudflareBindings,
   holidayId: number,
   data: Holiday
 ): Promise<boolean> => {
@@ -76,7 +75,7 @@ export const updateHoliday = async (
 };
 
 export const deleteHoliday = async (
-  env: Bindings,
+  env: CloudflareBindings,
   holidayId: number
 ): Promise<boolean> => {
   const { success } = await env.DB.prepare(
@@ -91,7 +90,7 @@ export const deleteHoliday = async (
 };
 
 export const importHolidays = async (
-  env: Bindings,
+  env: CloudflareBindings,
   holidays: Array<Holiday>
 ) => {
   if (!holidays.length) return;
@@ -112,7 +111,7 @@ export const importHolidays = async (
   await bulkInsertHolidays(env, holidays);
 };
 
-const bulkInsertHolidays = async (env: Bindings, holidays: Array<Holiday>) => {
+const bulkInsertHolidays = async (env: CloudflareBindings, holidays: Array<Holiday>) => {
   const multiQuery = `
       WITH TempHolidays(date, occasion_id, type, country) AS (
           VALUES ${holidays
@@ -136,7 +135,7 @@ const bulkInsertHolidays = async (env: Bindings, holidays: Array<Holiday>) => {
 };
 
 const bulkInsertOccassions = async (
-  env: Bindings,
+  env: CloudflareBindings,
   holidays: Array<Holiday>
 ) => {
   const multiQuery = `

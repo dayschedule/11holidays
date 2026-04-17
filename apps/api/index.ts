@@ -1,5 +1,4 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { Bindings } from './types/binding';
 import { countries } from './controllers/countries.controller';
 import { holidays } from './controllers/holidays.controller';
 import { occasions } from './controllers/occasions.controller';
@@ -8,7 +7,7 @@ import { cors } from 'hono/cors';
 import { jwtAuth } from './middleware/auth';
 import { HTTPException } from 'hono/http-exception';
 
-const app = new OpenAPIHono<{ Bindings: Bindings }>().basePath('/v1');
+const app = new OpenAPIHono<{ Bindings: CloudflareBindings }>().basePath('/v1');
 
 app.onError(async (err, ctx) => {
     if (err instanceof HTTPException) {

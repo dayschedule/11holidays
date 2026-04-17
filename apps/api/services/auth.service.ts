@@ -1,10 +1,8 @@
 import { nanoid } from "nanoid";
-import { Bindings } from "../types/binding";
-import { User } from "../schema/authSchema";
-import Stripe from "stripe";
+import { AuthUser } from "../schema/authSchema";
 
 export const signupWithEmail = async (
-    env: Bindings,
+    env: CloudflareBindings,
     email: string,
 ) => {
 
@@ -19,7 +17,7 @@ export const signupWithEmail = async (
 }
 
 export const activateUserAfterOtp = async (
-    env: Bindings,
+    env: CloudflareBindings,
     email: string
 ) => {
     const sqlQuery = env.DB.prepare(
@@ -35,7 +33,7 @@ export const activateUserAfterOtp = async (
 };
 
 export const generateApiKey = async (
-    env: Bindings,
+    env: CloudflareBindings,
     email: string,
 ) => {
     const apiKey = `11h_${nanoid(32)}`;
@@ -51,7 +49,7 @@ export const generateApiKey = async (
     return meta.changes ? apiKey : null;
 };
 
-export const getUserByEmail = async (env: Bindings, email: string) => {
+export const getUserByEmail = async (env: CloudflareBindings, email: string) => {
     const sqlQuery = env.DB.prepare(
         `
       SELECT *
@@ -60,10 +58,10 @@ export const getUserByEmail = async (env: Bindings, email: string) => {
     `
     ).bind(email.toLowerCase());
 
-    return await sqlQuery.first<User>();
+    return await sqlQuery.first<AuthUser>();
 }
 
-export const getUserByApiKey = async (env: Bindings, apiKey: string) => {
+export const getUserByApiKey = async (env: CloudflareBindings, apiKey: string) => {
     const sqlQuery = env.DB.prepare(
         `
       SELECT *
@@ -72,5 +70,5 @@ export const getUserByApiKey = async (env: Bindings, apiKey: string) => {
     `
     ).bind(apiKey);
 
-    return await sqlQuery.first<User>();
+    return await sqlQuery.first<AuthUser>();
 }

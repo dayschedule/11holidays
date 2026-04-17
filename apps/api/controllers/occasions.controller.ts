@@ -6,10 +6,9 @@ import {
   updateOccasion,
   deleteOccasion,
 } from '../services/occasion.service';
-import { Bindings } from '../types/binding';
 import { HTTPException } from 'hono/http-exception';
 
-const occasions = new Hono<{ Bindings: Bindings }>();
+const occasions = new Hono<{ Bindings: CloudflareBindings }>();
 
 occasions.get('/', async (c) => {
   const { offset = 0, limit = 1000 } = c.req.query();
@@ -55,9 +54,7 @@ occasions.delete('/:id', async (c) => {
       message: `No occasion found`,
     });
   }
-
   return c.json({ message: 'Occasion deleted successfully' }, 200);
-
 });
 
 export { occasions };

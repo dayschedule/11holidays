@@ -1,7 +1,6 @@
 import { Country } from '../schema/countrySchema';
-import { Bindings } from '../types/binding';
 
-export const getCountries = async (env: Bindings): Promise<Array<Country>> => {
+export const getCountries = async (env: CloudflareBindings): Promise<Array<Country>> => {
   const sqlQuery = env.DB.prepare(
     `
       SELECT * 
@@ -12,9 +11,9 @@ export const getCountries = async (env: Bindings): Promise<Array<Country>> => {
 };
 
 export const getCountryById = async (
-  env: Bindings,
+  env: CloudflareBindings,
   country: string
-): Promise<Country> => {
+): Promise<Country | null> => {
   const sqlQuery = env.DB.prepare(
     `
       SELECT * 

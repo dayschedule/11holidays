@@ -75,5 +75,5 @@ console.log(countries);
 
 ## Support
 
-- If you have any question related to API key, access etc. [contact support](https://11holidays.com/contact).
+- If you have any question related to API key, access etc. [contact support](https://dayschedule.com/contact).
 - Open an issue on Github for question related to SDK

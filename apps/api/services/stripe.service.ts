@@ -1,7 +1,6 @@
 import Stripe from "stripe";
-import { Bindings } from "../types/binding";
 
-const stripeClient = (env: Bindings) => {
+const stripeClient = (env: CloudflareBindings) => {
     return new Stripe(env.STRIPE_SECRET_KEY);
 };
 
@@ -11,7 +10,7 @@ const PRICE_MAP: Record<'Pro' | 'Lifetime', string> = {
 };
 
 export const createStripeSession = async (
-    env: Bindings,
+    env: CloudflareBindings,
     email: string,
     plan: 'Pro' | 'Lifetime'
 ) => {

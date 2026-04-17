@@ -1,14 +1,12 @@
 import { formatZodError } from '../helper/utility';
 import { HTTPException } from 'hono/http-exception';
-import { Bindings } from '../types/binding';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 import { activateUserAfterOtp, generateApiKey, getUserByEmail, signupWithEmail } from '../services/auth.service';
-import { sendMandrillEmail } from '../services/emailer.service';
 import { z } from '@hono/zod-openapi';
 import { createStripeSession } from '../services/stripe.service';
 
-const auth = new Hono<{ Bindings: Bindings }>();
+const auth = new Hono<{ Bindings: CloudflareBindings }>();
 
 auth.post('/',
     validator("json", (value, ctx) => {
@@ -34,10 +32,11 @@ auth.post('/',
             expirationTtl: 60 * 10,
         });
 
-        // 4. Send email
-        await sendMandrillEmail(ctx.env, {
+        //4. Send email
+        await ctx.env.EMAIL.send({
+            from: "11holidays <support@11holidays.com>",
             to: user.email,
-            subject: "Your 11holidays API verification code",
+            subject: `Your 11holidays API verification code`,
             html: `
       <h2>Verify your email</h2>
       <p>Your verification code is:</p>

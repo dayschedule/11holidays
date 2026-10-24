@@ -39,6 +39,7 @@ export const Route = createFileRoute('/sitemap.xml')({
           '/contact',
           '/terms',
           '/api-key',
+          '/docs/api',
           ...countryPaths,
           ...occasions.map((x) => `/holidays/${x.url}`),
         ]);

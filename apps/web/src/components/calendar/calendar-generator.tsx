@@ -32,6 +32,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CountrySelect } from '@/components/country-select';
 import { EmbedCode, type EmbedView } from '@/components/embed-code';
 import { HolidayTypeBadge } from '@/components/holiday-type-badge';
+import { useToday } from '@/hooks/use-today';
 import { calendarThemes, generateYearCalendar, getMonthName, type CalendarTheme } from '@/lib/calendar-utils';
 import type { Country } from '@/lib/countries-data';
 import {
@@ -75,7 +76,8 @@ export function CalendarGenerator({ country, year, holidays, search }: CalendarG
   const [newName, setNewName] = useState('');
 
   const view = search.view ?? 'year';
-  const month = search.month ?? new Date().getMonth();
+  const today = useToday();
+  const month = search.month ?? today.getMonth();
   const themeKey: CalendarTheme = search.theme ?? 'festive';
   const theme = calendarThemes[themeKey];
   const weekStart = search.week ?? 'sun';
@@ -101,7 +103,10 @@ export function CalendarGenerator({ country, year, holidays, search }: CalendarG
   const excluded = useMemo(() => getExcludedKeys(search, holidays), [search, holidays]);
   const customEntries = parseCustomEntries(search.add);
   const selected = useMemo(() => buildCalendarHolidays(holidays, search), [holidays, search]);
-  const months = useMemo(() => generateYearCalendar(year, selected, weekStart), [year, selected, weekStart]);
+  const months = useMemo(
+    () => generateYearCalendar(year, selected, weekStart, today),
+    [year, selected, weekStart, today]
+  );
 
   const uniqueHolidays = useMemo(() => {
     const seen = new Set<string>();

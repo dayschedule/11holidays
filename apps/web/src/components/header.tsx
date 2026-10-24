@@ -1,6 +1,8 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
 import {
+  BadgeDollarSign,
+  BookOpen,
   Briefcase,
   Calendar,
   CalendarDays,
@@ -41,7 +43,8 @@ type NavTo =
   | '/tools'
   | '/pricing'
   | '/my-calendars'
-  | '/api-key';
+  | '/api-key'
+  | '/docs/api';
 
 interface NavLink {
   to: NavTo;
@@ -77,9 +80,14 @@ const navGroups: NavGroup[] = [
     ],
     footer: { to: '/tools', label: 'All tools', icon: LayoutGrid },
   },
+  {
+    label: 'API',
+    items: [
+      { to: '/docs/api', label: 'API Docs', description: 'REST API reference and playground', icon: BookOpen },
+      { to: '/pricing', label: 'Pricing', description: 'Free and paid API plans', icon: BadgeDollarSign },
+    ],
+  },
 ];
-
-const navLinks: NavLink[] = [{ to: '/pricing', label: 'API Pricing' }];
 
 const navLinkClass =
   'inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground';
@@ -192,11 +200,6 @@ export function Header() {
           {navGroups.map((group) => (
             <NavDropdown key={group.label} group={group} pathname={pathname} />
           ))}
-          {navLinks.map(({ to, label }) => (
-            <Link key={to} to={to} className={navLinkClass} activeProps={{ className: 'text-foreground bg-accent' }}>
-              {label}
-            </Link>
-          ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
@@ -239,9 +242,8 @@ export function Header() {
                 {[
                   ...navGroups.map((g) => ({ label: g.label, items: groupLinks(g) })),
                   {
-                    label: 'Developers',
+                    label: 'More',
                     items: [
-                      ...navLinks,
                       { to: '/my-calendars', label: 'My calendars' },
                       { to: '/api-key', label: 'Get API Key' },
                     ] satisfies NavLink[],

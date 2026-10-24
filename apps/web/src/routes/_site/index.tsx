@@ -7,6 +7,7 @@ import { CountryFlag } from '@/components/country-flag';
 import { Countdown, FestiveParticles } from '@/components/festive';
 import { OccasionsList } from '@/components/occasions-list';
 import { Button } from '@/components/ui/button';
+import { useToday } from '@/hooks/use-today';
 import { getCountryByCode, getCountryName } from '@/lib/countries-data';
 import { currentYear, occasionParams } from '@/lib/holidays-api';
 import { FEATURED_FESTIVALS, defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
@@ -46,6 +47,7 @@ const POPULAR = ['US', 'IN', 'GB', 'CA', 'AU', 'DE', 'FR', 'AE', 'SG', 'BR'];
 
 function Home() {
   const { code, upcoming, today } = Route.useLoaderData();
+  const now = useToday();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const country = getCountryByCode(code);
@@ -162,7 +164,7 @@ function Home() {
       {today.length > 0 && (
         <section className="space-y-6">
           <SectionHeading
-            eyebrow={format(new Date(), 'EEEE, MMMM d')}
+            eyebrow={format(now, 'EEEE, MMMM d')}
             title="Celebrating today around the world"
           />
           <div className="flex flex-wrap gap-2">

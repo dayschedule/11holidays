@@ -8,6 +8,7 @@ import {
 } from '../services/holiday.service';
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
 import { formatZodError } from '../helper/utility';
+import { errorResponses } from '../helper/openapi';
 import { Holiday, holidaySchema } from '../schema/holidaySchema';
 import { HTTPException } from 'hono/http-exception';
 
@@ -29,18 +30,21 @@ holidays.openapi(
     tags: ['Holidays'],
     method: 'get',
     path: '/',
-    description: 'Get all holidays',
+    summary: 'List holidays',
+    description: 'Get all public holidays, bank holidays and observances of a country for a year',
     request: {
       query: z.object({
         country: z
           .string()
-          .length(2, { message: "Country must be a 2-character code" }),
+          .length(2, { message: "Country must be a 2-character code" })
+          .openapi({ example: 'US', description: 'Country code in ISO2 format' }),
         year: z
           .coerce
           .number()
           .int()
           .min(1000, { message: "Year must be 4 digits" })
-          .max(9999, { message: "Year must be 4 digits" }),
+          .max(9999, { message: "Year must be 4 digits" })
+          .openapi({ example: new Date().getFullYear(), description: 'Year in YYYY format' }),
       })
     },
     responses: {
@@ -50,6 +54,7 @@ holidays.openapi(
           'application/json': { schema: z.array(holidaySchema) },
         },
       },
+      ...errorResponses(400, 401),
     },
   }),
   async (ctx) => {
@@ -63,10 +68,17 @@ holidays.openapi(
   createRoute({
     tags: ['Holidays'],
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Get a holiday',
     description: 'Get holiday by id',
     request: {
-      //params: pagedSchema,
+      params: z.object({
+        id: z.coerce.number().int().positive().openapi({
+          param: { name: 'id', in: 'path' },
+          example: 1,
+          description: 'Unique holiday id',
+        }),
+      }),
     },
     responses: {
       200: {
@@ -75,6 +87,7 @@ holidays.openapi(
           'application/json': { schema: holidaySchema },
         },
       },
+      ...errorResponses(400, 401, 404),
     },
   }),
   async (ctx) => {

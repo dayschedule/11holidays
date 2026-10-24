@@ -1,14 +1,16 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router';
-import { addMonths, endOfDay, endOfMonth, format, isToday, isWithinInterval, parseISO, startOfDay } from 'date-fns';
+import { addMonths, endOfDay, endOfMonth, format, isSameDay, isWithinInterval, parseISO, startOfDay } from 'date-fns';
 import { ArrowRight, PartyPopper } from 'lucide-react';
+import { AdsBlock } from '@/components/ads-block';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { CountryFlag } from '@/components/country-flag';
+import { CountryHeading } from '@/components/country-heading';
 import { Countdown } from '@/components/festive';
 import { HolidayTypeBadge } from '@/components/holiday-type-badge';
 import { HolidaysTable } from '@/components/holidays-table';
 import { OccasionsList } from '@/components/occasions-list';
 import { PageLayout } from '@/components/page-layout';
 import { Button } from '@/components/ui/button';
+import { useToday } from '@/hooks/use-today';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { getHolidayTheme } from '@/lib/holiday-themes';
 import { holidayListSchema, seo } from '@/lib/seo';
@@ -47,13 +49,15 @@ export const Route = createFileRoute('/_site/upcoming-holidays/$country')({
 function UpcomingHolidayPage() {
   const { country, year, holidays, occasions } = Route.useLoaderData();
 
-  const todayHolidays = holidays.filter((h) => isToday(parseISO(h.date)));
-  const today = startOfDay(new Date());
+  const now = useToday();
+  const isToday = (date: string) => isSameDay(parseISO(date), now);
+  const todayHolidays = holidays.filter((h) => isToday(h.date));
+  const today = startOfDay(now);
   const threeMonthsLater = endOfDay(endOfMonth(addMonths(today, 3)));
   const upcoming = holidays.filter((h) =>
     isWithinInterval(parseISO(h.date), { start: today, end: threeMonthsLater })
   );
-  const next = upcoming.find((h) => !isToday(parseISO(h.date)));
+  const next = upcoming.find((h) => !isToday(h.date));
 
   return (
     <PageLayout country={country}>
@@ -65,18 +69,16 @@ function UpcomingHolidayPage() {
         ]}
       />
 
-      <div className="flex items-center gap-4">
-        <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md" />
-        <div>
-          <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Upcoming Holidays in {country.name}</h1>
-          <p className="text-muted-foreground">Today&apos;s holiday and what&apos;s next in {country.name}</p>
-        </div>
-      </div>
+      <CountryHeading
+        countryCode={country.code}
+        title={`Upcoming Holidays in ${country.name}`}
+        description={`Today's holiday and what's next in ${country.name}`}
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <section className="rounded-2xl border bg-card p-5 shadow-xs">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Today · {format(new Date(), 'EEEE, MMMM d, yyyy')}
+            Today · {format(now, 'EEEE, MMMM d, yyyy')}
           </p>
           {todayHolidays.length === 0 ? (
             <p className="mt-2 text-lg font-semibold">No holiday in {country.name} today</p>
@@ -105,6 +107,8 @@ function UpcomingHolidayPage() {
           </section>
         )}
       </div>
+
+      <AdsBlock />
 
       <HolidaysTable
         holidays={upcoming}

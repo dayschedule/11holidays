@@ -5,9 +5,11 @@ import { ThemeProvider, themeScript } from '@/components/theme-provider';
 import { NotFound } from '@/components/not-found';
 import { organizationSchema, seo, websiteSchema } from '@/lib/seo';
 import { currentYear } from '@/lib/holidays-api';
+import { serverNow } from '@/hooks/use-today';
 import appCss from '@/styles.css?url';
 
 export const Route = createRootRoute({
+  loader: () => ({ now: serverNow() }),
   head: () => {
     const { meta } = seo({
       title: `Holidays API & Calendar for ${currentYear} - 11holidays.com`,

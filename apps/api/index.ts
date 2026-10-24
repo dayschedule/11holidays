@@ -6,6 +6,7 @@ import { auth } from './controllers/auth.controller';
 import { cors } from 'hono/cors';
 import { jwtAuth } from './middleware/auth';
 import { HTTPException } from 'hono/http-exception';
+import { apiDescription } from './helper/openapi';
 
 const app = new OpenAPIHono<{ Bindings: CloudflareBindings }>().basePath('/v1');
 
@@ -24,7 +25,7 @@ app.use(
     "/*",
     cors({
         origin: (origin, ctx) => {
-            const allowedPaths = ["/public", "/api-specs.json"];
+            const allowedPaths = ["/public", "/openapi.json"];
             if (!origin || corsAllowed.some((d) => origin.includes(d))) {
                 return origin;
             }
@@ -40,6 +41,43 @@ app.use(
 
 // Public
 app.route(`/auth`, auth);
+
+// API specification
+app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
+    type: "http",
+    scheme: "bearer",
+    description: "API key from https://11holidays.com/api-key",
+});
+
+app.get("/openapi.json", async (ctx) => {
+    const apiSpecs = app.getOpenAPIDocument({
+        openapi: "3.0.0",
+        info: {
+            version: "1.0.0",
+            title: "11holidays API",
+            description: apiDescription,
+        },
+        security: [{ Bearer: [] }],
+        tags: [
+            {
+                name: "Holidays",
+                description: "Public holidays, bank holidays and observances by country and year",
+            },
+            {
+                name: "Countries",
+                description: "Countries with holiday data",
+            },
+        ],
+        servers: [
+            {
+                url: "https://api.11holidays.com",
+                description: "API",
+            },
+        ],
+    });
+    ctx.header("Cache-Control", "public, max-age=3600");
+    return ctx.json(apiSpecs);
+});
 
 app.use(jwtAuth());
 

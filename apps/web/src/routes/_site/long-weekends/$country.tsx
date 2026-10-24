@@ -2,13 +2,15 @@ import { Link, createFileRoute, notFound } from '@tanstack/react-router';
 import { format, isAfter, parseISO, startOfDay } from 'date-fns';
 import { ArrowRight, Palmtree } from 'lucide-react';
 import { z } from 'zod';
+import { AdsBlock } from '@/components/ads-block';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { CountryFlag } from '@/components/country-flag';
+import { CountryHeading } from '@/components/country-heading';
 import { LongWeekendsTable } from '@/components/long-weekends-table';
 import { OccasionsList } from '@/components/occasions-list';
 import { PageLayout } from '@/components/page-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useToday } from '@/hooks/use-today';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { generateLongWeekends } from '@/lib/long-weekends';
 import { SITE_URL, seo } from '@/lib/seo';
@@ -61,10 +63,11 @@ export const Route = createFileRoute('/_site/long-weekends/$country')({
 
 function LongWeekendsPage() {
   const { country, year, holidays, occasions } = Route.useLoaderData();
-  const today = startOfDay(new Date());
+  const now = useToday();
+  const today = startOfDay(now);
   const longWeekends = generateLongWeekends(holidays);
   const upcoming = longWeekends.filter((lw) => isAfter(parseISO(lw.endDate), today)).slice(0, 5);
-  const thisYear = new Date().getFullYear();
+  const thisYear = now.getFullYear();
 
   return (
     <PageLayout country={country}>
@@ -76,17 +79,13 @@ function LongWeekendsPage() {
         ]}
       />
 
-      <div className="flex items-center gap-4">
-        <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md" />
-        <div>
-          <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-            Long Weekends in {year} · {country.name}
-          </h1>
-          <p className="text-muted-foreground">Make the most of your leaves with these extended breaks</p>
-        </div>
-      </div>
+      <CountryHeading
+        countryCode={country.code}
+        title={`Long Weekends in ${year} · ${country.name}`}
+        description="Make the most of your leaves with these extended breaks"
+      />
 
-      <div className="flex gap-1 self-start rounded-full border bg-card p-1">
+      <div className="flex gap-1 self-center rounded-full sm:self-start border bg-card p-1">
         {[thisYear, thisYear + 1].map((y) => (
           <Link
             key={y}
@@ -139,6 +138,8 @@ function LongWeekendsPage() {
           ))}
         </section>
       )}
+
+      <AdsBlock />
 
       <section className="space-y-4">
         <div>

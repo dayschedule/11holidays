@@ -50,14 +50,15 @@ export function generateCalendarDays(
   year: number,
   month: number,
   holidays: CalendarHoliday[],
-  weekStart: WeekStart = 'sun'
+  weekStart: WeekStart = 'sun',
+  today: Date = new Date()
 ): CalendarDay[] {
   const byDate = new Map<string, CalendarHoliday[]>();
   for (const h of holidays) {
     byDate.set(h.date, [...(byDate.get(h.date) ?? []), h]);
   }
 
-  const todayKey = format(new Date(), 'yyyy-MM-dd');
+  const todayKey = format(today, 'yyyy-MM-dd');
   const firstDay = new Date(year, month, 1).getDay();
   const offset = weekStart === 'mon' ? (firstDay + 6) % 7 : firstDay;
   const start = new Date(year, month, 1 - offset);
@@ -81,12 +82,13 @@ export function generateCalendarDays(
 export function generateYearCalendar(
   year: number,
   holidays: CalendarHoliday[],
-  weekStart: WeekStart = 'sun'
+  weekStart: WeekStart = 'sun',
+  today: Date = new Date()
 ): CalendarMonth[] {
   return MONTHS.map((name, month) => ({
     name,
     number: month,
-    days: generateCalendarDays(year, month, holidays, weekStart),
+    days: generateCalendarDays(year, month, holidays, weekStart, today),
   }));
 }
 

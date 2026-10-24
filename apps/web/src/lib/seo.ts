@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 export const SITE_URL = 'https://11holidays.com';
 export const SITE_NAME = '11holidays';
 export const API_URL = 'https://api.11holidays.com/v1';
+export const OPENAPI_URL = `${API_URL}/openapi.json`;
 export const DEFAULT_IMAGE = `${SITE_URL}/android-chrome-512x512.png`;
 
 type JsonLd = Record<string, unknown>;

@@ -9,6 +9,7 @@ import { PageLayout } from '@/components/page-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useToday } from '@/hooks/use-today';
 import { getCountryByCode } from '@/lib/countries-data';
 import { faqSchema, seo, softwareAppSchema } from '@/lib/seo';
 import { cn } from '@/lib/utils';
@@ -18,8 +19,7 @@ import { getCountryHolidays, getVisitorCountry } from '@/server/holidays';
 const DEFAULT_LEAVES = 10;
 
 /** From October on there is little left to plan this year, so default to next year */
-function defaultYear() {
-  const today = new Date();
+function defaultYear(today = new Date()) {
   return today.getMonth() >= 9 ? today.getFullYear() + 1 : today.getFullYear();
 }
 
@@ -82,12 +82,12 @@ function LeavePlannerPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const leaves = search.leaves ?? DEFAULT_LEAVES;
-  const baseYear = defaultYear();
-  const thisYear = new Date().getFullYear();
+  const today = useToday();
+  const baseYear = defaultYear(today);
+  const thisYear = today.getFullYear();
 
   const { ctx, breaks, daysOff, used, partial } = useMemo(() => {
     const ctx = { weekend: getWeekend(country.code), holidays: publicHolidayMap(holidays) };
-    const today = new Date();
     const from = year === today.getFullYear() ? today : new Date(year, 0, 1);
     const to = new Date(year, 11, 31);
     const breaks = from <= to ? planLeaves(from, to, leaves, ctx) : [];
@@ -98,7 +98,7 @@ function LeavePlannerPage() {
       used: breaks.reduce((t, b) => t + b.leaves.length, 0),
       partial: year === today.getFullYear(),
     };
-  }, [country.code, holidays, year, leaves]);
+  }, [country.code, holidays, year, leaves, today]);
 
   const update = (patch: Partial<typeof search>) =>
     navigate({ search: { ...search, ...patch }, replace: true, resetScroll: false });

@@ -5,6 +5,7 @@ import { ArrowRight, CalendarPlus, Check, Share2, Sparkles } from 'lucide-react'
 import { toast } from 'sonner';
 import type { Occasion } from '@/lib/occassion-api';
 import type { Country } from '@/lib/countries-data';
+import { useToday } from '@/hooks/use-today';
 import { downloadBlob, type Holiday } from '@/lib/holidays-api';
 import { defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
 import { buildIcs, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ics';
@@ -38,11 +39,13 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
   const code = country.code.toLowerCase();
   const pageUrl = `${SITE_URL}/holidays/${occasion.url}`;
 
+  const now = useToday();
+  const today = format(now, 'yyyy-MM-dd');
+
   const { next, sorted } = useMemo(() => {
-    const today = format(new Date(), 'yyyy-MM-dd');
     const sorted = [...holidays].sort((a, b) => a.date.localeCompare(b.date));
     return { sorted, next: sorted.find((d) => d.date >= today) ?? sorted[sorted.length - 1] };
-  }, [holidays]);
+  }, [holidays, today]);
 
   const nextDate = next ? parseISO(next.date) : null;
   const event = next && {
@@ -109,16 +112,16 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
         )}
         <FestiveParticles theme={theme} count={22} />
 
-        <div className="relative grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+        <div className="relative grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end [&>*]:min-w-0">
           <div className="space-y-4">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest ring-1 ring-white/25 backdrop-blur">
               <CountryFlag countryCode={country.code} className="h-3 w-4 rounded-[2px]" />
               {country.name} · {theme.label}
             </span>
-            <h1 className="text-4xl font-semibold tracking-[-0.03em] leading-tight drop-shadow-sm sm:text-6xl">{occasion.name}</h1>
+            <h1 className="break-words text-4xl font-semibold tracking-[-0.03em] leading-tight drop-shadow-sm sm:text-6xl">{occasion.name}</h1>
             {nextDate && (
               <p className="text-lg opacity-90 sm:text-xl">
-                {next!.date >= format(new Date(), 'yyyy-MM-dd') ? 'Next on' : 'Last observed on'}{' '}
+                {next!.date >= today ? 'Next on' : 'Last observed on'}{' '}
                 <strong className="font-semibold">{format(nextDate, 'EEEE, d MMMM yyyy')}</strong>
               </p>
             )}
@@ -178,7 +181,9 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
       </section>
 
       <div className="grid gap-8 lg:grid-cols-12">
-        <div className="space-y-10 lg:col-span-8">
+        <div className="min-w-0 space-y-10 lg:col-span-8">
+          <AdsBlock />
+
           {/* About */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold">About {occasion.name}</h2>
@@ -253,7 +258,7 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
               <ul className="divide-y overflow-hidden rounded-2xl border bg-card shadow-xs">
                 {sorted.map((row) => {
                   const isNext = row.holiday_id === next?.holiday_id;
-                  const days = differenceInCalendarDays(parseISO(row.date), new Date());
+                  const days = differenceInCalendarDays(parseISO(row.date), now);
                   return (
                     <li
                       key={row.holiday_id}
@@ -327,7 +332,7 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
           </section>
         </div>
 
-        <aside className="lg:col-span-4">
+        <aside className="min-w-0 lg:col-span-4">
           <div className="space-y-6 lg:sticky lg:top-24">
             <InternalLinksAd country={country} />
           </div>

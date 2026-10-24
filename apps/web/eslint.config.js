@@ -1,4 +1,11 @@
-import { nextJsConfig } from "@repo/eslint-config/next-js";
+import { config } from '@repo/eslint-config/react-internal';
 
 /** @type {import("eslint").Linter.Config[]} */
-export default nextJsConfig;
+export default [
+  { ignores: ['dist/**', '.wrangler/**', 'src/routeTree.gen.ts', 'cloudflare-env.d.ts'] },
+  ...config,
+  {
+    // TypeScript already validates props
+    rules: { 'react/prop-types': 'off' },
+  },
+];

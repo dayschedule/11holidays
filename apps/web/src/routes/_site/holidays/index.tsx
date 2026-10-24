@@ -4,7 +4,7 @@ import { OccasionsList } from '@/components/occasions-list';
 import { PageLayout } from '@/components/page-layout';
 import { Button } from '@/components/ui/button';
 import { currentYear } from '@/lib/holidays-api';
-import { seo } from '@/lib/seo';
+import { SITE_URL, seo, webPageSchema } from '@/lib/seo';
 import { getOccasions } from '@/server/holidays';
 
 const LIMIT = 20;
@@ -21,6 +21,18 @@ export const Route = createFileRoute('/_site/holidays/')({
       title: `Holidays & Festivals ${currentYear} - 11holidays.com`,
       description: 'Browse public and religious holidays around the world. Pick a country or search by name.',
       path: loaderData?.offset ? `/holidays?offset=${loaderData.offset}` : '/holidays',
+      jsonLd: [
+        webPageSchema('/holidays', `Holidays & festivals ${currentYear}`, undefined, 'CollectionPage'),
+        {
+          '@type': 'ItemList',
+          itemListElement: (loaderData?.occasions ?? []).map((o, i) => ({
+            '@type': 'ListItem',
+            position: (loaderData?.offset ?? 0) + i + 1,
+            name: o.name,
+            url: `${SITE_URL}/holidays/${o.url}`,
+          })),
+        },
+      ],
     }),
   component: HolidaysPage,
 });

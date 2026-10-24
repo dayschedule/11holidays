@@ -26,7 +26,10 @@ export function CountryList({ countries, currentYear, type }: CountryListProps) 
 
   const filteredCountries = countries.filter((country) => {
     const q = searchQuery.toLowerCase();
-    const matchesQuery = country.name.toLowerCase().includes(q) || country.code.toLowerCase().includes(q);
+    const matchesQuery =
+      country.name.toLowerCase().includes(q) ||
+      country.official_name?.toLowerCase().includes(q) ||
+      country.code.toLowerCase().includes(q);
     return matchesQuery && (region === 'All' || country.region === region);
   });
 

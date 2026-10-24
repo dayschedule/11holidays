@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { differenceInCalendarDays, format, parseISO } from 'date-fns';
-import { Calendar, Check, Copy, Download, FileJson, FileSpreadsheet, Search } from 'lucide-react';
+import { ArrowRight, Calendar, Check, ChevronDown, Copy, Download, FileJson, FileSpreadsheet, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,6 +43,9 @@ export function HolidaysTable({ holidays, country, year, filter, title }: Holida
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [monthFilter, setMonthFilter] = useState<string>('all');
   const [copied, setCopied] = useState(false);
+  // null = automatic: past collapsed unless filtering or nothing is upcoming
+  const [pastOpen, setPastOpen] = useState<boolean | null>(null);
+  const [upcomingOpen, setUpcomingOpen] = useState(true);
 
   const monthCounts = useMemo(
     () =>
@@ -69,6 +72,11 @@ export function HolidaysTable({ holidays, country, year, filter, title }: Holida
   const nextHoliday = holidays.find((h) => h.date >= today);
   const fileBase = `holidays-${country.code}-${year}`;
 
+  const pastHolidays = filteredHolidays.filter((h) => h.date < today);
+  const upcomingHolidays = filteredHolidays.filter((h) => h.date >= today);
+  const isFiltering = searchQuery !== '' || monthFilter !== 'all';
+  const showPast = pastOpen ?? (isFiltering || upcomingHolidays.length === 0);
+
   const exportData = () => ({
     country: country.name,
     countryCode: country.code,
@@ -89,6 +97,75 @@ export function HolidaysTable({ holidays, country, year, filter, title }: Holida
       filteredHolidays.map((h) => ({ uid: `${h.holiday_id}`, date: h.date, title: h.name, description: h.type }))
     );
     downloadBlob(ics, 'text/calendar', `${fileBase}.ics`);
+  };
+
+  const renderRow = (holiday: Holiday) => {
+    const date = parseISO(holiday.date);
+    const isPast = holiday.date < today;
+    const isNext = nextHoliday?.holiday_id === holiday.holiday_id;
+    const days = differenceInCalendarDays(date, new Date());
+    const theme = getHolidayTheme(holiday.name, country.code);
+
+    return (
+      <li
+        key={holiday.holiday_id}
+        className={cn(
+          'flex items-center gap-4 px-4 py-3 transition-colors hover:bg-muted/40 sm:px-5',
+          isPast && 'opacity-60',
+          isNext && 'bg-primary/5'
+        )}
+      >
+        <div
+          className={cn(
+            'flex w-14 shrink-0 flex-col items-center rounded-xl border bg-background py-1.5 text-center',
+            isNext && 'border-primary/50'
+          )}
+        >
+          <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">
+            {format(date, 'MMM')}
+          </span>
+          <span className="text-xl font-bold leading-none">{format(date, 'd')}</span>
+          <span className="text-[10px] text-muted-foreground">{format(date, 'EEE')}</span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="flex items-center gap-2 font-medium">
+            {theme && <span aria-hidden>{theme.particles[0]}</span>}
+            {holiday.url ? (
+              <Link
+                to="/holidays/$country/$slug"
+                params={occasionParams(holiday.url)}
+                className="truncate underline-offset-4 hover:text-primary hover:underline"
+              >
+                {holiday.name}
+              </Link>
+            ) : (
+              <span className="truncate">{holiday.name}</span>
+            )}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {getDayOfWeek(holiday.date)}, {format(date, 'MMMM d, yyyy')}
+            {isNext && (
+              <span className="ml-2 font-semibold text-primary">
+                {days === 0 ? 'Today!' : days === 1 ? 'Tomorrow' : `in ${days} days`}
+              </span>
+            )}
+          </p>
+        </div>
+        <HolidayTypeBadge type={holiday.type} className="hidden sm:inline-flex" />
+        {holiday.url && (
+          <Link
+            to="/holidays/$country/$slug"
+            params={occasionParams(holiday.url)}
+            aria-label={`Learn more about ${holiday.name}`}
+            title={`Learn more about ${holiday.name}`}
+            className="group/more inline-flex shrink-0 items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            <span className="hidden md:inline">Learn more</span>
+            <ArrowRight className="size-3.5 transition-transform group-hover/more:translate-x-0.5" aria-hidden="true" />
+          </Link>
+        )}
+      </li>
+    );
   };
 
   return (
@@ -176,65 +253,68 @@ export function HolidaysTable({ holidays, country, year, filter, title }: Holida
       {filteredHolidays.length === 0 ? (
         <p className="py-12 text-center text-sm text-muted-foreground">No holidays found</p>
       ) : (
-        <ul className="divide-y">
-          {filteredHolidays.map((holiday) => {
-            const date = parseISO(holiday.date);
-            const isPast = holiday.date < today;
-            const isNext = nextHoliday?.holiday_id === holiday.holiday_id;
-            const days = differenceInCalendarDays(date, new Date());
-            const theme = getHolidayTheme(holiday.name, country.code);
-
-            return (
-              <li
-                key={holiday.holiday_id}
-                className={cn(
-                  'flex items-center gap-4 px-4 py-3 transition-colors hover:bg-muted/40 sm:px-5',
-                  isPast && 'opacity-60',
-                  isNext && 'bg-primary/5'
-                )}
+        <div className="divide-y">
+          {pastHolidays.length > 0 && upcomingHolidays.length > 0 ? (
+            <>
+              <CollapsibleGroup
+                label="Past"
+                count={pastHolidays.length}
+                open={showPast}
+                onToggle={() => setPastOpen(!showPast)}
               >
-                <div
-                  className={cn(
-                    'flex w-14 shrink-0 flex-col items-center rounded-xl border bg-background py-1.5 text-center',
-                    isNext && 'border-primary/50'
-                  )}
-                >
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">
-                    {format(date, 'MMM')}
-                  </span>
-                  <span className="text-xl font-bold leading-none">{format(date, 'd')}</span>
-                  <span className="text-[10px] text-muted-foreground">{format(date, 'EEE')}</span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-2 font-medium">
-                    {theme && <span aria-hidden>{theme.particles[0]}</span>}
-                    {holiday.url ? (
-                      <Link
-                        to="/holidays/$country/$slug"
-                        params={occasionParams(holiday.url)}
-                        className="truncate underline-offset-4 hover:text-primary hover:underline"
-                      >
-                        {holiday.name}
-                      </Link>
-                    ) : (
-                      <span className="truncate">{holiday.name}</span>
-                    )}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {getDayOfWeek(holiday.date)}, {format(date, 'MMMM d, yyyy')}
-                    {isNext && (
-                      <span className="ml-2 font-semibold text-primary">
-                        {days === 0 ? 'Today!' : days === 1 ? 'Tomorrow' : `in ${days} days`}
-                      </span>
-                    )}
-                  </p>
-                </div>
-                <HolidayTypeBadge type={holiday.type} className="hidden sm:inline-flex" />
-              </li>
-            );
-          })}
-        </ul>
+                {pastHolidays.map(renderRow)}
+              </CollapsibleGroup>
+              <CollapsibleGroup
+                label="Upcoming"
+                count={upcomingHolidays.length}
+                open={upcomingOpen}
+                onToggle={() => setUpcomingOpen((o) => !o)}
+              >
+                {upcomingHolidays.map(renderRow)}
+              </CollapsibleGroup>
+            </>
+          ) : (
+            <ul className="divide-y">{filteredHolidays.map(renderRow)}</ul>
+          )}
+        </div>
       )}
     </section>
+  );
+}
+
+interface CollapsibleGroupProps {
+  label: string;
+  count: number;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}
+
+function CollapsibleGroup({ label, count, open, onToggle, children }: CollapsibleGroupProps) {
+  const id = `holidays-group-${label.toLowerCase()}`;
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={id}
+        className="flex w-full items-center justify-between gap-3 bg-muted/20 px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted/50 sm:px-5"
+      >
+        <span className="flex items-center gap-2">
+          {label}
+          <span className="rounded-full border bg-background px-2 py-0.5 text-xs text-muted-foreground">{count}</span>
+        </span>
+        <ChevronDown
+          className={cn('h-4 w-4 text-muted-foreground transition-transform', open && 'rotate-180')}
+          aria-hidden="true"
+        />
+      </button>
+      {open && (
+        <ul id={id} className="divide-y border-t">
+          {children}
+        </ul>
+      )}
+    </div>
   );
 }

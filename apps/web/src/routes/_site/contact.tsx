@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Github } from 'lucide-react';
 import { PageLayout } from '@/components/page-layout';
 import { createFileRoute } from '@tanstack/react-router';
-import { seo } from '@/lib/seo';
+import { seo, webPageSchema } from '@/lib/seo';
 
 export const Route = createFileRoute('/_site/contact')({
   head: () =>
@@ -11,6 +11,7 @@ export const Route = createFileRoute('/_site/contact')({
       description:
         "Get in touch with the 11holidays.com team. We're here to help with questions, support, and feedback.",
       path: '/contact',
+      jsonLd: [webPageSchema('/contact', 'Contact 11holidays', undefined, 'ContactPage')],
     }),
   component: ContactPage,
 });

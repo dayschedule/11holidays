@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 import { loadSavedCalendars, type SavedCalendar } from '@/lib/custom-calendar';
 import { currentYear } from '@/lib/holidays-api';
-import { seo } from '@/lib/seo';
+import { seo, softwareAppSchema } from '@/lib/seo';
 
 export const Route = createFileRoute('/_site/calendars/')({
   head: () =>
@@ -16,6 +16,13 @@ export const Route = createFileRoute('/_site/calendars/')({
       description:
         'Create a custom holiday calendar for any country. Choose holidays, add company days off, pick a theme and print or download PDF, PNG and iCal for free.',
       path: '/calendars',
+      jsonLd: [
+        softwareAppSchema(
+          'Holiday calendar maker',
+          '/calendars',
+          'Create a custom holiday calendar for any country and print it or download PDF, PNG and iCal.'
+        ),
+      ],
     }),
   component: CalendarsPage,
 });

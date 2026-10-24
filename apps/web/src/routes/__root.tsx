@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router';
 import { ThemeProvider, themeScript } from '@/components/theme-provider';
 import { NotFound } from '@/components/not-found';
-import { seo } from '@/lib/seo';
+import { organizationSchema, seo, websiteSchema } from '@/lib/seo';
 import { currentYear } from '@/lib/holidays-api';
 import appCss from '@/styles.css?url';
 
@@ -13,6 +13,7 @@ export const Route = createRootRoute({
       title: `Holidays API & Calendar for ${currentYear} - 11holidays.com`,
       description:
         'Public holidays for 230+ countries. Search holidays, build printable and embeddable holiday calendars, plan long weekends and access holiday data via API.',
+      jsonLd: [organizationSchema(), websiteSchema()],
     });
     return {
       meta: [
@@ -29,11 +30,14 @@ export const Route = createRootRoute({
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..700;1,400..700&display=swap',
         },
-        { rel: 'icon', href: '/favicon.ico' },
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'manifest', href: '/site.webmanifest' },
+        { rel: 'alternate', type: 'text/plain', title: 'LLM-friendly site guide', href: '/llms.txt' },
+        { rel: 'sitemap', type: 'application/xml', href: '/sitemap.xml' },
       ],
     };
   },

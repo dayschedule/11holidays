@@ -6,7 +6,7 @@ import { OccasionsList } from '@/components/occasions-list';
 import { Button } from '@/components/ui/button';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { calendarSearchSchema } from '@/lib/custom-calendar';
-import { seo } from '@/lib/seo';
+import { seo, softwareAppSchema } from '@/lib/seo';
 import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
 
 export const Route = createFileRoute('/_site/calendars/$country')({
@@ -35,6 +35,13 @@ export const Route = createFileRoute('/_site/calendars/$country')({
         'holiday calendar generator',
       ],
       path: `/calendars/${params.country}`,
+      jsonLd: [
+        softwareAppSchema(
+          `${country.name} holiday calendar ${year}`,
+          `/calendars/${params.country}`,
+          `Printable and embeddable ${country.name} holiday calendar for ${year}.`
+        ),
+      ],
     });
   },
   component: CalendarGeneratorPage,

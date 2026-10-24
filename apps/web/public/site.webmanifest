@@ -1,19 +1,22 @@
 {
-    "name": "",
-    "short_name": "",
-    "icons": [
-       {
-          "src": "/android-chrome-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-       },
-       {
-        "src": "/android-chrome-512x512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-        }
-    ],
-    "theme_color": "#FFFFFF",
-    "background_color": "#FFFFFF",
-    "display": "standalone"
- }
+  "name": "11holidays - Public holidays for 230+ countries",
+  "short_name": "11holidays",
+  "description": "Public holidays, holiday calendars, long weekends and a holidays API for 230+ countries.",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#e4572e",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

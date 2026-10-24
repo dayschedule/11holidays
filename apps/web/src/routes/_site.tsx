@@ -1,5 +1,6 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router';
 import { Header, Logo } from '@/components/header';
+import { PopularCountries } from '@/components/popular-countries';
 import { PromotionalPopup } from '@/components/promotional-popup';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -59,7 +60,8 @@ function SiteLayout() {
           <Outlet />
         </div>
       </main>
-      <footer className="no-print mt-16 w-full border-t bg-card/50">
+      <PopularCountries />
+      <footer className="no-print w-full border-t bg-card/50">
         <div className="mx-auto grid w-full max-w-[1200px] gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-6 lg:px-8">
           <div className="space-y-3">
             <Logo />

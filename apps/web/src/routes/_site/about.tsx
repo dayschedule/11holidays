@@ -3,7 +3,7 @@ import { Globe, Code, Users, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageLayout } from '@/components/page-layout';
 import { createFileRoute } from '@tanstack/react-router';
-import { seo } from '@/lib/seo';
+import { seo, webPageSchema } from '@/lib/seo';
 
 export const Route = createFileRoute('/_site/about')({
   head: () =>
@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_site/about')({
       description:
         'Learn about 11holidays.com, the comprehensive public holidays API for developers and businesses worldwide.',
       path: '/about',
+      jsonLd: [webPageSchema('/about', 'About 11holidays', undefined, 'AboutPage')],
     }),
   component: AboutPage,
 });

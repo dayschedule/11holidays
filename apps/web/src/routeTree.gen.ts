@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SiteRouteImport } from './routes/_site'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SiteIndexRouteImport } from './routes/_site/index'
 import { Route as SiteAboutRouteImport } from './routes/_site/about'
@@ -33,6 +34,11 @@ import { Route as SiteHolidaysCountrySlugRouteImport } from './routes/_site/holi
 
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -140,6 +146,7 @@ const SiteHolidaysCountrySlugRoute = SiteHolidaysCountrySlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/about': typeof SiteAboutRoute
   '/api-key': typeof SiteApiKeyRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/holidays/$country/': typeof SiteHolidaysCountryIndexRoute
 }
 export interface FileRoutesByTo {
+  '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/about': typeof SiteAboutRoute
   '/api-key': typeof SiteApiKeyRoute
@@ -185,6 +193,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_site': typeof SiteRouteWithChildren
+  '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_site/about': typeof SiteAboutRoute
   '/_site/api-key': typeof SiteApiKeyRoute
@@ -210,6 +219,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/llms.txt'
     | '/sitemap.xml'
     | '/about'
     | '/api-key'
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
     | '/holidays/$country/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/llms.txt'
     | '/sitemap.xml'
     | '/about'
     | '/api-key'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_site'
+    | '/llms.txt'
     | '/sitemap.xml'
     | '/_site/about'
     | '/_site/api-key'
@@ -278,6 +290,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   EmbedCountryRoute: typeof EmbedCountryRoute
   IcsCountryRoute: typeof IcsCountryRoute
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof SiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -479,6 +499,7 @@ const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   SiteRoute: SiteRouteWithChildren,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   EmbedCountryRoute: EmbedCountryRoute,
   IcsCountryRoute: IcsCountryRoute,

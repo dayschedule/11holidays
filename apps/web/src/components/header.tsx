@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Github, Menu, Search } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
@@ -15,13 +15,36 @@ const navItems = [
   { to: '/pricing', label: 'API Pricing' },
 ] as const;
 
+export function LogoMark({ className }: { className?: string }) {
+  const id = useId();
+  return (
+    <svg viewBox="0 0 64 64" aria-hidden="true" className={className}>
+      <defs>
+        <linearGradient id={`${id}g`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#F2643A" />
+          <stop offset="0.55" stopColor="#E4572E" />
+          <stop offset="1" stopColor="#A63FCB" />
+        </linearGradient>
+        <clipPath id={`${id}c`}>
+          <rect width="64" height="64" rx="15" />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${id}c)`}>
+        <rect width="64" height="64" fill={`url(#${id}g)`} />
+        <rect width="64" height="17" fill="#000" fillOpacity=".18" />
+      </g>
+      <rect x="17" y="5" width="5" height="13" rx="2.5" fill="#fff" />
+      <rect x="42" y="5" width="5" height="13" rx="2.5" fill="#fff" />
+      <path fill="#fff" d="M28 24v29h-7.5V33.6l-5 2.9v-6.9L22 24zM45.5 24v29H38V33.6l-5 2.9v-6.9L39.5 24z" />
+      <path fill="#FFD25A" d="M53 22l1.3 3.2 3.2 1.3-3.2 1.3L53 31l-1.3-3.2-3.2-1.3 3.2-1.3z" />
+    </svg>
+  );
+}
+
 export function Logo() {
   return (
-    <Link to="/" className="flex shrink-0 items-center gap-2">
-      <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-festive-gradient text-sm font-semibold tracking-[-0.03em] text-white shadow-sm">
-        <span className="absolute inset-x-0 top-0 h-2 bg-black/15" />
-        11
-      </span>
+    <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="11holidays home">
+      <LogoMark className="h-9 w-9 shrink-0 drop-shadow-sm" />
       <span className="text-lg font-bold tracking-tight">
         holidays<span className="text-primary">.com</span>
       </span>

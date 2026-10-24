@@ -11,7 +11,7 @@ import { PageLayout } from '@/components/page-layout';
 import { Button } from '@/components/ui/button';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { getHolidayTheme } from '@/lib/holiday-themes';
-import { seo } from '@/lib/seo';
+import { holidayListSchema, seo } from '@/lib/seo';
 import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
 
 export const Route = createFileRoute('/_site/upcoming-holidays/$country')({
@@ -32,6 +32,13 @@ export const Route = createFileRoute('/_site/upcoming-holidays/$country')({
           title: `Upcoming Holidays in ${loaderData.country.name} - 11holidays`,
           description: `Is today a holiday in ${loaderData.country.name}? See today's and upcoming public holidays with a countdown, download holiday dates, and access ${loaderData.country.code} holiday data via API.`,
           path: `/upcoming-holidays/${params.country}`,
+          jsonLd: [
+            holidayListSchema(
+              `Upcoming holidays in ${loaderData.country.name}`,
+              loaderData.country.name,
+              loaderData.holidays.filter((h) => h.date >= format(new Date(), 'yyyy-MM-dd')).slice(0, 10)
+            ),
+          ],
         })
       : {},
   component: UpcomingHolidayPage,

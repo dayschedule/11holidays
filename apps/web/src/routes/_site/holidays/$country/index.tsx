@@ -10,7 +10,7 @@ import { PageLayout } from '@/components/page-layout';
 import { Input } from '@/components/ui/input';
 import { getCountryByCode } from '@/lib/countries-data';
 import { currentYear } from '@/lib/holidays-api';
-import { seo } from '@/lib/seo';
+import { holidayListSchema, seo } from '@/lib/seo';
 import { getCountryOccasions } from '@/server/holidays';
 
 export const Route = createFileRoute('/_site/holidays/$country/')({
@@ -28,6 +28,13 @@ export const Route = createFileRoute('/_site/holidays/$country/')({
           title: `${loaderData.country.name} Holiday & Festival List ${currentYear} | 11holidays.com`,
           description: `Explore public holidays, religious festivals, observances, and national celebrations in ${loaderData.country.name} for ${currentYear}. Browse holiday dates, significance and upcoming events.`,
           path: `/holidays/${params.country}`,
+          jsonLd: [
+            holidayListSchema(
+              `${loaderData.country.name} holidays and festivals ${currentYear}`,
+              loaderData.country.name,
+              [...loaderData.occasions].sort((a, b) => a.date.localeCompare(b.date))
+            ),
+          ],
         })
       : {},
   component: CountryOccasionsPage,

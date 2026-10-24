@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApiKeySignup from '@/components/signup';
 import { PageLayout } from '@/components/page-layout';
 import { createFileRoute } from '@tanstack/react-router';
-import { seo } from '@/lib/seo';
+import { seo, webApiSchema } from '@/lib/seo';
 import { z } from 'zod';
 
 export const Route = createFileRoute('/_site/api-key')({
@@ -16,6 +16,7 @@ export const Route = createFileRoute('/_site/api-key')({
       description:
         'Sign up for a free API key to access holiday data for 230+ countries. Start integrating holidays data with your apps today.',
       path: '/api-key',
+      jsonLd: [webApiSchema()],
     }),
   component: ApiKeyPage,
 });

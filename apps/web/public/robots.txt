@@ -1,8 +1,7 @@
-# *
+# Search engines and AI agents are welcome. Guide for LLMs: https://11holidays.com/llms.txt
 User-agent: *
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
-
-# Sitemaps
+Disallow: /embed/
 
 Sitemap: https://11holidays.com/sitemap.xml

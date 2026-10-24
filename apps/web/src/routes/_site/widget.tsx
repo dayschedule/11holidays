@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { calendarThemes, CALENDAR_THEME_KEYS, type CalendarTheme } from '@/lib/calendar-utils';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { cleanSearch } from '@/lib/custom-calendar';
-import { seo } from '@/lib/seo';
+import { seo, softwareAppSchema } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/_site/widget')({
@@ -25,6 +25,13 @@ export const Route = createFileRoute('/_site/widget')({
       description:
         'Embed an upcoming holidays list or a holiday calendar for any country on your website, blog or intranet with a free iframe widget. No sign-up required.',
       path: '/widget',
+      jsonLd: [
+        softwareAppSchema(
+          'Holidays widget',
+          '/widget',
+          'Free embeddable widget showing upcoming holidays or a holiday calendar for any country.'
+        ),
+      ],
     }),
   component: WidgetPage,
 });

@@ -13,7 +13,34 @@ export interface Country {
   sub_region_code: string;
   intermediate_region_code: string;
   slug?: string;
+  official_name?: string;
 }
+
+// Short, commonly searched names used for display and SEO titles. Slugs keep
+// using the official name so existing URLs stay stable.
+const SHORT_NAMES: Record<string, string> = {
+  US: 'USA',
+  GB: 'UK',
+  AE: 'UAE',
+  KR: 'South Korea',
+  KP: 'North Korea',
+  RU: 'Russia',
+  VN: 'Vietnam',
+  IR: 'Iran',
+  TR: 'Turkey',
+  NL: 'Netherlands',
+  BO: 'Bolivia',
+  VE: 'Venezuela',
+  TZ: 'Tanzania',
+  MD: 'Moldova',
+  SY: 'Syria',
+  LA: 'Laos',
+  CD: 'DR Congo',
+  BN: 'Brunei',
+  PS: 'Palestine',
+  FM: 'Micronesia',
+  VA: 'Vatican City',
+};
 
 export function getCountryByCode(code: string): Country | undefined {
   return COUNTRIES_WITH_SLUG.find((c) => c.code.toLowerCase() === code.toLowerCase());
@@ -3275,11 +3302,16 @@ const COUNTRIES: Country[] = [
 
 export const COUNTRIES_WITH_SLUG: Country[] = COUNTRIES.map((c) => ({
   ...c,
+  name: SHORT_NAMES[c.code] ?? c.name,
+  official_name: c.name,
   slug: toSlug(c.name),
 }));
 
 const countryBySlugMap: Record<string, Country> = Object.fromEntries(
-  COUNTRIES_WITH_SLUG.map((c) => [c.slug!, c])
+  COUNTRIES_WITH_SLUG.flatMap((c) => [
+    [toSlug(c.name), c],
+    [c.slug!, c],
+  ])
 );
 
 export function getCountryBySlug(slug: string): Country | undefined {

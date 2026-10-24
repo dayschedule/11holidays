@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { getCountryByCode, getCountryName } from '@/lib/countries-data';
 import { currentYear, occasionParams } from '@/lib/holidays-api';
 import { FEATURED_FESTIVALS, defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
-import { seo } from '@/lib/seo';
+import { seo, softwareAppSchema, webApiSchema, webPageSchema } from '@/lib/seo';
 import { getHolidaysToday, getUpcomingOccasions, getVisitorCountry } from '@/server/holidays';
 
 export const Route = createFileRoute('/_site/')({
@@ -29,6 +29,15 @@ export const Route = createFileRoute('/_site/')({
         'Find public holidays and festivals for 230+ countries. Create printable holiday calendars, embed a free holidays widget, plan long weekends and access holidays via API.',
       keywords: ['holidays', 'public holidays', 'holiday calendar', 'holidays API', 'festival dates', 'long weekends'],
       path: '/',
+      jsonLd: [
+        webPageSchema('/', `Holidays ${currentYear} for 230+ countries`),
+        webApiSchema(),
+        softwareAppSchema(
+          'Holiday calendar maker',
+          '/calendars',
+          'Create printable, embeddable holiday calendars for any country and download them as PDF, PNG or iCal.'
+        ),
+      ],
     }),
   component: Home,
 });
@@ -96,7 +105,7 @@ function Home() {
                 className="inline-flex items-center gap-1.5 rounded-full border bg-background/80 px-3 py-1 text-xs font-medium transition-colors hover:border-primary/40 hover:text-primary"
               >
                 <CountryFlag countryCode={c} className="h-3 w-4 rounded-[2px]" />
-                {getCountryName(c).replace(' of America', '')}
+                {getCountryName(c)}
               </Link>
             ))}
           </div>
@@ -273,7 +282,7 @@ function Home() {
               <CountryFlag countryCode={c} className="h-7 w-10 shrink-0 rounded shadow-sm" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold group-hover:text-primary">
-                  {getCountryName(c).replace(' of America', '')}
+                  {getCountryName(c)}
                 </p>
                 <p className="text-xs text-muted-foreground">{currentYear} holidays</p>
               </div>

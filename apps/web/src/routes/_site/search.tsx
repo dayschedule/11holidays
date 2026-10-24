@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { COUNTRIES_WITH_SLUG, getCountryName } from '@/lib/countries-data';
 import { currentYear, occasionParams } from '@/lib/holidays-api';
 import { getHolidayTheme } from '@/lib/holiday-themes';
-import { seo } from '@/lib/seo';
+import { seo, webPageSchema } from '@/lib/seo';
 import { searchHolidays } from '@/server/holidays';
 
 export const Route = createFileRoute('/_site/search')({
@@ -27,6 +27,7 @@ export const Route = createFileRoute('/_site/search')({
         ? `When is ${loaderData.q} in ${currentYear}? See ${loaderData.q} dates in every country that observes it.`
         : 'Search holidays and festivals across 230+ countries.',
       path: loaderData?.q ? `/search?q=${encodeURIComponent(loaderData.q)}` : '/search',
+      jsonLd: [webPageSchema('/search', 'Search holidays', undefined, 'SearchResultsPage')],
     }),
   component: SearchPage,
 });

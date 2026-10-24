@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { generateLongWeekends } from '@/lib/long-weekends';
-import { seo } from '@/lib/seo';
+import { SITE_URL, seo } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
 
@@ -33,6 +33,27 @@ export const Route = createFileRoute('/_site/long-weekends/$country')({
           title: `Long Weekends in ${loaderData.year} - ${loaderData.country.name} | 11holidays`,
           description: `List of long weekends in ${loaderData.country.name} for ${loaderData.year}. Plan trips with extended weekends and find which leaves to take for the longest breaks.`,
           path: `/long-weekends/${params.country}`,
+          jsonLd: [
+            {
+              '@type': 'ItemList',
+              name: `Long weekends in ${loaderData.country.name} ${loaderData.year}`,
+              itemListElement: generateLongWeekends(loaderData.holidays).map((lw, i) => ({
+                '@type': 'ListItem',
+                position: i + 1,
+                item: {
+                  '@type': 'Event',
+                  name: `${lw.occasion} long weekend (${lw.days} days)`,
+                  description: lw.tip,
+                  startDate: lw.startDate,
+                  endDate: lw.endDate,
+                  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+                  eventStatus: 'https://schema.org/EventScheduled',
+                  location: { '@type': 'Country', name: loaderData.country.name },
+                  url: `${SITE_URL}/long-weekends/${params.country}`,
+                },
+              })),
+            },
+          ],
         })
       : {},
   component: LongWeekendsPage,

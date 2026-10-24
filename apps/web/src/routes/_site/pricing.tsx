@@ -9,7 +9,7 @@ import {
 import { Check } from 'lucide-react';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@/components/page-layout';
-import { seo } from '@/lib/seo';
+import { SITE_URL, seo, webApiSchema } from '@/lib/seo';
 
 export const Route = createFileRoute('/_site/pricing')({
   head: () =>
@@ -18,6 +18,15 @@ export const Route = createFileRoute('/_site/pricing')({
       description:
         'Simple, transparent pricing for our holidays API. Choose between yearly or lifetime access.',
       path: '/pricing',
+      jsonLd: [
+        {
+          ...webApiSchema(),
+          offers: [
+            { '@type': 'Offer', name: 'Yearly Plan', price: '99', priceCurrency: 'USD', url: `${SITE_URL}/api-key` },
+            { '@type': 'Offer', name: 'Lifetime Plan', price: '249', priceCurrency: 'USD', url: `${SITE_URL}/api-key` },
+          ],
+        },
+      ],
     }),
   component: PricingPage,
 });

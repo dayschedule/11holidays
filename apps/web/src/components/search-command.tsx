@@ -58,7 +58,10 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
     const q = query.trim().toLowerCase();
     if (!q) return COUNTRIES_WITH_SLUG.filter((c) => ['US', 'IN', 'GB', 'CA', 'AU'].includes(c.code));
     return COUNTRIES_WITH_SLUG.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase() === q
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.official_name?.toLowerCase().includes(q) ||
+        c.code.toLowerCase() === q
     ).slice(0, 6);
   }, [query]);
 

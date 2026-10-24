@@ -52,7 +52,7 @@ export function CountrySelect({ value, onChange, className, id }: CountrySelectP
             {COUNTRIES_WITH_SLUG.map((c) => (
               <CommandPrimitive.Item
                 key={c.code}
-                value={`${c.name} ${c.code}`}
+                value={`${c.name} ${c.official_name} ${c.code}`}
                 onSelect={() => {
                   onChange(c);
                   setOpen(false);

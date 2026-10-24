@@ -29,9 +29,13 @@ const footerColumns = [
   {
     title: 'Tools',
     links: [
+      { to: '/countdown', label: 'Countdown timer' },
+      { to: '/leave-planner', label: 'Leave planner' },
+      { to: '/working-days-calculator', label: 'Working days calculator' },
       { to: '/calendars', label: 'Calendar maker' },
       { to: '/widget', label: 'Embeddable widget' },
       { to: '/my-calendars', label: 'My saved calendars' },
+      { to: '/tools', label: 'All tools' },
     ],
   },
   {

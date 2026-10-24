@@ -1,19 +1,131 @@
 import { useEffect, useId, useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Github, Menu, Search } from 'lucide-react';
+import { Link, useRouterState } from '@tanstack/react-router';
+import {
+  Briefcase,
+  Calendar,
+  CalendarDays,
+  ChevronDown,
+  Code2,
+  Github,
+  Globe2,
+  LayoutGrid,
+  Menu,
+  Palmtree,
+  Search,
+  Timer,
+  type LucideIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { ThemeToggle } from './theme-toggle';
 import { SearchCommand } from './search-command';
 import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { Kbd } from './ui/kbd';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 
-const navItems = [
-  { to: '/holidays', label: 'Holidays' },
-  { to: '/calendars', label: 'Calendars' },
-  { to: '/widget', label: 'Widget' },
-  { to: '/countries', label: 'Countries' },
-  { to: '/pricing', label: 'API Pricing' },
-] as const;
+type NavTo =
+  | '/holidays'
+  | '/countries'
+  | '/search'
+  | '/countdown'
+  | '/leave-planner'
+  | '/working-days-calculator'
+  | '/calendars'
+  | '/widget'
+  | '/tools'
+  | '/pricing'
+  | '/my-calendars'
+  | '/api-key';
+
+interface NavLink {
+  to: NavTo;
+  label: string;
+  description?: string;
+  icon?: LucideIcon;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavLink[];
+  /** "See all" link under the items */
+  footer?: NavLink;
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: 'Holidays',
+    items: [
+      { to: '/holidays', label: 'Holidays this year', description: 'Festivals and holidays worldwide', icon: CalendarDays },
+      { to: '/countries', label: 'Countries', description: 'Public holidays for 230+ countries', icon: Globe2 },
+      { to: '/search', label: 'Search holidays', description: 'Find a holiday in every country', icon: Search },
+    ],
+  },
+  {
+    label: 'Tools',
+    items: [
+      { to: '/countdown', label: 'Countdown timer', description: 'Count down to any date or event', icon: Timer },
+      { to: '/leave-planner', label: 'Leave planner', description: 'Most days off from your leaves', icon: Palmtree },
+      { to: '/working-days-calculator', label: 'Working days calculator', description: 'Business days between dates', icon: Briefcase },
+      { to: '/calendars', label: 'Calendar maker', description: 'Printable holiday calendars', icon: Calendar },
+      { to: '/widget', label: 'Holidays widget', description: 'Embed holidays on your website', icon: Code2 },
+    ],
+    footer: { to: '/tools', label: 'All tools', icon: LayoutGrid },
+  },
+];
+
+const navLinks: NavLink[] = [{ to: '/pricing', label: 'API Pricing' }];
+
+const navLinkClass =
+  'inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground';
+
+const groupLinks = (group: NavGroup) => (group.footer ? [...group.items, group.footer] : group.items);
+
+function NavDropdown({ group, pathname }: { group: NavGroup; pathname: string }) {
+  const active = groupLinks(group).some((l) => pathname === l.to || pathname.startsWith(`${l.to}/`));
+
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger className={cn(navLinkClass, active && 'bg-accent text-foreground')}>
+        {group.label}
+        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-72 p-1.5">
+        {group.items.map((item) => (
+          <DropdownMenuItem key={item.to} asChild className="cursor-pointer items-start gap-3 p-2">
+            <Link to={item.to}>
+              {item.icon && (
+                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <item.icon className="h-4 w-4" />
+                </span>
+              )}
+              <span className="flex flex-col">
+                <span className="text-sm font-medium">{item.label}</span>
+                {item.description && <span className="text-xs text-muted-foreground">{item.description}</span>}
+              </span>
+            </Link>
+          </DropdownMenuItem>
+        ))}
+        {group.footer && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer text-sm font-medium text-primary">
+              <Link to={group.footer.to}>
+                {group.footer.icon && <group.footer.icon className="h-4 w-4 text-primary" />}
+                {group.footer.label}
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export function LogoMark({ className }: { className?: string }) {
   const id = useId();
@@ -55,6 +167,7 @@ export function Logo() {
 export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -76,13 +189,11 @@ export function Header() {
         <Logo />
 
         <nav className="ml-4 hidden items-center gap-1 lg:flex">
-          {navItems.map(({ to, label }) => (
-            <Link
-              key={to}
-              to={to}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              activeProps={{ className: 'text-foreground bg-accent' }}
-            >
+          {navGroups.map((group) => (
+            <NavDropdown key={group.label} group={group} pathname={pathname} />
+          ))}
+          {navLinks.map(({ to, label }) => (
+            <Link key={to} to={to} className={navLinkClass} activeProps={{ className: 'text-foreground bg-accent' }}>
               {label}
             </Link>
           ))}
@@ -124,20 +235,35 @@ export function Header() {
               <SheetHeader>
                 <SheetTitle className="text-left">Menu</SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 px-4">
-                {[...navItems, { to: '/my-calendars', label: 'My calendars' } as const, { to: '/api-key', label: 'Get API Key' } as const].map(
-                  ({ to, label }) => (
-                    <Link
-                      key={to}
-                      to={to}
-                      onClick={() => setMenuOpen(false)}
-                      className="rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent"
-                      activeProps={{ className: 'bg-accent text-primary' }}
-                    >
-                      {label}
-                    </Link>
-                  )
-                )}
+              <nav className="flex flex-col gap-4 overflow-y-auto px-4 pb-6">
+                {[
+                  ...navGroups.map((g) => ({ label: g.label, items: groupLinks(g) })),
+                  {
+                    label: 'Developers',
+                    items: [
+                      ...navLinks,
+                      { to: '/my-calendars', label: 'My calendars' },
+                      { to: '/api-key', label: 'Get API Key' },
+                    ] satisfies NavLink[],
+                  },
+                ].map((group) => (
+                  <div key={group.label} className="flex flex-col gap-0.5">
+                    <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {group.label}
+                    </p>
+                    {group.items.map(({ to, label }) => (
+                      <Link
+                        key={to}
+                        to={to}
+                        onClick={() => setMenuOpen(false)}
+                        className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                        activeProps={{ className: 'bg-accent text-primary' }}
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
               </nav>
             </SheetContent>
           </Sheet>

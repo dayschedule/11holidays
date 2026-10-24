@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { AdsBlock } from '@/components/ads-block';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { CountryFlag } from '@/components/country-flag';
+import { CountdownEmbedCode } from '@/components/countdown-tools';
 import { Countdown, FestiveParticles } from '@/components/festive';
 import { MonthGrid } from '@/components/calendar/year-grid';
 import { OccasionsList } from '@/components/occasions-list';
@@ -303,6 +304,14 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
                 </div>
               )}
             </div>
+          </section>
+
+          <section className="space-y-3 rounded-2xl border bg-card p-4 shadow-xs">
+            <h2 className="text-lg font-bold">Add a {occasion.name} countdown to your website</h2>
+            <p className="text-sm text-muted-foreground">
+              Free widget that counts down to the next {occasion.name} and moves to the following date every year.
+            </p>
+            <CountdownEmbedCode target={{ holiday: occasion.url }} />
           </section>
 
           <section className="space-y-4">

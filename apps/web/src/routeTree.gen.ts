@@ -16,13 +16,18 @@ import { Route as SiteIndexRouteImport } from './routes/_site/index'
 import { Route as SiteAboutRouteImport } from './routes/_site/about'
 import { Route as SiteApiKeyRouteImport } from './routes/_site/api-key'
 import { Route as SiteContactRouteImport } from './routes/_site/contact'
+import { Route as SiteCountdownRouteImport } from './routes/_site/countdown'
 import { Route as SiteCountriesRouteImport } from './routes/_site/countries'
+import { Route as SiteLeavePlannerRouteImport } from './routes/_site/leave-planner'
 import { Route as SiteMyCalendarsRouteImport } from './routes/_site/my-calendars'
 import { Route as SitePricingRouteImport } from './routes/_site/pricing'
 import { Route as SiteSearchRouteImport } from './routes/_site/search'
 import { Route as SiteTermsRouteImport } from './routes/_site/terms'
+import { Route as SiteToolsRouteImport } from './routes/_site/tools'
 import { Route as SiteWidgetRouteImport } from './routes/_site/widget'
+import { Route as SiteWorkingDaysCalculatorRouteImport } from './routes/_site/working-days-calculator'
 import { Route as EmbedCountryRouteImport } from './routes/embed/$country'
+import { Route as EmbedCountdownRouteImport } from './routes/embed/countdown'
 import { Route as IcsCountryRouteImport } from './routes/ics.$country'
 import { Route as SiteCalendarsIndexRouteImport } from './routes/_site/calendars/index'
 import { Route as SiteCalendarsCountryRouteImport } from './routes/_site/calendars/$country'
@@ -66,9 +71,19 @@ const SiteContactRoute = SiteContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteCountdownRoute = SiteCountdownRouteImport.update({
+  id: '/countdown',
+  path: '/countdown',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteCountriesRoute = SiteCountriesRouteImport.update({
   id: '/countries',
   path: '/countries',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteLeavePlannerRoute = SiteLeavePlannerRouteImport.update({
+  id: '/leave-planner',
+  path: '/leave-planner',
   getParentRoute: () => SiteRoute,
 } as any)
 const SiteMyCalendarsRoute = SiteMyCalendarsRouteImport.update({
@@ -91,14 +106,30 @@ const SiteTermsRoute = SiteTermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteToolsRoute = SiteToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteWidgetRoute = SiteWidgetRouteImport.update({
   id: '/widget',
   path: '/widget',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteWorkingDaysCalculatorRoute =
+  SiteWorkingDaysCalculatorRouteImport.update({
+    id: '/working-days-calculator',
+    path: '/working-days-calculator',
+    getParentRoute: () => SiteRoute,
+  } as any)
 const EmbedCountryRoute = EmbedCountryRouteImport.update({
   id: '/embed/$country',
   path: '/embed/$country',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmbedCountdownRoute = EmbedCountdownRouteImport.update({
+  id: '/embed/countdown',
+  path: '/embed/countdown',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IcsCountryRoute = IcsCountryRouteImport.update({
@@ -151,13 +182,18 @@ export interface FileRoutesByFullPath {
   '/about': typeof SiteAboutRoute
   '/api-key': typeof SiteApiKeyRoute
   '/contact': typeof SiteContactRoute
+  '/countdown': typeof SiteCountdownRoute
   '/countries': typeof SiteCountriesRoute
+  '/leave-planner': typeof SiteLeavePlannerRoute
   '/my-calendars': typeof SiteMyCalendarsRoute
   '/pricing': typeof SitePricingRoute
   '/search': typeof SiteSearchRoute
   '/terms': typeof SiteTermsRoute
+  '/tools': typeof SiteToolsRoute
   '/widget': typeof SiteWidgetRoute
+  '/working-days-calculator': typeof SiteWorkingDaysCalculatorRoute
   '/embed/$country': typeof EmbedCountryRoute
+  '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
   '/calendars/$country': typeof SiteCalendarsCountryRoute
   '/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
@@ -173,13 +209,18 @@ export interface FileRoutesByTo {
   '/about': typeof SiteAboutRoute
   '/api-key': typeof SiteApiKeyRoute
   '/contact': typeof SiteContactRoute
+  '/countdown': typeof SiteCountdownRoute
   '/countries': typeof SiteCountriesRoute
+  '/leave-planner': typeof SiteLeavePlannerRoute
   '/my-calendars': typeof SiteMyCalendarsRoute
   '/pricing': typeof SitePricingRoute
   '/search': typeof SiteSearchRoute
   '/terms': typeof SiteTermsRoute
+  '/tools': typeof SiteToolsRoute
   '/widget': typeof SiteWidgetRoute
+  '/working-days-calculator': typeof SiteWorkingDaysCalculatorRoute
   '/embed/$country': typeof EmbedCountryRoute
+  '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
   '/': typeof SiteIndexRoute
   '/calendars/$country': typeof SiteCalendarsCountryRoute
@@ -198,13 +239,18 @@ export interface FileRoutesById {
   '/_site/about': typeof SiteAboutRoute
   '/_site/api-key': typeof SiteApiKeyRoute
   '/_site/contact': typeof SiteContactRoute
+  '/_site/countdown': typeof SiteCountdownRoute
   '/_site/countries': typeof SiteCountriesRoute
+  '/_site/leave-planner': typeof SiteLeavePlannerRoute
   '/_site/my-calendars': typeof SiteMyCalendarsRoute
   '/_site/pricing': typeof SitePricingRoute
   '/_site/search': typeof SiteSearchRoute
   '/_site/terms': typeof SiteTermsRoute
+  '/_site/tools': typeof SiteToolsRoute
   '/_site/widget': typeof SiteWidgetRoute
+  '/_site/working-days-calculator': typeof SiteWorkingDaysCalculatorRoute
   '/embed/$country': typeof EmbedCountryRoute
+  '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/calendars/$country': typeof SiteCalendarsCountryRoute
@@ -224,13 +270,18 @@ export interface FileRouteTypes {
     | '/about'
     | '/api-key'
     | '/contact'
+    | '/countdown'
     | '/countries'
+    | '/leave-planner'
     | '/my-calendars'
     | '/pricing'
     | '/search'
     | '/terms'
+    | '/tools'
     | '/widget'
+    | '/working-days-calculator'
     | '/embed/$country'
+    | '/embed/countdown'
     | '/ics/$country'
     | '/calendars/$country'
     | '/long-weekends/$country'
@@ -246,13 +297,18 @@ export interface FileRouteTypes {
     | '/about'
     | '/api-key'
     | '/contact'
+    | '/countdown'
     | '/countries'
+    | '/leave-planner'
     | '/my-calendars'
     | '/pricing'
     | '/search'
     | '/terms'
+    | '/tools'
     | '/widget'
+    | '/working-days-calculator'
     | '/embed/$country'
+    | '/embed/countdown'
     | '/ics/$country'
     | '/'
     | '/calendars/$country'
@@ -270,13 +326,18 @@ export interface FileRouteTypes {
     | '/_site/about'
     | '/_site/api-key'
     | '/_site/contact'
+    | '/_site/countdown'
     | '/_site/countries'
+    | '/_site/leave-planner'
     | '/_site/my-calendars'
     | '/_site/pricing'
     | '/_site/search'
     | '/_site/terms'
+    | '/_site/tools'
     | '/_site/widget'
+    | '/_site/working-days-calculator'
     | '/embed/$country'
+    | '/embed/countdown'
     | '/ics/$country'
     | '/_site/'
     | '/_site/calendars/$country'
@@ -293,6 +354,7 @@ export interface RootRouteChildren {
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   EmbedCountryRoute: typeof EmbedCountryRoute
+  EmbedCountdownRoute: typeof EmbedCountdownRoute
   IcsCountryRoute: typeof IcsCountryRoute
 }
 
@@ -347,11 +409,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteContactRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/countdown': {
+      id: '/_site/countdown'
+      path: '/countdown'
+      fullPath: '/countdown'
+      preLoaderRoute: typeof SiteCountdownRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/countries': {
       id: '/_site/countries'
       path: '/countries'
       fullPath: '/countries'
       preLoaderRoute: typeof SiteCountriesRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/leave-planner': {
+      id: '/_site/leave-planner'
+      path: '/leave-planner'
+      fullPath: '/leave-planner'
+      preLoaderRoute: typeof SiteLeavePlannerRouteImport
       parentRoute: typeof SiteRoute
     }
     '/_site/my-calendars': {
@@ -382,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteTermsRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/tools': {
+      id: '/_site/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof SiteToolsRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/widget': {
       id: '/_site/widget'
       path: '/widget'
@@ -389,11 +472,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteWidgetRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/working-days-calculator': {
+      id: '/_site/working-days-calculator'
+      path: '/working-days-calculator'
+      fullPath: '/working-days-calculator'
+      preLoaderRoute: typeof SiteWorkingDaysCalculatorRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/embed/$country': {
       id: '/embed/$country'
       path: '/embed/$country'
       fullPath: '/embed/$country'
       preLoaderRoute: typeof EmbedCountryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/embed/countdown': {
+      id: '/embed/countdown'
+      path: '/embed/countdown'
+      fullPath: '/embed/countdown'
+      preLoaderRoute: typeof EmbedCountdownRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ics/$country': {
@@ -459,12 +556,16 @@ interface SiteRouteChildren {
   SiteAboutRoute: typeof SiteAboutRoute
   SiteApiKeyRoute: typeof SiteApiKeyRoute
   SiteContactRoute: typeof SiteContactRoute
+  SiteCountdownRoute: typeof SiteCountdownRoute
   SiteCountriesRoute: typeof SiteCountriesRoute
+  SiteLeavePlannerRoute: typeof SiteLeavePlannerRoute
   SiteMyCalendarsRoute: typeof SiteMyCalendarsRoute
   SitePricingRoute: typeof SitePricingRoute
   SiteSearchRoute: typeof SiteSearchRoute
   SiteTermsRoute: typeof SiteTermsRoute
+  SiteToolsRoute: typeof SiteToolsRoute
   SiteWidgetRoute: typeof SiteWidgetRoute
+  SiteWorkingDaysCalculatorRoute: typeof SiteWorkingDaysCalculatorRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteCalendarsCountryRoute: typeof SiteCalendarsCountryRoute
   SiteLongWeekendsCountryRoute: typeof SiteLongWeekendsCountryRoute
@@ -479,12 +580,16 @@ const SiteRouteChildren: SiteRouteChildren = {
   SiteAboutRoute: SiteAboutRoute,
   SiteApiKeyRoute: SiteApiKeyRoute,
   SiteContactRoute: SiteContactRoute,
+  SiteCountdownRoute: SiteCountdownRoute,
   SiteCountriesRoute: SiteCountriesRoute,
+  SiteLeavePlannerRoute: SiteLeavePlannerRoute,
   SiteMyCalendarsRoute: SiteMyCalendarsRoute,
   SitePricingRoute: SitePricingRoute,
   SiteSearchRoute: SiteSearchRoute,
   SiteTermsRoute: SiteTermsRoute,
+  SiteToolsRoute: SiteToolsRoute,
   SiteWidgetRoute: SiteWidgetRoute,
+  SiteWorkingDaysCalculatorRoute: SiteWorkingDaysCalculatorRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteCalendarsCountryRoute: SiteCalendarsCountryRoute,
   SiteLongWeekendsCountryRoute: SiteLongWeekendsCountryRoute,
@@ -502,6 +607,7 @@ const rootRouteChildren: RootRouteChildren = {
   LlmsDottxtRoute: LlmsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   EmbedCountryRoute: EmbedCountryRoute,
+  EmbedCountdownRoute: EmbedCountdownRoute,
   IcsCountryRoute: IcsCountryRoute,
 }
 export const routeTree = rootRouteImport

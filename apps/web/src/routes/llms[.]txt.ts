@@ -27,6 +27,14 @@ Countries are identified by ISO 3166-1 alpha-2 codes in lowercase (\`us\`, \`in\
 - Long weekends: \`${SITE_URL}/long-weekends/{slug}?year={year}\`
 - Holiday calendar maker: \`${SITE_URL}/calendars/{slug}\`
 
+## Tools
+
+- [All tools](${SITE_URL}/tools)
+- [Countdown timer](${SITE_URL}/countdown): \`/countdown?title={name}&date={YYYY-MM-DD}\` or \`{YYYY-MM-DDTHH:mm}\`
+- [Working days calculator](${SITE_URL}/working-days-calculator): business days between two dates and working days per month, excluding public holidays. \`?country={code}&year={year}\`
+- [Leave planner](${SITE_URL}/leave-planner): bridges public holidays and weekends to get the most days off from a leave budget. \`?country={code}&year={year}&leaves={1-40}\`
+- Countdown widget: \`${SITE_URL}/embed/countdown?holiday={code}/{holiday-slug}\` as an iframe
+
 ## Data feeds (free, no key)
 
 - iCal feed: \`${SITE_URL}/ics/{code}\` returns the current and next year as \`text/calendar\`. Add \`?year={year}\` for one year, or \`?public=1\` for public holidays only.

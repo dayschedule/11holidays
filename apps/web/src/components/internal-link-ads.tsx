@@ -5,6 +5,8 @@ import {
   FileDown,
   FileSpreadsheet,
   ArrowRight,
+  Briefcase,
+  Plane,
   type LucideIcon,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +19,7 @@ import { Link, type LinkComponentProps } from '@tanstack/react-router';
 import { AdsBlock } from './ads-block';
 
 type AdCard = {
-  link: Pick<LinkComponentProps, 'to' | 'params'>;
+  link: Pick<LinkComponentProps, 'to' | 'params' | 'search'>;
   key: string;
   title: string;
   description: string;
@@ -67,6 +69,24 @@ export function InternalLinksAd({ country, className }: InternalLinksAdProps) {
       cta: 'Plan now',
       icon: Palmtree,
       tone: 'from-sky-500/15 to-indigo-500/15 text-sky-600 dark:text-sky-400',
+    },
+    {
+      key: 'leave-planner',
+      link: { to: '/leave-planner', search: { country: code } },
+      title: `Leave planner ${currentYear}`,
+      description: 'Turn a few leaves into the longest breaks',
+      cta: 'Maximize leaves',
+      icon: Plane,
+      tone: 'from-teal-500/15 to-emerald-500/15 text-teal-600 dark:text-teal-400',
+    },
+    {
+      key: 'working-days',
+      link: { to: '/working-days-calculator', search: { country: code } },
+      title: `Working days in ${country.name}`,
+      description: 'Business days calculator and monthly count',
+      cta: 'Calculate',
+      icon: Briefcase,
+      tone: 'from-lime-500/15 to-green-500/15 text-lime-700 dark:text-lime-400',
     },
     {
       key: 'upcoming',

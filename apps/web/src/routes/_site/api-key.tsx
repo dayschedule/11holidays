@@ -1,15 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApiKeySignup from '@/components/signup';
-import { Suspense } from 'react';
 import { PageLayout } from '@/components/page-layout';
+import { createFileRoute } from '@tanstack/react-router';
+import { seo } from '@/lib/seo';
+import { z } from 'zod';
 
-export const metadata = {
-  title: 'Get API Key for Holidays API - 11holidays.com',
-  description:
-    'Sign up for a free API key to access holiday data for 230+ countries. Start integrating holidays data with your apps today.',
-};
+export const Route = createFileRoute('/_site/api-key')({
+  validateSearch: z.object({
+    step: z.enum(['email', 'otp', 'upgrade', 'generate']).optional().catch(undefined),
+    email: z.string().optional().catch(undefined),
+  }),
+  head: () =>
+    seo({
+      title: 'Get API Key for Holidays API - 11holidays.com',
+      description:
+        'Sign up for a free API key to access holiday data for 230+ countries. Start integrating holidays data with your apps today.',
+      path: '/api-key',
+    }),
+  component: ApiKeyPage,
+});
 
-export default function ApiKeyPage() {
+function ApiKeyPage() {
+  const { step, email } = Route.useSearch();
+
   return (
     <PageLayout sidebar={false}>
       <div className="space-y-2 text-center">
@@ -21,9 +34,7 @@ export default function ApiKeyPage() {
         </p>
       </div>
 
-      <Suspense fallback={<div>Loading...</div>}>
-        <ApiKeySignup />
-      </Suspense>
+      <ApiKeySignup step={step} email={email} />
 
       <Card className="bg-muted/50">
         <CardHeader>

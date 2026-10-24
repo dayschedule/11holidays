@@ -1,4 +1,3 @@
-"use client"
 
 import { cn } from "cn"
 import { GripVerticalIcon } from "lucide-react"

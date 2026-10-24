@@ -1,166 +1,146 @@
-import { notFound } from 'next/navigation';
-import { fetchHolidays } from '@/lib/holidays-api';
-import { getCountryBySlug } from '@/lib/countries-data';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link, createFileRoute, notFound } from '@tanstack/react-router';
 import { format, isAfter, parseISO, startOfDay } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
+import { ArrowRight, Palmtree } from 'lucide-react';
+import { z } from 'zod';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { generateLongWeekends } from '@/lib/long-weekends';
 import { CountryFlag } from '@/components/country-flag';
 import { LongWeekendsTable } from '@/components/long-weekends-table';
+import { OccasionsList } from '@/components/occasions-list';
 import { PageLayout } from '@/components/page-layout';
-import { OccasionsList } from '../../../components/occasions-list';
-import { ArrowRight } from 'lucide-react';
-import { fetchUpcomingOccasions } from '../../../lib/occassion-api';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { getCountryBySlug } from '@/lib/countries-data';
+import { generateLongWeekends } from '@/lib/long-weekends';
+import { seo } from '@/lib/seo';
+import { cn } from '@/lib/utils';
+import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
 
-interface PageProps {
-  params: Promise<{
-    country: string;
-  }>;
-}
+export const Route = createFileRoute('/_site/long-weekends/$country')({
+  validateSearch: z.object({ year: z.coerce.number().int().min(2000).max(2100).optional().catch(undefined) }),
+  loaderDeps: ({ search }) => ({ year: search.year ?? new Date().getFullYear() }),
+  loader: async ({ params, deps }) => {
+    const country = getCountryBySlug(params.country);
+    if (!country) throw notFound();
+    const [{ holidays }, occasions] = await Promise.all([
+      getCountryHolidays({ data: { code: country.code, year: deps.year } }),
+      getUpcomingOccasions({ data: { code: country.code, limit: 4 } }),
+    ]);
+    return { country, year: deps.year, holidays, occasions };
+  },
+  head: ({ loaderData, params }) =>
+    loaderData
+      ? seo({
+          title: `Long Weekends in ${loaderData.year} - ${loaderData.country.name} | 11holidays`,
+          description: `List of long weekends in ${loaderData.country.name} for ${loaderData.year}. Plan trips with extended weekends and find which leaves to take for the longest breaks.`,
+          path: `/long-weekends/${params.country}`,
+        })
+      : {},
+  component: LongWeekendsPage,
+});
 
-export async function generateMetadata({ params }: PageProps) {
-  const { country: countryParam } = await params;
-
-  const country = getCountryBySlug(countryParam);
-  if (!country) {
-    return {
-      title: 'Country Not Found',
-    };
-  }
-
-  const year = new Date().getFullYear();
-
-  return {
-    title: `Long Weekends in ${year} - ${country.name} | 11holidays`,
-    description: `List of long weekends in ${country.name} for ${year}. Plan your trips with extended weekends, view detailed holiday breakdowns and long weekend calendars.`,
-  };
-}
-
-export default async function LongWeekendsPage({ params }: PageProps) {
-  const { country: countryParam } = await params;
-
-  const country = getCountryBySlug(countryParam);
-  if (!country) {
-    notFound();
-  }
-
-  const { env } = getCloudflareContext();
-  const year = new Date().getFullYear();
-  const holidaysData = await fetchHolidays(env, country.code, year);
-
+function LongWeekendsPage() {
+  const { country, year, holidays, occasions } = Route.useLoaderData();
   const today = startOfDay(new Date());
-  const longWeekends = generateLongWeekends(holidaysData.holidays);
-
-  const upcoming = longWeekends
-    .filter((lw) => isAfter(parseISO(lw.endDate), today))
-    .slice(0, 5);
-
-  const upcomingOccasions = await fetchUpcomingOccasions(env, country.code, 4);
-  const countryCode = country.code.toLowerCase();
+  const longWeekends = generateLongWeekends(holidays);
+  const upcoming = longWeekends.filter((lw) => isAfter(parseISO(lw.endDate), today)).slice(0, 5);
+  const thisYear = new Date().getFullYear();
 
   return (
     <PageLayout country={country}>
       <Breadcrumb
         items={[
-          { label: 'Home', href: '/' },
-          { label: 'Countries', href: '/countries' },
+          { label: 'Home', to: '/' },
+          { label: 'Countries', to: '/countries' },
           { label: `Long Weekends in ${year} ${country.name}` },
         ]}
       />
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-4">
-            <CountryFlag
-              countryCode={country.code}
-              className="w-12 h-8 sm:w-16 sm:h-12 rounded"
-            />
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Long Weekends in {year} {country.name}
-            </h1>
-          </div>
-          <p className="text-lg text-muted-foreground">
-            List of long Weekends in {country.name} for year {year}
-          </p>
+      <div className="flex items-center gap-4">
+        <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md" />
+        <div>
+          <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+            Long Weekends in {year} · {country.name}
+          </h1>
+          <p className="text-muted-foreground">Make the most of your leaves with these extended breaks</p>
         </div>
       </div>
 
-      <section>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              Upcoming Long Weekends in {year}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {upcoming.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No upcoming long weekends found.
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {upcoming.map((lw) => (
-                  <li key={lw.id} className="flex items-start gap-2 text-sm">
-                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                    <div>
-                      <span className="font-medium">{lw.occasion}</span>
-                      <span className="text-muted-foreground">
-                        {' — '}
-                        {format(parseISO(lw.startDate), 'd MMM')} –{' '}
-                        {format(parseISO(lw.endDate), 'd MMM yyyy')}
-                      </span>
-                      <Badge variant="secondary" className="ml-2 text-xs">
-                        {lw.days} days
-                      </Badge>
-                      {lw.leavesNeeded > 0 && (
-                        <span className="ml-2 inline-flex items-center gap-1 text-muted-foreground">
-                          {lw.leavesNeeded} leave
-                          {lw.leavesNeeded > 1 ? 's' : ''}
-                        </span>
-                      )}
-                      {lw.tip && (
-                        <p className="text-muted-foreground mt-0.5">{lw.tip}</p>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+      <div className="flex gap-1 self-start rounded-full border bg-card p-1">
+        {[thisYear, thisYear + 1].map((y) => (
+          <Link
+            key={y}
+            to="/long-weekends/$country"
+            params={{ country: country.slug! }}
+            search={{ year: y === thisYear ? undefined : y }}
+            className={cn(
+              'rounded-full px-4 py-1 text-sm font-medium',
+              y === year ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
             )}
-          </CardContent>
-        </Card>
-      </section>
+          >
+            {y}
+          </Link>
+        ))}
+      </div>
+
+      {upcoming.length > 0 && (
+        <section className="grid gap-3 sm:grid-cols-2">
+          {upcoming.map((lw, i) => (
+            <div
+              key={lw.id}
+              className={cn(
+                'relative overflow-hidden rounded-2xl border p-5 shadow-xs',
+                i === 0 ? 'bg-gradient-to-br from-festive-teal/15 via-festive-saffron/10 to-festive-coral/10 sm:col-span-2' : 'bg-card'
+              )}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  {i === 0 && <p className="text-xs font-semibold uppercase tracking-wider text-primary">Next long weekend</p>}
+                  <p className="text-lg font-semibold">{lw.occasion}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {format(parseISO(lw.startDate), 'EEE d MMM')} – {format(parseISO(lw.endDate), 'EEE d MMM yyyy')}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="inline-flex items-center gap-1 text-3xl font-bold">
+                    <Palmtree className="h-5 w-5 text-festive-teal" />
+                    {lw.days}
+                  </span>
+                  <span className="text-xs text-muted-foreground">days off</span>
+                </div>
+              </div>
+              {lw.leavesNeeded > 0 && (
+                <Badge variant="secondary" className="mt-3">
+                  {lw.leavesNeeded} leave{lw.leavesNeeded > 1 ? 's' : ''} needed
+                </Badge>
+              )}
+              {lw.tip && <p className="mt-2 text-sm text-muted-foreground">{lw.tip}</p>}
+            </div>
+          ))}
+        </section>
+      )}
+
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            Long Weekends in {year} {country.name}
+          <h2 className="text-2xl font-bold">
+            All long weekends in {year}
           </h2>
           <p className="text-sm text-muted-foreground">
-            Month-wise list of long weekends in {year} {country.name}, showing
-            dates, total days off, and the holidays that make them possible.
+            Month-wise list showing dates, total days off and the holidays that make them possible.
           </p>
         </div>
-
         <LongWeekendsTable longWeekends={longWeekends} />
+      </section>
 
-        <section className="w-full mt-8 space-y-4 text-left">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-bold">
-              Explore more holidays in {country.name}
-            </h2>
-
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/holidays/${countryCode}`}>
-                View All <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-          </div>
-
-          <OccasionsList occasions={upcomingOccasions} />
-        </section>
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-bold">Explore more holidays in {country.name}</h2>
+          <Button variant="outline" size="sm" asChild className="rounded-full">
+            <Link to="/holidays/$country" params={{ country: country.code.toLowerCase() }}>
+              View all <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <OccasionsList occasions={occasions} />
       </section>
     </PageLayout>
   );

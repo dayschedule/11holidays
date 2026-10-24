@@ -1,13 +1,20 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { PageLayout } from '../../components/page-layout';
+import { PageLayout } from '@/components/page-layout';
+import { createFileRoute } from '@tanstack/react-router';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Terms of Service - 11holidays.com',
-  description:
-    'Terms of service and conditions for using the 11holidays.com API and services.',
-};
+export const Route = createFileRoute('/_site/terms')({
+  head: () =>
+    seo({
+      title: 'Terms of Service - 11holidays.com',
+      description:
+        'Terms of service and conditions for using the 11holidays.com API and services.',
+      path: '/terms',
+    }),
+  component: TermsPage,
+});
 
-export default function TermsPage() {
+function TermsPage() {
   return (
     <PageLayout sidebar={false}>
       <div className="space-y-2">

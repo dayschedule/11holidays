@@ -1,32 +1,29 @@
+import { createFileRoute } from '@tanstack/react-router';
 import { CountryList } from '@/components/country-list';
-import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 import { PageLayout } from '@/components/page-layout';
+import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
+import { currentYear } from '@/lib/holidays-api';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'All Countries - 11holidays.com',
-  description:
-    'Browse public holidays for 230+ countries. Select a country to view its holiday list.',
-};
+export const Route = createFileRoute('/_site/countries')({
+  head: () =>
+    seo({
+      title: 'All Countries - Public Holidays for 230+ Countries | 11holidays.com',
+      description: 'Browse public holidays for 230+ countries. Select a country to view its holiday list.',
+      path: '/countries',
+    }),
+  component: CountriesPage,
+});
 
-export default function CountriesPage() {
-  const currentYear = new Date().getFullYear();
-
+function CountriesPage() {
   return (
     <PageLayout sidebar={false}>
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight md:text-4xl">
-          Browse Countries
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Select a country to view its public holidays for {currentYear}
-        </p>
+        <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Browse countries</h1>
+        <p className="text-muted-foreground">Select a country to view its public holidays for {currentYear}</p>
       </div>
 
-      <CountryList
-        countries={COUNTRIES_WITH_SLUG}
-        currentYear={currentYear}
-        type="holidays"
-      />
+      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear} type="holidays" />
     </PageLayout>
   );
 }

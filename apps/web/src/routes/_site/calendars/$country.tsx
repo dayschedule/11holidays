@@ -1,118 +1,82 @@
-import { COUNTRIES_WITH_SLUG, getCountryBySlug } from '@/lib/countries-data';
-import { CalendarGenerator } from '../components/calendar-generator';
-import { notFound } from 'next/navigation';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { fetchHolidays } from '@/lib/holidays-api';
-import { Breadcrumb } from '@/components/breadcrumb';
-import { PageLayout } from '@/components/page-layout';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { OccasionsList } from '@/components/occasions-list';
+import { Link, createFileRoute, notFound } from '@tanstack/react-router';
 import { ArrowRight } from 'lucide-react';
-import { fetchUpcomingOccasions } from '@/lib/occassion-api';
+import { Breadcrumb } from '@/components/breadcrumb';
+import { CalendarGenerator } from '@/components/calendar/calendar-generator';
+import { OccasionsList } from '@/components/occasions-list';
+import { Button } from '@/components/ui/button';
+import { getCountryBySlug } from '@/lib/countries-data';
+import { calendarSearchSchema } from '@/lib/custom-calendar';
+import { seo } from '@/lib/seo';
+import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
 
-interface PageProps {
-  params: Promise<{
-    country: string;
-  }>;
-}
+export const Route = createFileRoute('/_site/calendars/$country')({
+  validateSearch: calendarSearchSchema,
+  loaderDeps: ({ search }) => ({ year: search.year ?? new Date().getFullYear() }),
+  loader: async ({ params, deps }) => {
+    const country = getCountryBySlug(params.country);
+    if (!country) throw notFound();
+    const [{ holidays }, occasions] = await Promise.all([
+      getCountryHolidays({ data: { code: country.code, year: deps.year } }),
+      getUpcomingOccasions({ data: { code: country.code, limit: 4 } }),
+    ]);
+    return { country, year: deps.year, holidays, occasions };
+  },
+  head: ({ loaderData, params }) => {
+    if (!loaderData) return {};
+    const { country, year } = loaderData;
+    return seo({
+      title: `${country.name} Holiday Calendar ${year} - Printable, Customizable & Free PDF | 11holidays`,
+      description: `Create a custom ${country.name} holiday calendar for ${year}. Select holidays, add company days off, choose a theme and print, download PDF/PNG, or embed it on your website.`,
+      keywords: [
+        `${country.name} holiday calendar ${year}`,
+        `printable ${country.name} calendar`,
+        `${country.name} company holiday list`,
+        'custom holiday calendar',
+        'holiday calendar generator',
+      ],
+      path: `/calendars/${params.country}`,
+    });
+  },
+  component: CalendarGeneratorPage,
+});
 
-export async function generateMetadata({ params }: PageProps) {
-  const { country: countrySlug } = await params;
-
-  const country = getCountryBySlug(countrySlug);
-  if (!country) {
-    return {
-      title: 'Country Not Found',
-    };
-  }
-
-  const year = new Date().getFullYear();
-
-  return {
-    title: `${country.name} Holidays Calendar ${year} | Free PDF & PNG Download`,
-    description: `Generate and download a printable ${country.name} holidays calendar for ${year}. Customize themes, view public holidays by month or year, and export as PDF or PNG for free.`,
-    keywords: [
-      `${country.name} holidays`,
-      `${country.name} public holidays`,
-      `${country.name} holiday calendar`,
-      `${country.name} holidays ${year}`,
-      `printable ${country.name} calendar`,
-      `${country.name} holiday planner`,
-      `holiday calendar generator`,
-      `public holiday calendar`,
-    ],
-    openGraph: {
-      title: `${country.name} Holidays Calendar ${year}`,
-      description: `Generate a customizable ${country.name} public holidays calendar and download it as PDF or PNG.`,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${country.name} Holidays Calendar ${year}`,
-      description: `Create and download a printable ${country.name} holiday calendar for ${year}.`,
-    },
-  };
-}
-
-export default async function CalendarGeneratorPage({ params }: PageProps) {
-  const { country: countrySlug } = await params;
-
-  const country = getCountryBySlug(countrySlug);
-  if (!country) {
-    return notFound();
-  }
-
-  const currentYear = new Date().getFullYear();
-  const { env } = getCloudflareContext();
-  const holidaysData = await fetchHolidays(env, country.code, currentYear);
-
-  const upcomingOccasions = await fetchUpcomingOccasions(env, country.code, 4);
-  const countryCode = country.code.toLowerCase();
+function CalendarGeneratorPage() {
+  const { country, year, holidays, occasions } = Route.useLoaderData();
+  const search = Route.useSearch();
 
   return (
-    <PageLayout country={country}>
+    <div className="space-y-8 py-8">
       <Breadcrumb
         items={[
-          { label: 'Home', href: '/' },
-          { label: 'Calendars', href: '/calendars' },
+          { label: 'Home', to: '/' },
+          { label: 'Calendars', to: '/calendars' },
           { label: `${country.name} Calendar` },
         ]}
       />
 
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-          {country.name} Holidays Calendar
+      <div className="no-print space-y-2">
+        <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          {country.name} Holiday Calendar {year}
         </h1>
-        <p className="text-muted-foreground">
-          Create a {currentYear} {country.name} holidays calendar including all
-          public and national holidays. Easily customize your design and
-          download or print the calendar as a PDF or image.
+        <p className="max-w-3xl text-muted-foreground">
+          Pick the holidays you observe, add your own days off and save it as your company or team calendar. Print it,
+          download as PDF, PNG or iCal, share a link, or embed it on your website.
         </p>
       </div>
 
-      <CalendarGenerator
-        countries={COUNTRIES_WITH_SLUG}
-        currentYear={currentYear}
-        preselectedCountry={country.code}
-        holidaysData={holidaysData}
-      />
+      <CalendarGenerator country={country} year={year} holidays={holidays} search={search} />
 
-      <section className="w-full mt-8 space-y-4 text-left">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold">
-            Explore holidays in {country.name}
-          </h2>
-
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/holidays/${countryCode}`}>
-              View All <ArrowRight className="w-4 h-4" />
+      <section className="no-print space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-bold">Explore holidays in {country.name}</h2>
+          <Button variant="outline" size="sm" asChild className="rounded-full">
+            <Link to="/holidays/$country" params={{ country: country.code.toLowerCase() }}>
+              View all <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
         </div>
-
-        <OccasionsList occasions={upcomingOccasions} />
+        <OccasionsList occasions={occasions} columns={4} />
       </section>
-    </PageLayout>
+    </div>
   );
 }

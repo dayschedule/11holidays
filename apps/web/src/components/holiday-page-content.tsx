@@ -1,291 +1,336 @@
-'use client';
-
-import { useTransition } from 'react';
-import { HolidaysTable } from '@/components/holidays-table';
+import { useMemo, useState } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { format, isAfter, parseISO, startOfDay } from 'date-fns';
+import { AlertCircle, CalendarDays, CalendarPlus, Code2, LayoutGrid, List, Sunset } from 'lucide-react';
 import { ApiExamples } from '@/components/api-examples';
-import { YearSelector } from '@/components/year-selector';
-import { CountryFlag } from '@/components/country-flag';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { COUNTRIES_WITH_SLUG, Country } from '@/lib/countries-data';
-import { AlertCircle, Calendar, List } from 'lucide-react';
-import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
-import { Holiday } from '@/lib/holidays-api';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
+import { CountryFlag } from '@/components/country-flag';
+import { CountrySelect } from '@/components/country-select';
+import { Countdown } from '@/components/festive';
+import { HolidaysTable } from '@/components/holidays-table';
 import { PageLayout } from '@/components/page-layout';
+import { HolidayLegend, YearGrid } from '@/components/calendar/year-grid';
+import { Button } from '@/components/ui/button';
+import type { Country } from '@/lib/countries-data';
+import { holidayKind, occasionParams, type Holiday } from '@/lib/holidays-api';
+import { generateLongWeekends } from '@/lib/long-weekends';
+import { SITE_URL } from '@/lib/seo';
+import { cn } from '@/lib/utils';
 
 interface HolidayPageContentProps {
   country: Country;
   year: number;
-  holidaysData: {
-    holidays: Holiday[];
-    country: string;
-    year: number;
-  };
+  holidays: Holiday[];
 }
 
-const publicHolidays = ['public', 'gazetted', 'national', 'federal'];
+export function HolidayPageContent({ country, year, holidays }: HolidayPageContentProps) {
+  const navigate = useNavigate();
+  const [view, setView] = useState<'list' | 'calendar'>('list');
+  const code = country.code.toLowerCase();
 
-const countPublicHolidays = (holidays: Holiday[]) => {
-  return holidays.filter((h) =>
-    publicHolidays.some((x) => h.type.toLowerCase().includes(x)),
-  ).length;
-};
+  const stats = useMemo(() => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const longWeekends = generateLongWeekends(holidays).filter((lw) => lw.leavesNeeded === 0);
+    return {
+      total: holidays.length,
+      public: holidays.filter((h) => holidayKind(h.type) === 'public').length,
+      longWeekends: longWeekends.length,
+      upcomingLongWeekend: longWeekends.find((lw) => isAfter(parseISO(lw.endDate), startOfDay(new Date()))),
+      next: holidays.find((h) => h.date >= today),
+    };
+  }, [holidays]);
 
-export function HolidayPageContent({
-  country,
-  year,
-  holidaysData,
-}: HolidayPageContentProps) {
-  const router = useRouter();
+  const calendarHolidays = useMemo(
+    () => holidays.map((h) => ({ id: String(h.holiday_id), date: h.date, name: h.name, type: h.type, url: h.url })),
+    [holidays]
+  );
 
-  const [, startTransition] = useTransition();
-
-  const handleCountryChange = (code: string) => {
-    startTransition(() => {
-      router.push(`/holidays/${code.toLowerCase()}/${year}`);
-    });
-  };
-
-  const handleYearChange = (newYear: string) => {
-    startTransition(() => {
-      router.push(`/holidays/${country.code.toLowerCase()}/${newYear}`);
-    });
-  };
+  const subscribeUrl = `${SITE_URL.replace('https://', 'webcal://')}/ics/${code}`;
+  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 1 + i);
 
   return (
     <PageLayout country={country}>
       <Breadcrumb
         items={[
-          { label: 'Home', href: '/' },
-          { label: 'Countries', href: '/countries' },
-          { label: `${country.name} Holidays` },
+          { label: 'Home', to: '/' },
+          { label: 'Countries', to: '/countries' },
+          { label: `${country.name} Holidays`, to: '/holidays/$country', params: { country: code } },
+          { label: String(year) },
         ]}
       />
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <CountryFlag
-              countryCode={country.code}
-              className="w-12 h-8 sm:w-16 sm:h-12 rounded"
-            />
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
-              {country.name} {year} Holidays
+      <header className="space-y-5">
+        <div className="flex items-center gap-4">
+          <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md sm:h-12 sm:w-16" />
+          <div>
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+              {country.name} Holidays {year}
             </h1>
+            <p className="text-muted-foreground">
+              All public holidays, festivals and observances in {country.name} for {year}
+            </p>
           </div>
-          <p className="text-base sm:text-lg text-muted-foreground">
-            List of public holidays in {country.name} for year {year}
-          </p>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:flex-wrap lg:gap-6">
-        <div className="w-full sm:col-span-1 lg:flex-1 lg:min-w-[180px] space-y-2">
-          <label
-            htmlFor="country"
-            className="text-sm font-medium text-muted-foreground"
-          >
-            Country Code
-          </label>
-          <Select
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <CountrySelect
             value={country.code}
-            onValueChange={(y) => handleCountryChange(y)}
-          >
-            <SelectTrigger id="country" className="w-full">
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRIES_WITH_SLUG.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  <span className="flex items-center gap-2">
-                    <CountryFlag
-                      countryCode={country.code}
-                      className="w-6 h-4 rounded"
-                    />
-                    <span>{country.name}</span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="w-full sm:col-span-1 lg:flex-1 lg:min-w-[140px] space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">
-            Year
-          </label>
-          <YearSelector currentYear={year} onChange={handleYearChange} />
-        </div>
-
-        <div className="w-full sm:col-span-2 lg:w-auto lg:flex lg:items-end">
-          <div className="flex w-full lg:w-auto rounded-md shadow-sm">
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="flex-1 sm:flex-none rounded-r-none border-r-0"
-            >
+            onChange={(c) =>
+              navigate({ to: '/holidays/$country/$slug', params: { country: c.code.toLowerCase(), slug: String(year) } })
+            }
+            className="sm:w-64"
+          />
+          <div className="flex gap-1 overflow-x-auto rounded-full border bg-card p-1">
+            {years.map((y) => (
               <Link
-                href={`/holidays/${country.code.toLowerCase()}/${year}`}
-                className="flex items-center justify-center"
+                key={y}
+                to="/holidays/$country/$slug"
+                params={{ country: code, slug: String(y) }}
+                className={cn(
+                  'rounded-full px-3 py-1 text-sm font-medium transition-colors',
+                  y === year ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
+                )}
               >
-                <List className="w-4 h-4" />
+                {y}
               </Link>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="flex-1 sm:flex-none rounded-l-none"
-            >
-              <Link
-                href={`/calendars/${country.slug}`}
-                className="flex items-center justify-center"
-              >
-                <Calendar className="w-4 h-4" />
-              </Link>
-            </Button>
+            ))}
           </div>
+        </div>
+      </header>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Stat label="Total holidays" value={stats.total} />
+        <Stat label="Public holidays" value={stats.public} accent />
+        <Stat label="Long weekends" value={stats.longWeekends} />
+        <div className="col-span-2 rounded-2xl border bg-card p-4 shadow-xs lg:col-span-1">
+          <p className="text-xs font-medium text-muted-foreground">Next holiday</p>
+          {stats.next ? (
+            <>
+              {stats.next.url ? (
+                <Link
+                  to="/holidays/$country/$slug"
+                  params={occasionParams(stats.next.url)}
+                  className="line-clamp-1 font-semibold hover:text-primary"
+                >
+                  {stats.next.name}
+                </Link>
+              ) : (
+                <p className="line-clamp-1 font-semibold">{stats.next.name}</p>
+              )}
+              <p className="text-xs text-muted-foreground">{format(parseISO(stats.next.date), 'EEE, MMM d')}</p>
+            </>
+          ) : (
+            <p className="font-semibold">—</p>
+          )}
         </div>
       </div>
 
-      <HolidaysTable
-        holidays={holidaysData.holidays}
-        country={country}
-        year={year}
-        filter={true}
-      />
+      {stats.next && year === new Date().getFullYear() && (
+        <div className="flex flex-col items-start gap-3 rounded-2xl border bg-gradient-to-r from-festive-coral/10 via-festive-saffron/10 to-festive-violet/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm">
+            Countdown to <span className="font-semibold">{stats.next.name}</span>
+          </p>
+          <Countdown date={stats.next.date} variant="card" />
+        </div>
+      )}
 
-      <div className="flex items-start gap-3 rounded-lg border border-muted bg-muted/30 p-4 text-sm">
-        <AlertCircle className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-        <p className="text-muted-foreground leading-relaxed">
-          We strive to provide an accurate and up-to-date holiday list for{' '}
-          {country.name}. However, please note that some holiday dates may
-          change. If you discover any discrepancies, kindly{' '}
-          <Link
+      {/* View toggle */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="inline-flex rounded-full border bg-card p-1">
+          <button
+            type="button"
+            onClick={() => setView('list')}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium',
+              view === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+            )}
+          >
+            <List className="h-4 w-4" /> List
+          </button>
+          <button
+            type="button"
+            onClick={() => setView('calendar')}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium',
+              view === 'calendar' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+            )}
+          >
+            <LayoutGrid className="h-4 w-4" /> Calendar
+          </button>
+        </div>
+        <Button variant="outline" size="sm" asChild className="rounded-full">
+          <Link to="/calendars/$country" params={{ country: country.slug! }} search={{ year }}>
+            <CalendarDays className="h-4 w-4" /> Customize & print
+          </Link>
+        </Button>
+      </div>
+
+      {view === 'list' ? (
+        <HolidaysTable holidays={holidays} country={country} year={year} filter />
+      ) : (
+        <div className="space-y-4">
+          <HolidayLegend />
+          <YearGrid year={year} holidays={calendarHolidays} />
+        </div>
+      )}
+
+      {/* Tools */}
+      <div className="grid gap-3 sm:grid-cols-3">
+        <ToolLink
+          icon={<CalendarPlus className="h-5 w-5" />}
+          title="Subscribe to calendar"
+          text="Auto-updating feed for Google, Outlook & Apple"
+          href={`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(subscribeUrl)}`}
+          secondary={{ label: 'webcal / iCal link', href: subscribeUrl }}
+        />
+        <Link
+          to="/widget"
+          search={{ country: country.slug }}
+          className="group flex items-start gap-3 rounded-2xl border bg-card p-4 shadow-xs transition hover:border-primary/40"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-festive-teal/15 text-festive-teal">
+            <Code2 className="h-5 w-5" />
+          </span>
+          <span>
+            <span className="block font-semibold group-hover:text-primary">Embed on your website</span>
+            <span className="text-sm text-muted-foreground">Free {country.name} holidays widget</span>
+          </span>
+        </Link>
+        <Link
+          to="/long-weekends/$country"
+          params={{ country: country.slug! }}
+          className="group flex items-start gap-3 rounded-2xl border bg-card p-4 shadow-xs transition hover:border-primary/40"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-festive-saffron/20 text-amber-600 dark:text-festive-saffron">
+            <Sunset className="h-5 w-5" />
+          </span>
+          <span>
+            <span className="block font-semibold group-hover:text-primary">Plan long weekends</span>
+            <span className="text-sm text-muted-foreground">
+              {stats.upcomingLongWeekend
+                ? `Next: ${stats.upcomingLongWeekend.occasion} (${stats.upcomingLongWeekend.days} days)`
+                : 'Make the most of your leaves'}
+            </span>
+          </span>
+        </Link>
+      </div>
+
+      <div className="flex items-start gap-3 rounded-2xl border border-dashed bg-muted/30 p-4 text-sm">
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+        <p className="leading-relaxed text-muted-foreground">
+          We strive to provide an accurate and up-to-date holiday list for {country.name}. However,
+          some holiday dates may change. If you discover any discrepancies, kindly{' '}
+          <a
             target="_blank"
-            rel="nofollow"
+            rel="nofollow noreferrer"
             href="https://github.com/dayschedule/11holidays/issues"
             className="text-primary hover:underline"
           >
             report to us
-          </Link>
+          </a>
           .
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Holiday Type Color Legend</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Holidays are color-coded based on their types:
+      <section className="space-y-6 rounded-2xl border bg-card p-5 shadow-xs sm:p-6">
+        <h2 className="text-2xl font-bold">Frequently asked questions</h2>
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">
+            How many holidays are there in {country.name} in {year}?
+          </h3>
+          <p className="text-muted-foreground">
+            There are {stats.public} public holidays and {stats.total} holidays and observances in total in{' '}
+            {country.name} in {year}. Planning ahead?{' '}
+            <Link to="/upcoming-holidays/$country" params={{ country: country.slug! }} className="text-primary underline">
+              Check upcoming holidays
+            </Link>
           </p>
-          <ul className="space-y-3">
-            <li className="flex items-center gap-3">
-              <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30">
-                Public Holiday
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Public, National, Federal, and Gazetted holidays
-              </span>
-            </li>
-            <li className="flex items-center gap-3">
-              <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30">
-                Local Holiday
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Local, Regional, State, and Provincial holidays
-              </span>
-            </li>
-            <li className="flex items-center gap-3">
-              <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                Other Holiday
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Observances and other types of holidays
-              </span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <h3 className="font-semibold text-lg mb-2">
-              How many holidays in {country.name} this year in {year}?
-            </h3>
-            <p className="text-muted-foreground">
-              There are {countPublicHolidays(holidaysData.holidays)} public
-              holidays in {country.name} in {year}. If you are planning ahead?{' '}
-              <Link
-                href={`/upcoming-holidays/${country.slug}`}
-                className="underline"
-              >
-                Check upcoming holidays
-              </Link>
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-lg mb-2">
-              How to retrieve the {country.name} holidays list via API?
-            </h3>
-            <p className="text-muted-foreground mb-3">
-              Simply make a GET request to{' '}
-              <code className="px-2 py-1 bg-muted rounded text-sm">
-                v1/holidays?country={country.code}&year={year}
-              </code>{' '}
-              API to retrieve this list of {country.name} holidays.
-            </p>
-            <p className="text-muted-foreground mb-3">
-              Here is an example using Node.js and our{' '}
-              <a
-                href="https://www.npmjs.com/package/11holidays"
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                official package on NPM
-              </a>
-              :
-            </p>
-            <div className="rounded-lg bg-slate-950 p-3 sm:p-4 overflow-x-auto">
-              <pre className="text-xs sm:text-sm text-slate-50 overflow-x-auto leading-tight sm:leading-normal">
-                <code>{`// Install the 11holidays package from NPM
-// npm i 11holidays
-
+        </div>
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">
+            How do I add {country.name} holidays to my calendar?
+          </h3>
+          <p className="text-muted-foreground">
+            Use the <strong>Subscribe to calendar</strong> link above to add an auto-updating feed to
+            Google Calendar, Outlook or Apple Calendar, or use <strong>Export → Calendar (.ics)</strong>{' '}
+            to download this year&apos;s holidays.
+          </p>
+        </div>
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">
+            How to retrieve the {country.name} holidays list via API?
+          </h3>
+          <p className="mb-3 text-muted-foreground">
+            Make a GET request to{' '}
+            <code className="rounded bg-muted px-2 py-1 text-sm">
+              v1/holidays?country={country.code}&year={year}
+            </code>{' '}
+            to retrieve this list. Here is an example using our{' '}
+            <a
+              href="https://www.npmjs.com/package/11holidays"
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              official package on NPM
+            </a>
+            :
+          </p>
+          <pre className="overflow-x-auto rounded-xl bg-slate-950 p-4 text-xs text-slate-50 sm:text-sm">
+            <code>{`// npm i 11holidays
 import HolidaysApi from '11holidays';
 
 const instance = new HolidaysApi(API_KEY);
 const holidays = await instance.holidays.list({
   country: '${country.code}',
   year: '${year}'
-});
-console.log(holidays);`}</code>
-              </pre>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+});`}</code>
+          </pre>
+        </div>
+      </section>
 
       <ApiExamples countryCode={country.code} year={year} />
     </PageLayout>
+  );
+}
+
+function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+  return (
+    <div className="rounded-2xl border bg-card p-4 shadow-xs">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className={cn('text-3xl font-bold', accent && 'text-primary')}>{value}</p>
+    </div>
+  );
+}
+
+function ToolLink({
+  icon,
+  title,
+  text,
+  href,
+  secondary,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+  href: string;
+  secondary: { label: string; href: string };
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-2xl border bg-card p-4 shadow-xs">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-festive-coral/15 text-festive-coral">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <a href={href} target="_blank" rel="noreferrer nofollow" className="block font-semibold hover:text-primary">
+          {title}
+        </a>
+        <span className="block text-sm text-muted-foreground">{text}</span>
+        <a href={secondary.href} className="text-xs text-primary hover:underline">
+          {secondary.label}
+        </a>
+      </span>
+    </div>
   );
 }

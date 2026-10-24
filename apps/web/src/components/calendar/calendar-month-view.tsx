@@ -1,127 +1,77 @@
-import { CalendarDay, CalendarMonth } from '@/lib/calendar-utils';
+import { getWeekDays, type CalendarMonth, type CalendarThemeColors, type WeekStart } from '@/lib/calendar-utils';
+import { CalendarHeader, dayCellStyle } from './calendar-year-view';
 
 interface CalendarMonthViewProps {
   month: CalendarMonth;
-  theme: {
-    background: string;
-    text: string;
-    primary: string;
-    secondary: string;
-    holiday: string;
-  };
+  theme: CalendarThemeColors;
   heading?: string;
-  showYear?: boolean;
-  year?: number;
+  year: number;
+  weekStart?: WeekStart;
 }
 
-export function CalendarMonthView({
-  month,
-  theme,
-  heading,
-  showYear = true,
-  year,
-}: CalendarMonthViewProps) {
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export function CalendarMonthView({ month, theme, heading, year, weekStart = 'sun' }: CalendarMonthViewProps) {
+  const weekDays = getWeekDays(weekStart);
+  const monthHolidays = month.days.filter((d) => d.holidays.length);
 
   return (
     <div
-      className="w-full p-8 rounded-lg"
+      className="w-full p-8"
       style={{
         backgroundColor: theme.background,
         color: theme.text,
-        minWidth: '600px',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
+        minWidth: '640px',
+        fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       }}
     >
-      {heading && (
-        <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold" style={{ color: theme.primary }}>
-            {heading}
-          </h2>
-        </div>
-      )}
+      <CalendarHeader theme={theme} heading={heading} subtitle={`${month.name} ${year}`} />
 
-      <div className="mb-4 text-center">
-        <h3 className="text-3xl font-bold" style={{ color: theme.primary }}>
-          {month.name} {showYear && year}
-        </h3>
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 mb-2">
+      <div className="mb-2 grid grid-cols-7 gap-2">
         {weekDays.map((day) => (
-          <div
-            key={day}
-            className="text-center font-semibold text-sm py-2"
-            style={{ color: theme.primary }}
-          >
+          <div key={day} className="py-2 text-center text-sm font-semibold" style={{ color: theme.primary }}>
             {day}
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-7 gap-2">
-        {month.days.map((day, index) => (
-          <CalendarDayCell key={index} day={day} theme={theme} />
+        {month.days.map((day) => (
+          <div
+            key={day.key}
+            className="relative flex aspect-[4/3] flex-col items-start justify-between rounded-lg p-2 text-sm"
+            style={dayCellStyle(day, theme)}
+          >
+            <span className="font-bold">{day.day}</span>
+            {day.holidays.length > 0 && (
+              <span className="line-clamp-2 text-[10px] font-medium leading-tight">
+                {day.holidays.map((h) => h.name).join(' · ')}
+              </span>
+            )}
+          </div>
         ))}
       </div>
 
-      {month.days.some((d) => d.holiday) && (
+      {monthHolidays.length > 0 && (
         <div className="mt-6 space-y-2">
-          <h4
-            className="font-semibold text-sm"
-            style={{ color: theme.primary }}
-          >
-            Holidays:
+          <h4 className="text-sm font-semibold" style={{ color: theme.primary }}>
+            Holidays
           </h4>
           <div className="space-y-1">
-            {month.days
-              .filter((d) => d.holiday && d.isCurrentMonth)
-              .map((d, i) => (
-                <div key={i} className="text-sm flex items-start gap-2">
-                  <span
-                    className="font-medium"
-                    style={{ color: theme.holiday }}
-                  >
-                    {d.day}:
+            {monthHolidays.flatMap((d) =>
+              d.holidays.map((h) => (
+                <div key={h.id} className="flex items-start gap-2 text-sm">
+                  <span className="w-6 font-semibold" style={{ color: h.custom ? theme.custom : theme.holiday }}>
+                    {d.day}
                   </span>
-                  <span>{d.holiday?.name}</span>
+                  <span>{h.name}</span>
                 </div>
-              ))}
+              ))
+            )}
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function CalendarDayCell({
-  day,
-  theme,
-}: {
-  day: CalendarDay;
-  theme: {
-    background: string;
-    text: string;
-    primary: string;
-    secondary: string;
-    holiday: string;
-  };
-}) {
-  return (
-    <div
-      className="aspect-square flex flex-col items-center justify-center p-1 rounded text-sm relative"
-      style={{
-        backgroundColor: day.holiday ? theme.holiday : theme.secondary,
-        color: day.holiday ? '#ffffff' : theme.text,
-        opacity: day.isCurrentMonth ? 1 : 0.3,
-      }}
-    >
-      <span className="font-medium">{day.day}</span>
-      {day.holiday && (
-        <span className="text-[8px] leading-tight text-center mt-0.5 line-clamp-2">
-          {day.holiday.name.split(' ').slice(0, 2).join(' ')}
-        </span>
-      )}
+      <p className="mt-6 text-right text-[10px]" style={{ opacity: 0.5 }}>
+        Made with 11holidays.com
+      </p>
     </div>
   );
 }

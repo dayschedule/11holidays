@@ -1,176 +1,122 @@
-import { notFound } from 'next/navigation';
-import { fetchHolidays } from '@/lib/holidays-api';
-import { getCountryBySlug } from '@/lib/countries-data';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { HolidaysTable } from '@/components/holidays-table';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  addMonths,
-  endOfDay,
-  endOfMonth,
-  format,
-  isToday,
-  isWithinInterval,
-  parseISO,
-  startOfDay,
-} from 'date-fns';
-import { Badge } from '@/components/ui/badge';
+import { Link, createFileRoute, notFound } from '@tanstack/react-router';
+import { addMonths, endOfDay, endOfMonth, format, isToday, isWithinInterval, parseISO, startOfDay } from 'date-fns';
+import { ArrowRight, PartyPopper } from 'lucide-react';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { CountryFlag } from '@/components/country-flag';
-import { PageLayout } from '@/components/page-layout';
-import { fetchUpcomingOccasions } from '@/lib/occassion-api';
-import { ArrowRight } from 'lucide-react';
+import { Countdown } from '@/components/festive';
+import { HolidayTypeBadge } from '@/components/holiday-type-badge';
+import { HolidaysTable } from '@/components/holidays-table';
 import { OccasionsList } from '@/components/occasions-list';
+import { PageLayout } from '@/components/page-layout';
+import { Button } from '@/components/ui/button';
+import { getCountryBySlug } from '@/lib/countries-data';
+import { getHolidayTheme } from '@/lib/holiday-themes';
+import { seo } from '@/lib/seo';
+import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
 
-interface PageProps {
-  params: Promise<{
-    country: string;
-  }>;
-}
+export const Route = createFileRoute('/_site/upcoming-holidays/$country')({
+  loader: async ({ params }) => {
+    const country = getCountryBySlug(params.country);
+    if (!country) throw notFound();
+    const year = new Date().getFullYear();
+    const [thisYear, nextYear, occasions] = await Promise.all([
+      getCountryHolidays({ data: { code: country.code, year } }),
+      getCountryHolidays({ data: { code: country.code, year: year + 1 } }),
+      getUpcomingOccasions({ data: { code: country.code, limit: 4 } }),
+    ]);
+    return { country, year, holidays: [...thisYear.holidays, ...nextYear.holidays], occasions };
+  },
+  head: ({ loaderData, params }) =>
+    loaderData
+      ? seo({
+          title: `Upcoming Holidays in ${loaderData.country.name} - 11holidays`,
+          description: `Is today a holiday in ${loaderData.country.name}? See today's and upcoming public holidays with a countdown, download holiday dates, and access ${loaderData.country.code} holiday data via API.`,
+          path: `/upcoming-holidays/${params.country}`,
+        })
+      : {},
+  component: UpcomingHolidayPage,
+});
 
-export async function generateMetadata({ params }: PageProps) {
-  const { country: countryParam } = await params;
+function UpcomingHolidayPage() {
+  const { country, year, holidays, occasions } = Route.useLoaderData();
 
-  const country = getCountryBySlug(countryParam);
-  if (!country) {
-    return {
-      title: 'Country Not Found',
-    };
-  }
-
-  const year = new Date().getFullYear();
-  return {
-    title: `Upcoming Holidays in ${country.name} - 11holidays`,
-    description: `Check today's and upcoming public holidays in ${country.name}. View the official ${year} ${country.name} holiday calendar, download holiday dates, and access ${country.code} public holiday data via API integration.`,
-  };
-}
-
-export default async function UpcomingHolidayPage({ params }: PageProps) {
-  const { country: countryParam } = await params;
-
-  const country = getCountryBySlug(countryParam);
-  if (!country) {
-    notFound();
-  }
-
-  const { env } = getCloudflareContext();
-  const year = new Date().getFullYear();
-  const holidaysData = await fetchHolidays(env, country.code, year);
-  const todayHolidays = holidaysData.holidays.filter((h) =>
-    isToday(parseISO(h.date)),
-  );
-
+  const todayHolidays = holidays.filter((h) => isToday(parseISO(h.date)));
   const today = startOfDay(new Date());
   const threeMonthsLater = endOfDay(endOfMonth(addMonths(today, 3)));
-
-  const upcomingHolidays = holidaysData.holidays.filter((h) => {
-    const holidayDate = parseISO(h.date);
-
-    return isWithinInterval(holidayDate, {
-      start: today,
-      end: threeMonthsLater,
-    });
-  });
-
-  const upcomingOccasions = await fetchUpcomingOccasions(env, country.code, 4);
-  const countryCode = country.code.toLowerCase();
+  const upcoming = holidays.filter((h) =>
+    isWithinInterval(parseISO(h.date), { start: today, end: threeMonthsLater })
+  );
+  const next = upcoming.find((h) => !isToday(parseISO(h.date)));
 
   return (
     <PageLayout country={country}>
       <Breadcrumb
         items={[
-          { label: 'Home', href: '/' },
-          { label: 'Countries', href: '/countries' },
+          { label: 'Home', to: '/' },
+          { label: 'Countries', to: '/countries' },
           { label: `Upcoming holidays in ${country.name}` },
         ]}
       />
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-4">
-            <CountryFlag
-              countryCode={country.code}
-              className="w-12 h-8 sm:w-16 sm:h-12 rounded"
-            />
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Upcoming Holidays in {country.name}
-            </h1>
-          </div>
-          <p className="text-lg text-muted-foreground">
-            List of upcoming holidays in {country.name} for year {year}
-          </p>
+      <div className="flex items-center gap-4">
+        <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md" />
+        <div>
+          <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Upcoming Holidays in {country.name}</h1>
+          <p className="text-muted-foreground">Today&apos;s holiday and what&apos;s next in {country.name}</p>
         </div>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            Today&apos;s Holiday in {country.name}
-          </CardTitle>
-          <CardDescription>
-            {format(new Date(), 'EEEE, MMMM d, yyyy')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {todayHolidays.length === 0 ? (
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <p>No holiday in {country.name} today</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {todayHolidays.map((h) => (
-                <div
-                  key={h.holiday_id}
-                  className="flex items-start justify-between gap-4"
-                >
-                  <div>
-                    <p className="font-semibold text-lg">{h.name}</p>
-                  </div>
-                  <Badge
-                    variant={h.type === 'public' ? 'default' : 'secondary'}
-                  >
-                    {h.type}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      <h2>
-        Upcoming Holidays ({format(today, 'MMMM yyyy')} -{' '}
-        {format(threeMonthsLater, 'MMMM yyyy')})
-      </h2>
+      <div className="grid gap-4 md:grid-cols-2">
+        <section className="rounded-2xl border bg-card p-5 shadow-xs">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Today · {format(new Date(), 'EEEE, MMMM d, yyyy')}
+          </p>
+          {todayHolidays.length === 0 ? (
+            <p className="mt-2 text-lg font-semibold">No holiday in {country.name} today</p>
+          ) : (
+            <ul className="mt-2 space-y-2">
+              {todayHolidays.map((h) => (
+                <li key={h.holiday_id} className="flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2 text-lg font-semibold">
+                    <PartyPopper className="h-5 w-5 text-primary" /> {h.name}
+                  </span>
+                  <HolidayTypeBadge type={h.type} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {next && (
+          <section className="rounded-2xl border bg-gradient-to-br from-festive-coral/10 via-festive-saffron/10 to-festive-violet/10 p-5 shadow-xs">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Next holiday</p>
+            <p className="mt-1 text-lg font-semibold">
+              {getHolidayTheme(next.name, country.code)?.particles[0]} {next.name}
+            </p>
+            <p className="mb-3 text-sm text-muted-foreground">{format(parseISO(next.date), 'EEEE, MMMM d, yyyy')}</p>
+            <Countdown date={next.date} variant="card" />
+          </section>
+        )}
+      </div>
 
       <HolidaysTable
-        holidays={upcomingHolidays}
+        holidays={upcoming}
         country={country}
         year={year}
         filter={false}
+        title={`Upcoming holidays (${format(today, 'MMM yyyy')} – ${format(threeMonthsLater, 'MMM yyyy')})`}
       />
 
-      <section className="w-full mt-8 space-y-4 text-left">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold">
-            Explore more holidays in {country.name}
-          </h2>
-
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/holidays/${countryCode}`}>
-              View All <ArrowRight className="w-4 h-4" />
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-bold">Explore more holidays in {country.name}</h2>
+          <Button variant="outline" size="sm" asChild className="rounded-full">
+            <Link to="/holidays/$country" params={{ country: country.code.toLowerCase() }}>
+              View all <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
         </div>
-
-        <OccasionsList occasions={upcomingOccasions} />
+        <OccasionsList occasions={occasions} />
       </section>
     </PageLayout>
   );

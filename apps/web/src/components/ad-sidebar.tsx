@@ -13,7 +13,7 @@ export function AdSidebar({ country }: SidebarProps) {
   return (
     <div className="space-y-6">
       {country && <InternalLinksAd country={country} />}
-      <Card className="sticky top-6 border-dashed">
+      <Card className="sticky top-24 border-dashed">
         <CardContent className="pt-6">
           <div className="flex flex-col items-center justify-center text-center">
             <Badge variant="outline" className="text-xs mb-4">

@@ -1,145 +1,91 @@
-import { notFound } from 'next/navigation';
-import { fetchHolidays, fetchHolidaysByOcasionId } from '@/lib/holidays-api';
+import { createFileRoute, notFound } from '@tanstack/react-router';
+import { HolidayPageContent } from '@/components/holiday-page-content';
+import { OccasionPageContent } from '@/components/occasion-page-content';
 import { getCountryByCode } from '@/lib/countries-data';
-import { HolidayPageContent } from './holiday-page-content';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { fetchOccasion, fetchUpcomingOccasions } from '@/lib/occassion-api';
-import { OccasionPageContent } from './occasion-page-content';
-
-interface PageProps {
-  params: Promise<{
-    country: string;
-    slug: string; // year or slug
-  }>;
-}
+import { seo } from '@/lib/seo';
+import { getCountryHolidays, getOccasionPage } from '@/server/holidays';
 
 function isYear(value: string): boolean {
   return /^\d{4}$/.test(value);
 }
 
-export async function generateMetadata({ params }: PageProps) {
-  const { country: countryParam, slug: value } = await params;
+export const Route = createFileRoute('/_site/holidays/$country/$slug')({
+  loader: async ({ params }) => {
+    const country = getCountryByCode(params.country);
+    if (!country) throw notFound();
 
-  const country = getCountryByCode(countryParam);
-
-  if (!country) {
-    return {
-      title: 'Not Found',
-    };
-  }
-
-  // /holidays/india/2026
-  if (isYear(value)) {
-    return {
-      title: `${country.name} Holidays in ${value} - 11holidays`,
-      description: `View all official public holidays in ${country.name} for ${value}. See holiday dates, weekdays, observances, long weekends, and download the ${value} holiday calendar.`,
-      keywords: [
-        `${country.name} holidays ${value}`,
-        `${country.name} public holidays`,
-        `${country.name} holiday calendar ${value}`,
-        `${country.name} bank holidays ${value}`,
-        `${country.name} national holidays`,
-        `${country.code} holidays`,
-      ],
-      openGraph: {
-        title: `${country.name} Public Holidays ${value}`,
-        description: `Complete list of public holidays in ${country.name} for ${value}.`,
-        type: 'website',
-      },
-    };
-  }
-
-  // /holidays/india/diwali
-  const slug = `${country.code.toLowerCase()}/${value}`;
-  const { env } = getCloudflareContext();
-  const occasion = await fetchOccasion(env, slug);
-  if (!occasion)
-    return {
-      title: 'Not Found',
-    };
-
-  const metaDescription =
-    occasion.description && occasion.description.length > 160
-      ? `${occasion.description.slice(0, 157)}...`
-      : occasion.description;
-
-  return {
-    title: `${occasion.name} in ${country.name} | Dates, History & Holiday Calendar`,
-    description: metaDescription,
-    keywords: [
-      occasion.name,
-      `${occasion.name} ${country.name}`,
-      `${occasion.name} holiday`,
-      `${occasion.name} date`,
-      `${occasion.name} history`,
-      `${occasion.name} significance`,
-      `${country.name} holidays`,
-    ],
-    openGraph: {
-      title: `${occasion.name} in ${country.name}`,
-      description: metaDescription,
-      type: 'article',
-      images: occasion.image?.url
-        ? [
-            {
-              url: occasion.image.url,
-              alt: occasion.image.query || occasion.name,
-            },
-          ]
-        : undefined,
-    },
-  };
-}
-
-export default async function HolidayPage({ params }: PageProps) {
-  const { country: countryParam, slug: value } = await params;
-
-  const country = getCountryByCode(countryParam);
-
-  if (!country) {
-    notFound();
-  }
-
-  const { env } = getCloudflareContext();
-
-  // /holidays/india/2026
-  if (isYear(value)) {
-    const year = Number(value);
-
-    if (year < 2000 || year > 2100) {
-      notFound();
+    // /holidays/in/2026
+    if (isYear(params.slug)) {
+      const year = Number(params.slug);
+      if (year < 2000 || year > 2100) throw notFound();
+      const { holidays } = await getCountryHolidays({ data: { code: country.code, year } });
+      return { kind: 'year' as const, country, year, holidays };
     }
 
-    const holidaysData = await fetchHolidays(env, country.code, year);
+    // /holidays/in/diwali
+    const page = await getOccasionPage({ data: { code: country.code, slug: params.slug } });
+    if (!page) throw notFound();
+    return { kind: 'occasion' as const, country, ...page };
+  },
+  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData) return {};
+    const { country } = loaderData;
 
-    return (
-      <HolidayPageContent
-        country={country}
-        year={year}
-        holidaysData={holidaysData}
-      />
-    );
+    if (loaderData.kind === 'year') {
+      const { year } = loaderData;
+      return seo({
+        title: `${country.name} Holidays ${year} - Public Holidays List & Calendar | 11holidays`,
+        description: `All ${loaderData.holidays.length} public holidays and observances in ${country.name} for ${year}. See dates, weekdays, long weekends, subscribe to the calendar or download as Excel, PDF or iCal.`,
+        keywords: [
+          `${country.name} holidays ${year}`,
+          `${country.name} public holidays`,
+          `${country.name} holiday calendar ${year}`,
+          `${country.name} bank holidays ${year}`,
+          `${country.code} holidays`,
+        ],
+        path: `/holidays/${params.country}/${year}`,
+      });
+    }
+
+    const { occasion } = loaderData;
+    const description =
+      occasion.description && occasion.description.length > 160
+        ? `${occasion.description.slice(0, 157)}...`
+        : occasion.description;
+
+    return seo({
+      title: `${occasion.name} in ${country.name} | Dates, History & Countdown`,
+      description,
+      keywords: [
+        occasion.name,
+        `${occasion.name} ${country.name}`,
+        `${occasion.name} date`,
+        `when is ${occasion.name}`,
+        `${occasion.name} history`,
+        `${country.name} holidays`,
+      ],
+      image: occasion.image?.url,
+      type: 'article',
+      path: `/holidays/${occasion.url}`,
+    });
+  },
+  component: HolidayPage,
+});
+
+function HolidayPage() {
+  const data = Route.useLoaderData();
+
+  if (data.kind === 'year') {
+    return <HolidayPageContent country={data.country} year={data.year} holidays={data.holidays} />;
   }
-
-  // /holidays/india/diwali
-  const slug = `${country.code.toLowerCase()}/${value}`;
-  const occasion = await fetchOccasion(env, slug);
-
-  if (!occasion) {
-    notFound();
-  }
-
-  const [holidays, upcomingHolidays] = await Promise.all([
-    fetchHolidaysByOcasionId(env, occasion.occasion_id),
-    fetchUpcomingOccasions(env, country.code, 4),
-  ]);
 
   return (
     <OccasionPageContent
-      country={country}
-      occasion={occasion}
-      holidays={holidays}
-      upcomingHolidays={upcomingHolidays}
+      country={data.country}
+      occasion={data.occasion}
+      holidays={data.dates}
+      upcomingHolidays={data.related}
     />
   );
 }

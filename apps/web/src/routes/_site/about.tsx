@@ -1,15 +1,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe, Code, Users, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PageLayout } from '../../components/page-layout';
+import { PageLayout } from '@/components/page-layout';
+import { createFileRoute } from '@tanstack/react-router';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'About Us - 11holidays.com',
-  description:
-    'Learn about 11holidays.com, the comprehensive public holidays API for developers and businesses worldwide.',
-};
+export const Route = createFileRoute('/_site/about')({
+  head: () =>
+    seo({
+      title: 'About Us - 11holidays.com',
+      description:
+        'Learn about 11holidays.com, the comprehensive public holidays API for developers and businesses worldwide.',
+      path: '/about',
+    }),
+  component: AboutPage,
+});
 
-export default function AboutPage() {
+function AboutPage() {
   return (
     <PageLayout sidebar={false}>
       <div className="space-y-4 text-center">

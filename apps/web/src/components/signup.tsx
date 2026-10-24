@@ -1,7 +1,5 @@
-'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -30,11 +28,12 @@ interface User {
 
 const API_URL = 'https://api.11holidays.com/v1';
 
-export default function ApiKeySignup() {
-  const searchParams = useSearchParams();
-  const stepParam = searchParams.get('step') as Step | null;
-  const emailParam = searchParams.get('email');
+interface ApiKeySignupProps {
+  step?: Step;
+  email?: string;
+}
 
+export default function ApiKeySignup({ step: stepParam, email: emailParam }: ApiKeySignupProps) {
   const [step, setStep] = useState<Step>(stepParam || 'email');
   const [email, setEmail] = useState(emailParam || '');
   const [otp, setOtp] = useState('');

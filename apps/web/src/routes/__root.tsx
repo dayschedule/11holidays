@@ -1,74 +1,62 @@
-import { Inter } from 'next/font/google';
-import Link from 'next/link';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Header } from '@/components/header';
-import { Toaster } from '../components/ui/sonner';
-import { PromotionalPopup } from '../components/promotional-popup';
-import './globals.css';
+/// <reference types="vite/client" />
+import type { ReactNode } from 'react';
+import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router';
+import { ThemeProvider, themeScript } from '@/components/theme-provider';
+import { NotFound } from '@/components/not-found';
+import { seo } from '@/lib/seo';
+import { currentYear } from '@/lib/holidays-api';
+import appCss from '@/styles.css?url';
 
-const inter = Inter({ subsets: ['latin'] });
+export const Route = createRootRoute({
+  head: () => {
+    const { meta } = seo({
+      title: `Holidays API & Calendar for ${currentYear} - 11holidays.com`,
+      description:
+        'Public holidays for 230+ countries. Search holidays, build printable and embeddable holiday calendars, plan long weekends and access holiday data via API.',
+    });
+    return {
+      meta: [
+        { charSet: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'theme-color', content: '#e4572e' },
+        ...meta,
+      ],
+      links: [
+        { rel: 'stylesheet', href: appCss },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..700;1,400..700&display=swap',
+        },
+        { rel: 'icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/site.webmanifest' },
+      ],
+    };
+  },
+  shellComponent: RootDocument,
+  component: () => (
+    <ThemeProvider>
+      <Outlet />
+    </ThemeProvider>
+  ),
+  notFoundComponent: NotFound,
+});
 
-const footerLinks = [
-  { href: '/about', label: 'About' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/terms', label: 'Terms' },
-  { href: '/contact', label: 'Contact' },
-];
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="relative flex min-h-screen flex-col w-full overflow-hidden">
-            <Header />
-            <main className="flex-1 w-full overflow-x-hidden">
-              <div className="mx-auto w-full max-w-[1200px] px-3 sm:px-4 md:px-6 lg:px-8">
-                {children}
-              </div>
-            </main>
-            <footer className="border-t w-full overflow-x-hidden py-6">
-              <div className="mx-auto w-full max-w-[1200px] flex flex-col items-center justify-between gap-3 px-3 sm:gap-4 sm:px-4 md:flex-row md:px-6 lg:px-8">
-                <p className="text-center text-xs sm:text-sm leading-loose text-muted-foreground md:text-left">
-                  Built with ❤️ by{' '}
-                  <a className="text-blue-600" href="https://dayschedule.com/">
-                    DaySchedule
-                  </a>{' '}
-                  for the love of holidays 🎉
-                </p>
-                <div className="flex flex-wrap justify-center gap-3 text-xs sm:text-sm text-muted-foreground md:justify-end">
-                  {footerLinks.map(({ href, label }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      prefetch={false}
-                      className="hover:text-primary transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </footer>
-            <PromotionalPopup />
-          </div>
-          <Toaster />
-        </ThemeProvider>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
       </body>
-      <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8402459453084519"
-        crossOrigin="anonymous"
-      />
     </html>
   );
 }

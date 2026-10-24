@@ -3,11 +3,7 @@
 // Runtime types generated with workerd@1.20251217.0 2024-12-30 global_fetch_strictly_public,nodejs_compat
 declare namespace Cloudflare {
 	interface Env {
-		NEXTJS_ENV: string;
-		WORKER_SELF_REFERENCE: Fetcher /* 11holidays */;
-		IMAGES: ImagesBinding;
-		ASSETS: Fetcher;
-        DB: D1Database
+		DB: D1Database;
 	}
 }
 interface CloudflareEnv extends Cloudflare.Env {}

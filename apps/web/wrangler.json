@@ -1,10 +1,13 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
+  "main": "@tanstack/react-start/server-entry",
   "name": "11holidays",
-  "compatibility_date": "2024-12-30",
+  "compatibility_date": "2025-09-02",
   "keep_vars": true,
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "observability": {
+    "enabled": true
+  },
   "d1_databases": [
     {
       "remote": true,
@@ -12,16 +15,5 @@
       "database_name": "holidays",
       "database_id": "c66f0973-0a27-479a-b2b1-8b288de01a75"
     }
-  ],
-  "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
-  },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "11holidays"
-    }
-  ],
-  "r2_buckets": []
+  ]
 }

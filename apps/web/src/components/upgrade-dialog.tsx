@@ -1,7 +1,6 @@
-"use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
+
+import { Link } from "@tanstack/react-router"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,7 +37,7 @@ export function UpgradeDialog({ year, open, onOpenChange }: UpgradeDialogProps) 
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Link href="/pricing">
+          <Link to="/pricing">
             <AlertDialogAction asChild>
               <button>Upgrade Now</button>
             </AlertDialogAction>

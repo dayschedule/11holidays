@@ -7,16 +7,22 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Check } from 'lucide-react';
-import Link from 'next/link';
-import { PageLayout } from '../../components/page-layout';
+import { Link, createFileRoute } from '@tanstack/react-router';
+import { PageLayout } from '@/components/page-layout';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Pricing - 11holidays.com',
-  description:
-    'Simple, transparent pricing for our holidays API. Choose between yearly or lifetime access.',
-};
+export const Route = createFileRoute('/_site/pricing')({
+  head: () =>
+    seo({
+      title: 'Pricing - 11holidays.com',
+      description:
+        'Simple, transparent pricing for our holidays API. Choose between yearly or lifetime access.',
+      path: '/pricing',
+    }),
+  component: PricingPage,
+});
 
-export default function PricingPage() {
+function PricingPage() {
   return (
     <PageLayout sidebar={false}>
       <div className="space-y-2 text-center">
@@ -71,7 +77,7 @@ export default function PricingPage() {
                 </li>
               </ul>
               <Button className="w-full" size="lg" asChild>
-                <Link href="/api-key">Buy Now</Link>
+                <Link to="/api-key">Buy Now</Link>
               </Button>
             </CardContent>
           </Card>
@@ -124,7 +130,7 @@ export default function PricingPage() {
                 </li>
               </ul>
               <Button className="w-full" size="lg" asChild>
-                <Link href="/api-key">Buy Now</Link>
+                <Link to="/api-key">Buy Now</Link>
               </Button>
             </CardContent>
           </Card>

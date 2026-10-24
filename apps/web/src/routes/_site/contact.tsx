@@ -1,19 +1,21 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Github } from 'lucide-react';
-import { PageLayout } from '../../components/page-layout';
+import { PageLayout } from '@/components/page-layout';
+import { createFileRoute } from '@tanstack/react-router';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Contact Us - 11holidays.com',
-  description:
-    "Get in touch with the 11holidays.com team. We're here to help with questions, support, and feedback.",
-};
+export const Route = createFileRoute('/_site/contact')({
+  head: () =>
+    seo({
+      title: 'Contact Us - 11holidays.com',
+      description:
+        "Get in touch with the 11holidays.com team. We're here to help with questions, support, and feedback.",
+      path: '/contact',
+    }),
+  component: ContactPage,
+});
 
-export default function ContactPage() {
+function ContactPage() {
   return (
     <PageLayout sidebar={false}>
       <div className="space-y-2 text-center">
@@ -21,7 +23,7 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="text-lg text-muted-foreground">
-          Have a question or feedback? We'd love to hear from you.
+          Have a question or feedback? We&apos;d love to hear from you.
         </p>
       </div>
       <div className="grid gap-8 md:grid-cols-2">

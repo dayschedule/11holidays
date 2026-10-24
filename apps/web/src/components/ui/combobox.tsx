@@ -1,4 +1,3 @@
-"use client"
 
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"
@@ -274,6 +273,7 @@ function ComboboxChip({
 
 function ComboboxChipsInput({
   className,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   children,
   ...props
 }: ComboboxPrimitive.Input.Props) {

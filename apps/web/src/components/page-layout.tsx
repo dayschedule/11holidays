@@ -17,21 +17,19 @@ export function PageLayout({
   className,
 }: PageLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container py-8">
-        {sidebar ? (
-          <div className="grid gap-8 lg:grid-cols-12">
-            <div className={cn('lg:col-span-9 space-y-6', className)}>
-              {children}
-            </div>
-            <aside className="lg:col-span-3">
-              <AdSidebar country={country}/>
-            </aside>
+    <div className="py-8">
+      {sidebar ? (
+        <div className="grid gap-8 lg:grid-cols-12">
+          <div className={cn('flex min-w-0 flex-col gap-6 lg:col-span-9', className)}>
+            {children}
           </div>
-        ) : (
-          <div className={cn('space-y-8', className)}>{children}</div>
-        )}
-      </main>
+          <aside className="no-print lg:col-span-3">
+            <AdSidebar country={country} />
+          </aside>
+        </div>
+      ) : (
+        <div className={cn('flex flex-col gap-8', className)}>{children}</div>
+      )}
     </div>
   );
 }

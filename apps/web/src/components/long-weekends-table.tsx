@@ -1,4 +1,3 @@
-'use client';
 
 import { useMemo, useState } from 'react';
 import { parseISO, format } from 'date-fns';

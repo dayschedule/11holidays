@@ -31,6 +31,7 @@ import { Route as EmbedCountdownRouteImport } from './routes/embed/countdown'
 import { Route as IcsCountryRouteImport } from './routes/ics.$country'
 import { Route as SiteCalendarsIndexRouteImport } from './routes/_site/calendars/index'
 import { Route as SiteCalendarsCountryRouteImport } from './routes/_site/calendars/$country'
+import { Route as SiteDocsApiRouteImport } from './routes/_site/docs/api'
 import { Route as SiteHolidaysIndexRouteImport } from './routes/_site/holidays/index'
 import { Route as SiteLongWeekendsCountryRouteImport } from './routes/_site/long-weekends/$country'
 import { Route as SiteUpcomingHolidaysCountryRouteImport } from './routes/_site/upcoming-holidays/$country'
@@ -147,6 +148,11 @@ const SiteCalendarsCountryRoute = SiteCalendarsCountryRouteImport.update({
   path: '/calendars/$country',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteDocsApiRoute = SiteDocsApiRouteImport.update({
+  id: '/docs/api',
+  path: '/docs/api',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteHolidaysIndexRoute = SiteHolidaysIndexRouteImport.update({
   id: '/holidays/',
   path: '/holidays/',
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
   '/calendars/$country': typeof SiteCalendarsCountryRoute
+  '/docs/api': typeof SiteDocsApiRoute
   '/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
   '/upcoming-holidays/$country': typeof SiteUpcomingHolidaysCountryRoute
   '/calendars/': typeof SiteCalendarsIndexRoute
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/ics/$country': typeof IcsCountryRoute
   '/': typeof SiteIndexRoute
   '/calendars/$country': typeof SiteCalendarsCountryRoute
+  '/docs/api': typeof SiteDocsApiRoute
   '/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
   '/upcoming-holidays/$country': typeof SiteUpcomingHolidaysCountryRoute
   '/calendars': typeof SiteCalendarsIndexRoute
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/ics/$country': typeof IcsCountryRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/calendars/$country': typeof SiteCalendarsCountryRoute
+  '/_site/docs/api': typeof SiteDocsApiRoute
   '/_site/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
   '/_site/upcoming-holidays/$country': typeof SiteUpcomingHolidaysCountryRoute
   '/_site/calendars/': typeof SiteCalendarsIndexRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/embed/countdown'
     | '/ics/$country'
     | '/calendars/$country'
+    | '/docs/api'
     | '/long-weekends/$country'
     | '/upcoming-holidays/$country'
     | '/calendars/'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/ics/$country'
     | '/'
     | '/calendars/$country'
+    | '/docs/api'
     | '/long-weekends/$country'
     | '/upcoming-holidays/$country'
     | '/calendars'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/ics/$country'
     | '/_site/'
     | '/_site/calendars/$country'
+    | '/_site/docs/api'
     | '/_site/long-weekends/$country'
     | '/_site/upcoming-holidays/$country'
     | '/_site/calendars/'
@@ -514,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteCalendarsCountryRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/docs/api': {
+      id: '/_site/docs/api'
+      path: '/docs/api'
+      fullPath: '/docs/api'
+      preLoaderRoute: typeof SiteDocsApiRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/holidays/': {
       id: '/_site/holidays/'
       path: '/holidays'
@@ -568,6 +587,7 @@ interface SiteRouteChildren {
   SiteWorkingDaysCalculatorRoute: typeof SiteWorkingDaysCalculatorRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteCalendarsCountryRoute: typeof SiteCalendarsCountryRoute
+  SiteDocsApiRoute: typeof SiteDocsApiRoute
   SiteLongWeekendsCountryRoute: typeof SiteLongWeekendsCountryRoute
   SiteUpcomingHolidaysCountryRoute: typeof SiteUpcomingHolidaysCountryRoute
   SiteCalendarsIndexRoute: typeof SiteCalendarsIndexRoute
@@ -592,6 +612,7 @@ const SiteRouteChildren: SiteRouteChildren = {
   SiteWorkingDaysCalculatorRoute: SiteWorkingDaysCalculatorRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteCalendarsCountryRoute: SiteCalendarsCountryRoute,
+  SiteDocsApiRoute: SiteDocsApiRoute,
   SiteLongWeekendsCountryRoute: SiteLongWeekendsCountryRoute,
   SiteUpcomingHolidaysCountryRoute: SiteUpcomingHolidaysCountryRoute,
   SiteCalendarsIndexRoute: SiteCalendarsIndexRoute,

@@ -37,7 +37,7 @@ function CountriesPage() {
         <p className="text-muted-foreground">Select a country to view its public holidays for {currentYear}</p>
       </div>
 
-      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear} type="holidays" />
+      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear} type="holidays" layout="table" />
     </PageLayout>
   );
 }

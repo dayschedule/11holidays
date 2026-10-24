@@ -2,9 +2,10 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { format, isAfter, parseISO, startOfDay } from 'date-fns';
 import { AlertCircle, CalendarDays, CalendarPlus, Code2, LayoutGrid, List, Sunset } from 'lucide-react';
+import { AdsBlock } from '@/components/ads-block';
 import { ApiExamples } from '@/components/api-examples';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { CountryFlag } from '@/components/country-flag';
+import { CountryHeading } from '@/components/country-heading';
 import { CountrySelect } from '@/components/country-select';
 import { Countdown } from '@/components/festive';
 import { HolidaysTable } from '@/components/holidays-table';
@@ -12,6 +13,7 @@ import { PageLayout } from '@/components/page-layout';
 import { HolidayLegend, YearGrid } from '@/components/calendar/year-grid';
 import { Button } from '@/components/ui/button';
 import type { Country } from '@/lib/countries-data';
+import { useToday } from '@/hooks/use-today';
 import { holidayKind, occasionParams, type Holiday } from '@/lib/holidays-api';
 import { generateLongWeekends } from '@/lib/long-weekends';
 import { SITE_URL } from '@/lib/seo';
@@ -27,18 +29,19 @@ export function HolidayPageContent({ country, year, holidays }: HolidayPageConte
   const navigate = useNavigate();
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const code = country.code.toLowerCase();
+  const now = useToday();
 
   const stats = useMemo(() => {
-    const today = format(new Date(), 'yyyy-MM-dd');
+    const today = format(now, 'yyyy-MM-dd');
     const longWeekends = generateLongWeekends(holidays).filter((lw) => lw.leavesNeeded === 0);
     return {
       total: holidays.length,
       public: holidays.filter((h) => holidayKind(h.type) === 'public').length,
       longWeekends: longWeekends.length,
-      upcomingLongWeekend: longWeekends.find((lw) => isAfter(parseISO(lw.endDate), startOfDay(new Date()))),
+      upcomingLongWeekend: longWeekends.find((lw) => isAfter(parseISO(lw.endDate), startOfDay(now))),
       next: holidays.find((h) => h.date >= today),
     };
-  }, [holidays]);
+  }, [holidays, now]);
 
   const calendarHolidays = useMemo(
     () => holidays.map((h) => ({ id: String(h.holiday_id), date: h.date, name: h.name, type: h.type, url: h.url })),
@@ -46,7 +49,7 @@ export function HolidayPageContent({ country, year, holidays }: HolidayPageConte
   );
 
   const subscribeUrl = `${SITE_URL.replace('https://', 'webcal://')}/ics/${code}`;
-  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 1 + i);
+  const years = Array.from({ length: 5 }, (_, i) => now.getFullYear() - 1 + i);
 
   return (
     <PageLayout country={country}>
@@ -59,28 +62,20 @@ export function HolidayPageContent({ country, year, holidays }: HolidayPageConte
         ]}
       />
 
-      <header className="space-y-5">
-        <div className="flex items-center gap-4">
-          <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md sm:h-12 sm:w-16" />
-          <div>
-            <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-              {country.name} Holidays {year}
-            </h1>
-            <p className="text-muted-foreground">
-              All public holidays, festivals and observances in {country.name} for {year}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <CountryHeading
+        countryCode={country.code}
+        title={`${country.name} Holidays ${year}`}
+        description={`All public holidays, festivals and observances in ${country.name} for ${year}`}
+      >
+        <div className="flex w-full flex-col items-center gap-3 sm:flex-row">
           <CountrySelect
             value={country.code}
             onChange={(c) =>
               navigate({ to: '/holidays/$country/$slug', params: { country: c.code.toLowerCase(), slug: String(year) } })
             }
-            className="sm:w-64"
+            className="w-full sm:w-64"
           />
-          <div className="flex gap-1 overflow-x-auto rounded-full border bg-card p-1">
+          <div className="flex max-w-full gap-1 overflow-x-auto rounded-full border bg-card p-1">
             {years.map((y) => (
               <Link
                 key={y}
@@ -96,7 +91,7 @@ export function HolidayPageContent({ country, year, holidays }: HolidayPageConte
             ))}
           </div>
         </div>
-      </header>
+      </CountryHeading>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -126,7 +121,7 @@ export function HolidayPageContent({ country, year, holidays }: HolidayPageConte
         </div>
       </div>
 
-      {stats.next && year === new Date().getFullYear() && (
+      {stats.next && year === now.getFullYear() && (
         <div className="flex flex-col items-start gap-3 rounded-2xl border bg-gradient-to-r from-festive-coral/10 via-festive-saffron/10 to-festive-violet/10 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm">
             Countdown to <span className="font-semibold">{stats.next.name}</span>
@@ -134,6 +129,8 @@ export function HolidayPageContent({ country, year, holidays }: HolidayPageConte
           <Countdown date={stats.next.date} variant="card" />
         </div>
       )}
+
+      <AdsBlock />
 
       {/* View toggle */}
       <div className="flex items-center justify-between gap-3">

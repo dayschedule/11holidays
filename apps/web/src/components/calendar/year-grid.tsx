@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { generateCalendarDays, getMonthName, getWeekDays, type CalendarHoliday, type WeekStart } from '@/lib/calendar-utils';
+import { useToday } from '@/hooks/use-today';
 import { holidayKind, occasionParams } from '@/lib/holidays-api';
 import { cn } from '@/lib/utils';
 
@@ -20,7 +21,8 @@ interface MonthGridProps {
 
 /** Interactive month grid used on web pages (not for printing) */
 export function MonthGrid({ year, month, holidays, weekStart = 'sun', highlight, className }: MonthGridProps) {
-  const days = generateCalendarDays(year, month, holidays, weekStart);
+  const today = useToday();
+  const days = generateCalendarDays(year, month, holidays, weekStart, today);
 
   return (
     <div className={cn('rounded-2xl border bg-card p-3 shadow-xs', className)}>

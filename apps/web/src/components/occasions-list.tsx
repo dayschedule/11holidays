@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { Calendar } from 'lucide-react';
+import { useToday } from '@/hooks/use-today';
 import { cn } from '@/lib/utils';
 import type { Occasion } from '@/lib/occassion-api';
 import { formatDate, getDayOfWeek, occasionParams } from '@/lib/holidays-api';
@@ -14,8 +15,8 @@ interface OccasionsListProps {
   columns?: 2 | 3 | 4;
 }
 
-function relativeDays(date: string) {
-  const diff = differenceInCalendarDays(parseISO(date), new Date());
+function relativeDays(date: string, today: Date) {
+  const diff = differenceInCalendarDays(parseISO(date), today);
   if (diff === 0) return 'Today';
   if (diff === 1) return 'Tomorrow';
   if (diff > 1 && diff <= 60) return `In ${diff} days`;
@@ -50,7 +51,7 @@ export function OccasionsList({
 
 export function OccasionCard({ occasion: o }: { occasion: Occasion }) {
   const theme = getHolidayTheme(o.name, o.country) ?? defaultHolidayTheme;
-  const badge = relativeDays(o.date);
+  const badge = relativeDays(o.date, useToday());
 
   return (
     <Link

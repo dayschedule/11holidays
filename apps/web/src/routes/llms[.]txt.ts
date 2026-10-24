@@ -43,7 +43,7 @@ Countries are identified by ISO 3166-1 alpha-2 codes in lowercase (\`us\`, \`in\
 ## REST API (API key required)
 
 - Base URL: \`${API_URL}\`
-- Authentication: \`Authorization: Bearer {API_KEY}\`. [Get an API key](${SITE_URL}/api-key), [pricing](${SITE_URL}/pricing)
+- Authentication: \`Authorization: Bearer {API_KEY}\`. [Get an API key](${SITE_URL}/api-key), [pricing](${SITE_URL}/pricing), [API reference](${SITE_URL}/docs/api), [OpenAPI spec](${API_URL}/openapi.json)
 - \`GET /holidays?country={CODE}&year={YYYY}\`: holidays for a country and year as a JSON array of \`{ holiday_id, date, name, type, country }\`
 - \`GET /countries\`: supported countries
 - \`GET /occasions\`: holidays and festivals with descriptions

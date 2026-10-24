@@ -3,6 +3,7 @@ import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { z } from '@hono/zod-openapi';
 import { countrySchema } from '../schema/countrySchema';
 import { formatZodError } from '../helper/utility';
+import { errorResponses } from '../helper/openapi';
 import { HTTPException } from 'hono/http-exception';
 
 const countries = new OpenAPIHono<{ Bindings: CloudflareBindings }>({
@@ -23,7 +24,8 @@ countries.openapi(
     tags: ['Countries'],
     method: 'get',
     path: '/',
-    description: 'Get all countries',
+    summary: 'List countries',
+    description: 'Get all countries with holiday data, with ISO2 country code and name',
     responses: {
       200: {
         description: '200 OK',
@@ -31,6 +33,7 @@ countries.openapi(
           'application/json': { schema: z.array(countrySchema) },
         },
       },
+      ...errorResponses(401),
     },
   }),
   async (ctx) => {
@@ -43,8 +46,18 @@ countries.openapi(
   createRoute({
     tags: ['Countries'],
     method: 'get',
-    path: '/:id',
-    description: 'Get country by Id',
+    path: '/{id}',
+    summary: 'Get a country',
+    description: 'Get country by ISO2 country code',
+    request: {
+      params: z.object({
+        id: z.string().length(2).openapi({
+          param: { name: 'id', in: 'path' },
+          example: 'US',
+          description: 'Country code in ISO2 format',
+        }),
+      }),
+    },
     responses: {
       200: {
         description: '200 OK',
@@ -52,6 +65,7 @@ countries.openapi(
           'application/json': { schema: countrySchema },
         },
       },
+      ...errorResponses(400, 401, 404),
     },
   }),
   async (ctx) => {

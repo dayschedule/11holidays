@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
-export function AdsBlock({ slot = '3130208712' }: { slot?: string }) {
+export function AdsBlock({ slot = '3130208712', className }: { slot?: string; className?: string }) {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -10,7 +11,8 @@ export function AdsBlock({ slot = '3130208712' }: { slot?: string }) {
   }, []);
 
   return (
-    <div className="no-print">
+    // min-height reserves space for the ad to limit layout shift above the fold
+    <div className={cn('no-print min-h-[100px]', className)}>
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}

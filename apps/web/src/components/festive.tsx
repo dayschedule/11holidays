@@ -93,12 +93,12 @@ export function Countdown({ date, className, variant = 'glass' }: CountdownProps
   ];
 
   return (
-    <div className={cn('flex gap-2 sm:gap-3', className)} role="timer" aria-live="off">
+    <div className={cn('flex w-full gap-2 sm:w-auto sm:gap-3', className)} role="timer" aria-live="off">
       {units.map((u) => (
         <div
           key={u.label}
           className={cn(
-            'flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 sm:min-w-[76px]',
+            'flex min-w-0 flex-1 flex-col items-center rounded-xl px-2 py-2 sm:min-w-[76px] sm:flex-none sm:px-3',
             variant === 'glass'
               ? 'bg-white/15 ring-1 ring-white/25 backdrop-blur-md'
               : 'border bg-background shadow-xs'

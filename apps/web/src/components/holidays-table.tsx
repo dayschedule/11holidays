@@ -24,6 +24,7 @@ import {
   type Holiday,
 } from '@/lib/holidays-api';
 import type { Country } from '@/lib/countries-data';
+import { useToday } from '@/hooks/use-today';
 import { getMonthName } from '@/lib/calendar-utils';
 import { getHolidayTheme } from '@/lib/holiday-themes';
 import { buildIcs } from '@/lib/ics';
@@ -68,7 +69,8 @@ export function HolidaysTable({ holidays, country, year, filter, title }: Holida
   });
 
   const uniqueTypes = Array.from(new Set(holidays.map((h) => h.type)));
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const now = useToday();
+  const today = format(now, 'yyyy-MM-dd');
   const nextHoliday = holidays.find((h) => h.date >= today);
   const fileBase = `holidays-${country.code}-${year}`;
 
@@ -103,7 +105,7 @@ export function HolidaysTable({ holidays, country, year, filter, title }: Holida
     const date = parseISO(holiday.date);
     const isPast = holiday.date < today;
     const isNext = nextHoliday?.holiday_id === holiday.holiday_id;
-    const days = differenceInCalendarDays(date, new Date());
+    const days = differenceInCalendarDays(date, now);
     const theme = getHolidayTheme(holiday.name, country.code);
 
     return (

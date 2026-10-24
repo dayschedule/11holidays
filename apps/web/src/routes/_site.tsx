@@ -41,6 +41,7 @@ const footerColumns = [
   {
     title: 'Developers',
     links: [
+      { to: '/docs/api', label: 'API docs' },
       { to: '/api-key', label: 'Get API key' },
       { to: '/pricing', label: 'Pricing' },
     ],
@@ -66,8 +67,8 @@ function SiteLayout() {
       </main>
       <PopularCountries />
       <footer className="no-print w-full border-t bg-card/50">
-        <div className="mx-auto grid w-full max-w-[1200px] gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-6 lg:px-8">
-          <div className="space-y-3">
+        <div className="mx-auto grid w-full max-w-[1200px] grid-cols-2 gap-x-6 gap-y-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:gap-10 md:px-6 lg:px-8">
+          <div className="col-span-2 space-y-3 md:col-span-1">
             <Logo />
             <p className="max-w-xs text-sm text-muted-foreground">
               Public holidays for 230+ countries, printable calendars and a

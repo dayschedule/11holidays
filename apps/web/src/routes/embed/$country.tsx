@@ -6,6 +6,7 @@ import { CountryFlag } from '@/components/country-flag';
 import { CalendarListView } from '@/components/calendar/calendar-list-view';
 import { CalendarMonthView } from '@/components/calendar/calendar-month-view';
 import { CalendarYearView } from '@/components/calendar/calendar-year-view';
+import { useToday } from '@/hooks/use-today';
 import { calendarThemes, generateYearCalendar } from '@/lib/calendar-utils';
 import { getCountryBySlug } from '@/lib/countries-data';
 import { buildCalendarHolidays, calendarSearchSchema, toQueryString } from '@/lib/custom-calendar';
@@ -49,9 +50,13 @@ function EmbedPage() {
   const theme = calendarThemes[search.theme ?? 'festive'];
   const weekStart = search.week ?? 'sun';
   const heading = search.title || `${country.name} Holidays`;
+  const today = useToday();
 
   const selected = useMemo(() => buildCalendarHolidays(holidays, search), [holidays, search]);
-  const months = useMemo(() => generateYearCalendar(year, selected, weekStart), [year, selected, weekStart]);
+  const months = useMemo(
+    () => generateYearCalendar(year, selected, weekStart, today),
+    [year, selected, weekStart, today]
+  );
 
   const fullUrl = `${SITE_URL}/calendars/${country.slug}${toQueryString({ ...search, view: view === 'upcoming' ? undefined : view, limit: undefined })}`;
 
@@ -61,14 +66,15 @@ function EmbedPage() {
         <UpcomingWidget
           heading={heading}
           countryCode={country.code}
-          holidays={selected.filter((h) => h.date >= format(new Date(), 'yyyy-MM-dd')).slice(0, search.limit ?? 8)}
+          today={today}
+          holidays={selected.filter((h) => h.date >= format(today, 'yyyy-MM-dd')).slice(0, search.limit ?? 8)}
           theme={theme}
         />
       )}
       {view === 'year' && <CalendarYearView months={months} year={year} theme={theme} heading={heading} weekStart={weekStart} />}
       {view === 'month' && (
         <CalendarMonthView
-          month={months[search.month ?? new Date().getMonth()]!}
+          month={months[search.month ?? today.getMonth()]!}
           theme={theme}
           heading={heading}
           year={year}
@@ -95,9 +101,11 @@ function UpcomingWidget({
   countryCode,
   holidays,
   theme,
+  today,
 }: {
   heading: string;
   countryCode: string;
+  today: Date;
   holidays: ReturnType<typeof buildCalendarHolidays>;
   theme: (typeof calendarThemes)[keyof typeof calendarThemes];
 }) {
@@ -116,7 +124,7 @@ function UpcomingWidget({
       <ul className="space-y-1.5">
         {holidays.map((h) => {
           const date = parseISO(h.date);
-          const days = differenceInCalendarDays(date, new Date());
+          const days = differenceInCalendarDays(date, today);
           const emoji = getHolidayTheme(h.name, countryCode)?.particles[0];
           return (
             <li key={h.id} className="flex items-center gap-3 rounded-xl px-2 py-2" style={{ backgroundColor: theme.secondary }}>

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cleanSearch, toQueryString } from '@/lib/custom-calendar';
+import { useToday } from '@/hooks/use-today';
 import { getCountryByCode } from '@/lib/countries-data';
 import { defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
 import { occasionParams } from '@/lib/holidays-api';
@@ -67,6 +68,7 @@ function nextNewYear() {
 function CountdownMaker() {
   const { code, upcoming } = Route.useLoaderData();
   const search = Route.useSearch();
+  const now = useToday();
   const navigate = useNavigate({ from: Route.fullPath });
   const heroRef = useRef<HTMLElement>(null);
 
@@ -181,7 +183,7 @@ function CountdownMaker() {
           <h2 className="text-2xl font-bold">Holiday countdowns{country && ` in ${country.name}`}</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {upcoming.map((o) => {
-              const days = differenceInCalendarDays(parseISO(o.date), new Date());
+              const days = differenceInCalendarDays(parseISO(o.date), now);
               return (
                 <Link
                   key={o.occasion_id}

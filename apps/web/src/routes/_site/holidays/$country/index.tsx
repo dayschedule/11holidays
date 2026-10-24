@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { Search } from 'lucide-react';
 import { z } from 'zod';
+import { AdsBlock } from '@/components/ads-block';
 import { Breadcrumb } from '@/components/breadcrumb';
-import { CountryFlag } from '@/components/country-flag';
+import { CountryHeading } from '@/components/country-heading';
 import { CountrySelect } from '@/components/country-select';
 import { OccasionsList } from '@/components/occasions-list';
 import { PageLayout } from '@/components/page-layout';
@@ -61,15 +62,11 @@ function CountryOccasionsPage() {
           { label: `${country.name} Holidays` },
         ]}
       />
-      <div className="flex items-center gap-4">
-        <CountryFlag countryCode={country.code} className="h-10 w-14 shrink-0 rounded-md shadow-md" />
-        <div>
-          <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Holidays in {country.name}</h1>
-          <p className="text-muted-foreground">
-            Public holidays, religious festivals, observances and national celebrations in {country.name} · {currentYear}
-          </p>
-        </div>
-      </div>
+      <CountryHeading
+        countryCode={country.code}
+        title={`Holidays in ${country.name}`}
+        description={`Public holidays, religious festivals, observances and national celebrations in ${country.name} · ${currentYear}`}
+      />
 
       <div className="sticky top-[68px] z-30 -mx-4 flex flex-col gap-3 bg-background/90 px-4 py-3 backdrop-blur sm:flex-row md:mx-0 md:px-0">
         <CountrySelect
@@ -90,6 +87,8 @@ function CountryOccasionsPage() {
           />
         </div>
       </div>
+
+      <AdsBlock />
 
       <OccasionsList occasions={sorted} emptyMessage={`No holidays found matching "${search}".`} />
     </PageLayout>

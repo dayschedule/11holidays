@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router';
 import { ThemeProvider, themeScript } from '@/components/theme-provider';
 import { NotFound } from '@/components/not-found';
-import { organizationSchema, seo, websiteSchema } from '@/lib/seo';
+import { OPENAPI_URL, organizationSchema, seo, websiteSchema } from '@/lib/seo';
 import { currentYear } from '@/lib/holidays-api';
 import { serverNow } from '@/hooks/use-today';
 import appCss from '@/styles.css?url';
@@ -12,7 +12,7 @@ export const Route = createRootRoute({
   loader: () => ({ now: serverNow() }),
   head: () => {
     const { meta } = seo({
-      title: `Holidays API & Calendar for ${currentYear} - 11holidays.com`,
+      title: `Holidays API & Calendar for ${currentYear()} - 11holidays.com`,
       description:
         'Public holidays for 230+ countries. Search holidays, build printable and embeddable holiday calendars, plan long weekends and access holiday data via API.',
       jsonLd: [organizationSchema(), websiteSchema()],
@@ -39,6 +39,9 @@ export const Route = createRootRoute({
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'manifest', href: '/site.webmanifest' },
         { rel: 'alternate', type: 'text/plain', title: 'LLM-friendly site guide', href: '/llms.txt' },
+        { rel: 'api-catalog', href: '/.well-known/api-catalog' },
+        { rel: 'service-desc', type: 'application/vnd.oai.openapi+json', href: OPENAPI_URL },
+        { rel: 'service-doc', href: '/docs/api' },
         { rel: 'sitemap', type: 'application/xml', href: '/sitemap.xml' },
       ],
     };

@@ -18,11 +18,11 @@ export const Route = createFileRoute('/_site/holidays/')({
   }),
   head: ({ loaderData }) =>
     seo({
-      title: `Holidays & Festivals ${currentYear} - 11holidays.com`,
+      title: `Holidays & Festivals ${currentYear()} - 11holidays.com`,
       description: 'Browse public and religious holidays around the world. Pick a country or search by name.',
       path: loaderData?.offset ? `/holidays?offset=${loaderData.offset}` : '/holidays',
       jsonLd: [
-        webPageSchema('/holidays', `Holidays & festivals ${currentYear}`, undefined, 'CollectionPage'),
+        webPageSchema('/holidays', `Holidays & festivals ${currentYear()}`, undefined, 'CollectionPage'),
         {
           '@type': 'ItemList',
           itemListElement: (loaderData?.occasions ?? []).map((o, i) => ({
@@ -46,14 +46,14 @@ function HolidaysPage() {
     <PageLayout>
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          Holidays &amp; festivals in {currentYear}
+          Holidays &amp; festivals in {currentYear()}
         </h1>
         <p className="text-muted-foreground">
           Discover holidays celebrated around the world, or{' '}
           <Link to="/countries" className="text-primary underline">
             pick a country
           </Link>{' '}
-          to see its full {currentYear} list.
+          to see its full {currentYear()} list.
         </p>
       </div>
 

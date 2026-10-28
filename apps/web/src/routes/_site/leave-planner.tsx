@@ -14,7 +14,8 @@ import { getCountryByCode } from '@/lib/countries-data';
 import { faqSchema, seo, softwareAppSchema } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 import { dayKind, getWeekend, planLeaves, publicHolidayMap, weekendLabel } from '@/lib/workdays';
-import { getCountryHolidays, getVisitorCountry } from '@/server/holidays';
+import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
+import { getCountryHolidays } from '@/server/holidays';
 
 const DEFAULT_LEAVES = 10;
 
@@ -50,7 +51,7 @@ export const Route = createFileRoute('/_site/leave-planner')({
   }),
   loaderDeps: ({ search }) => ({ country: search.country, year: search.year ?? defaultYear() }),
   loader: async ({ deps }) => {
-    const country = getCountryByCode(deps.country ?? (await getVisitorCountry())) ?? getCountryByCode('US')!;
+    const country = getCountryByCode(deps.country ?? getVisitorCountry()) ?? getCountryByCode('US')!;
     const { holidays } = await getCountryHolidays({ data: { code: country.code, year: deps.year } });
     return { country, year: deps.year, holidays };
   },
@@ -80,6 +81,7 @@ export const Route = createFileRoute('/_site/leave-planner')({
 function LeavePlannerPage() {
   const { country, year, holidays } = Route.useLoaderData();
   const search = Route.useSearch();
+  useVisitorCountry(country.code, !search.country);
   const navigate = useNavigate({ from: Route.fullPath });
   const leaves = search.leaves ?? DEFAULT_LEAVES;
   const today = useToday();

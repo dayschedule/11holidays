@@ -1,5 +1,4 @@
 import { createServerFn } from '@tanstack/react-start';
-import { getRequest } from '@tanstack/react-start/server';
 import { env } from 'cloudflare:workers';
 import { format } from 'date-fns';
 import { z } from 'zod';
@@ -17,12 +16,6 @@ import {
 } from '@/lib/occassion-api';
 
 const countryCode = z.string().length(2).toUpperCase();
-
-export const getVisitorCountry = createServerFn({ method: 'GET' }).handler(() => {
-  const request = getRequest() as Request & { cf?: { country?: string } };
-  const country = request.cf?.country;
-  return country && country !== 'XX' && country !== 'T1' ? country : 'US';
-});
 
 export const getCountryHolidays = createServerFn({ method: 'GET' })
   .validator(z.object({ code: countryCode, year: z.number().int().min(2000).max(2100) }))

@@ -66,7 +66,7 @@ const TOOLS: {
 export const Route = createFileRoute('/_site/tools')({
   head: () =>
     seo({
-      title: `Free Holiday Tools ${currentYear} - Countdown, Leave Planner, Working Days | 11holidays`,
+      title: `Free Holiday Tools ${currentYear()} - Countdown, Leave Planner, Working Days | 11holidays`,
       description:
         'Free holiday tools: countdown timer, leave planner, working days calculator, printable holiday calendars and an embeddable holidays widget for 230+ countries.',
       path: '/tools',

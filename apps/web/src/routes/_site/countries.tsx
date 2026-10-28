@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_site/countries')({
             '@type': 'ListItem',
             position: i + 1,
             name: `${c.name} holidays`,
-            url: `${SITE_URL}/holidays/${c.code.toLowerCase()}/${currentYear}`,
+            url: `${SITE_URL}/holidays/${c.code.toLowerCase()}/${currentYear()}`,
           })),
         },
       ],
@@ -34,10 +34,10 @@ function CountriesPage() {
     <PageLayout sidebar={false}>
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Browse countries</h1>
-        <p className="text-muted-foreground">Select a country to view its public holidays for {currentYear}</p>
+        <p className="text-muted-foreground">Select a country to view its public holidays for {currentYear()}</p>
       </div>
 
-      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear} type="holidays" layout="table" />
+      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear()} type="holidays" layout="table" />
     </PageLayout>
   );
 }

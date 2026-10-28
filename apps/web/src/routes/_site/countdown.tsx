@@ -17,7 +17,8 @@ import { defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
 import { occasionParams } from '@/lib/holidays-api';
 import { googleCalendarUrl } from '@/lib/ics';
 import { faqSchema, seo, SITE_URL, softwareAppSchema } from '@/lib/seo';
-import { getUpcomingOccasions, getVisitorCountry } from '@/server/holidays';
+import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
+import { getUpcomingOccasions } from '@/server/holidays';
 
 const FAQ = [
   {
@@ -40,7 +41,7 @@ export const Route = createFileRoute('/_site/countdown')({
     date: z.string().regex(COUNTDOWN_DATE).optional().catch(undefined),
   }),
   loader: async () => {
-    const code = await getVisitorCountry();
+    const code = getVisitorCountry();
     const upcoming = await getUpcomingOccasions({ data: { code, limit: 12 } });
     return { code, upcoming };
   },
@@ -67,6 +68,7 @@ function nextNewYear() {
 
 function CountdownMaker() {
   const { code, upcoming } = Route.useLoaderData();
+  useVisitorCountry(code);
   const search = Route.useSearch();
   const now = useToday();
   const navigate = useNavigate({ from: Route.fullPath });

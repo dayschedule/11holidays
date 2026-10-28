@@ -15,7 +15,7 @@ export const Route = createFileRoute('/sitemap.xml')({
     handlers: {
       GET: async () => {
         const countryPaths = COUNTRIES_WITH_SLUG.flatMap((x) => [
-          `/holidays/${x.code.toLowerCase()}/${currentYear}`,
+          `/holidays/${x.code.toLowerCase()}/${currentYear()}`,
           `/holidays/${x.code.toLowerCase()}`,
           `/upcoming-holidays/${x.slug}`,
           `/long-weekends/${x.slug}`,

@@ -6,7 +6,7 @@ import { API_URL, SITE_URL } from '@/lib/seo';
 /** Plain-text guide for AI agents and LLMs, see https://llmstxt.org */
 function buildLlmsTxt() {
   const countries = COUNTRIES_WITH_SLUG.map(
-    (c) => `- [${c.name} holidays ${currentYear}](${SITE_URL}/holidays/${c.code.toLowerCase()}/${currentYear}): code \`${c.code.toLowerCase()}\`, slug \`${c.slug}\``
+    (c) => `- [${c.name} holidays ${currentYear()}](${SITE_URL}/holidays/${c.code.toLowerCase()}/${currentYear()}): code \`${c.code.toLowerCase()}\`, slug \`${c.slug}\``
   ).join('\n');
 
   return `# 11holidays
@@ -20,7 +20,7 @@ Countries are identified by ISO 3166-1 alpha-2 codes in lowercase (\`us\`, \`in\
 - [All countries](${SITE_URL}/countries): every supported country with its code
 - [Holidays this year](${SITE_URL}/holidays): holidays and festivals around the world
 - [Search](${SITE_URL}/search?q=diwali): \`/search?q={name}\` finds a holiday in every country that observes it
-- Country holidays by year: \`${SITE_URL}/holidays/{code}/{year}\`, for example [${SITE_URL}/holidays/us/${currentYear}](${SITE_URL}/holidays/us/${currentYear})
+- Country holidays by year: \`${SITE_URL}/holidays/{code}/{year}\`, for example [${SITE_URL}/holidays/us/${currentYear()}](${SITE_URL}/holidays/us/${currentYear()})
 - Country holidays and festivals: \`${SITE_URL}/holidays/{code}\`
 - A single holiday with dates, history and countdown: \`${SITE_URL}/holidays/{code}/{holiday-slug}\`, for example [${SITE_URL}/holidays/in/diwali](${SITE_URL}/holidays/in/diwali)
 - Upcoming holidays: \`${SITE_URL}/upcoming-holidays/{slug}\`
@@ -39,6 +39,7 @@ Countries are identified by ISO 3166-1 alpha-2 codes in lowercase (\`us\`, \`in\
 
 - iCal feed: \`${SITE_URL}/ics/{code}\` returns the current and next year as \`text/calendar\`. Add \`?year={year}\` for one year, or \`?public=1\` for public holidays only.
 - [Sitemap](${SITE_URL}/sitemap.xml): every page URL
+- [API catalog](${SITE_URL}/.well-known/api-catalog): RFC 9727 linkset pointing to the OpenAPI spec and docs
 
 ## REST API (API key required)
 
@@ -49,7 +50,7 @@ Countries are identified by ISO 3166-1 alpha-2 codes in lowercase (\`us\`, \`in\
 - \`GET /occasions\`: holidays and festivals with descriptions
 
 \`\`\`bash
-curl "${API_URL}/holidays?country=US&year=${currentYear}" -H "Authorization: Bearer YOUR_API_KEY"
+curl "${API_URL}/holidays?country=US&year=${currentYear()}" -H "Authorization: Bearer YOUR_API_KEY"
 \`\`\`
 
 ## Optional

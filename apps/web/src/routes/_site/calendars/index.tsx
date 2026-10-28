@@ -12,7 +12,7 @@ import { seo, softwareAppSchema } from '@/lib/seo';
 export const Route = createFileRoute('/_site/calendars/')({
   head: () =>
     seo({
-      title: `Holiday Calendar Maker ${currentYear} - Printable Holiday Calendars for 230+ Countries`,
+      title: `Holiday Calendar Maker ${currentYear()} - Printable Holiday Calendars for 230+ Countries`,
       description:
         'Create a custom holiday calendar for any country. Choose holidays, add company days off, pick a theme and print or download PDF, PNG and iCal for free.',
       path: '/calendars',
@@ -40,7 +40,7 @@ function CalendarsPage() {
             Holiday calendar maker
           </h1>
           <p className="text-lg text-muted-foreground">
-            Create a {currentYear} holiday calendar for your company, school or family. Select the holidays you
+            Create a {currentYear()} holiday calendar for your company, school or family. Select the holidays you
             observe, add your own days off, then print it or share it.
           </p>
           <div className="flex flex-wrap gap-4 text-sm">
@@ -66,7 +66,7 @@ function CalendarsPage() {
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Choose a country to start</h2>
       </div>
-      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear} type="calendars" />
+      <CountryList countries={COUNTRIES_WITH_SLUG} currentYear={currentYear()} type="calendars" />
     </PageLayout>
   );
 }

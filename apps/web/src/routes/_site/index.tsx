@@ -12,11 +12,12 @@ import { getCountryByCode, getCountryName } from '@/lib/countries-data';
 import { currentYear, occasionParams } from '@/lib/holidays-api';
 import { FEATURED_FESTIVALS, defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
 import { seo, softwareAppSchema, webApiSchema, webPageSchema } from '@/lib/seo';
-import { getHolidaysToday, getUpcomingOccasions, getVisitorCountry } from '@/server/holidays';
+import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
+import { getHolidaysToday, getUpcomingOccasions } from '@/server/holidays';
 
 export const Route = createFileRoute('/_site/')({
   loader: async () => {
-    const code = await getVisitorCountry();
+    const code = getVisitorCountry();
     const [upcoming, today] = await Promise.all([
       getUpcomingOccasions({ data: { code, limit: 7 } }),
       getHolidaysToday(),
@@ -25,13 +26,13 @@ export const Route = createFileRoute('/_site/')({
   },
   head: () =>
     seo({
-      title: `Holidays ${currentYear} for 230+ Countries - Calendar, Widget & API | 11holidays`,
+      title: `Holidays ${currentYear()} for 230+ Countries - Calendar, Widget & API | 11holidays`,
       description:
         'Find public holidays and festivals for 230+ countries. Create printable holiday calendars, embed a free holidays widget, plan long weekends and access holidays via API.',
       keywords: ['holidays', 'public holidays', 'holiday calendar', 'holidays API', 'festival dates', 'long weekends'],
       path: '/',
       jsonLd: [
-        webPageSchema('/', `Holidays ${currentYear} for 230+ countries`),
+        webPageSchema('/', `Holidays ${currentYear()} for 230+ countries`),
         webApiSchema(),
         softwareAppSchema(
           'Holiday calendar maker',
@@ -47,6 +48,7 @@ const POPULAR = ['US', 'IN', 'GB', 'CA', 'AU', 'DE', 'FR', 'AE', 'SG', 'BR'];
 
 function Home() {
   const { code, upcoming, today } = Route.useLoaderData();
+  useVisitorCountry(code);
   const now = useToday();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
@@ -66,7 +68,7 @@ function Home() {
         <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
           <span className="inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium shadow-xs backdrop-blur">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-festive-coral" />
-            7,000+ holidays · 230+ countries · updated {currentYear}
+            7,000+ holidays · 230+ countries · updated {currentYear()}
           </span>
           <h1 className="text-4xl font-semibold tracking-[-0.03em] leading-[1.05] sm:text-6xl lg:text-7xl">
             Every holiday,
@@ -103,7 +105,7 @@ function Home() {
               <Link
                 key={c}
                 to="/holidays/$country/$slug"
-                params={{ country: c.toLowerCase(), slug: String(currentYear) }}
+                params={{ country: c.toLowerCase(), slug: String(currentYear()) }}
                 className="inline-flex items-center gap-1.5 rounded-full border bg-background/80 px-3 py-1 text-xs font-medium transition-colors hover:border-primary/40 hover:text-primary"
               >
                 <CountryFlag countryCode={c} className="h-3 w-4 rounded-[2px]" />
@@ -188,7 +190,7 @@ function Home() {
                 <Link
                   key={h.holiday_id}
                   to="/holidays/$country/$slug"
-                  params={{ country: h.country.toLowerCase(), slug: String(currentYear) }}
+                  params={{ country: h.country.toLowerCase(), slug: String(currentYear()) }}
                   className={className}
                 >
                   {content}
@@ -278,7 +280,7 @@ function Home() {
             <Link
               key={c}
               to="/holidays/$country/$slug"
-              params={{ country: c.toLowerCase(), slug: String(currentYear) }}
+              params={{ country: c.toLowerCase(), slug: String(currentYear()) }}
               className="group flex items-center gap-3 rounded-2xl border bg-card p-3 shadow-xs transition hover:border-primary/40 hover:shadow-md"
             >
               <CountryFlag countryCode={c} className="h-7 w-10 shrink-0 rounded shadow-sm" />
@@ -286,7 +288,7 @@ function Home() {
                 <p className="truncate text-sm font-semibold group-hover:text-primary">
                   {getCountryName(c)}
                 </p>
-                <p className="text-xs text-muted-foreground">{currentYear} holidays</p>
+                <p className="text-xs text-muted-foreground">{currentYear()} holidays</p>
               </div>
             </Link>
           ))}
@@ -313,7 +315,7 @@ function Home() {
             </Button>
           </div>
         </div>
-        <ApiExamples year={currentYear} countryCode={code} />
+        <ApiExamples year={currentYear()} countryCode={code} />
       </section>
     </div>
   );

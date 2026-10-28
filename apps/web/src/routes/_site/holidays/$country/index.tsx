@@ -26,12 +26,12 @@ export const Route = createFileRoute('/_site/holidays/$country/')({
   head: ({ loaderData, params }) =>
     loaderData
       ? seo({
-          title: `${loaderData.country.name} Holiday & Festival List ${currentYear} | 11holidays.com`,
-          description: `Explore public holidays, religious festivals, observances, and national celebrations in ${loaderData.country.name} for ${currentYear}. Browse holiday dates, significance and upcoming events.`,
+          title: `${loaderData.country.name} Holiday & Festival List ${currentYear()} | 11holidays.com`,
+          description: `Explore public holidays, religious festivals, observances, and national celebrations in ${loaderData.country.name} for ${currentYear()}. Browse holiday dates, significance and upcoming events.`,
           path: `/holidays/${params.country}`,
           jsonLd: [
             holidayListSchema(
-              `${loaderData.country.name} holidays and festivals ${currentYear}`,
+              `${loaderData.country.name} holidays and festivals ${currentYear()}`,
               loaderData.country.name,
               [...loaderData.occasions].sort((a, b) => a.date.localeCompare(b.date))
             ),
@@ -65,7 +65,7 @@ function CountryOccasionsPage() {
       <CountryHeading
         countryCode={country.code}
         title={`Holidays in ${country.name}`}
-        description={`Public holidays, religious festivals, observances and national celebrations in ${country.name} · ${currentYear}`}
+        description={`Public holidays, religious festivals, observances and national celebrations in ${country.name} · ${currentYear()}`}
       />
 
       <div className="sticky top-[68px] z-30 -mx-4 flex flex-col gap-3 bg-background/90 px-4 py-3 backdrop-blur sm:flex-row md:mx-0 md:px-0">

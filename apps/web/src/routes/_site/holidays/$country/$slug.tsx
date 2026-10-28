@@ -1,9 +1,9 @@
-import { createFileRoute, notFound } from '@tanstack/react-router';
+import { createFileRoute, notFound, redirect } from '@tanstack/react-router';
 import { format, parseISO } from 'date-fns';
 import { HolidayPageContent } from '@/components/holiday-page-content';
 import { OccasionPageContent } from '@/components/occasion-page-content';
 import { getCountryByCode } from '@/lib/countries-data';
-import { holidayKind } from '@/lib/holidays-api';
+import { currentYear, holidayKind } from '@/lib/holidays-api';
 import { faqSchema, holidayDatasetSchema, holidayListSchema, seo, webPageSchema } from '@/lib/seo';
 import { getCountryHolidays, getOccasionPage } from '@/server/holidays';
 
@@ -21,6 +21,10 @@ export const Route = createFileRoute('/_site/holidays/$country/$slug')({
     // /holidays/in/2026
     if (isYear(params.slug)) {
       const year = Number(params.slug);
+      // Old builds linked to /holidays/xx/1970 (clock frozen at epoch on Workers)
+      if (year === 1970) {
+        throw redirect({ to: '/holidays/$country/$slug', params: { country: params.country, slug: String(currentYear()) }, statusCode: 301 });
+      }
       if (year < 2000 || year > 2100) throw notFound();
       const { holidays } = await getCountryHolidays({ data: { code: country.code, year } });
       return { kind: 'year' as const, country, year, holidays };

@@ -210,4 +210,5 @@ export function holidayKind(type: string): HolidayKind {
   return 'other';
 }
 
-export const currentYear = new Date().getFullYear();
+// A function, not a constant: Workers freeze the clock at 1970 while modules load.
+export const currentYear = () => new Date().getFullYear();

@@ -50,9 +50,9 @@ export function InternalLinksAd({ country, className }: InternalLinksAdProps) {
       key: 'year',
       link: {
         to: '/holidays/$country/$slug',
-        params: { country: code, slug: String(currentYear) },
+        params: { country: code, slug: String(currentYear()) },
       },
-      title: `All holidays in ${country.name} ${currentYear}`,
+      title: `All holidays in ${country.name} ${currentYear()}`,
       description: 'Export the full list to Excel',
       cta: 'Download Excel',
       icon: FileSpreadsheet,
@@ -73,7 +73,7 @@ export function InternalLinksAd({ country, className }: InternalLinksAdProps) {
     {
       key: 'leave-planner',
       link: { to: '/leave-planner', search: { country: code } },
-      title: `Leave planner ${currentYear}`,
+      title: `Leave planner ${currentYear()}`,
       description: 'Turn a few leaves into the longest breaks',
       cta: 'Maximize leaves',
       icon: Plane,

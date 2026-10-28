@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as DotwellKnownApiCatalogRouteImport } from './routes/[.]well-known/api-catalog'
 import { Route as SiteIndexRouteImport } from './routes/_site/index'
 import { Route as SiteAboutRouteImport } from './routes/_site/about'
 import { Route as SiteApiKeyRouteImport } from './routes/_site/api-key'
@@ -50,6 +51,11 @@ const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotwellKnownApiCatalogRoute = DotwellKnownApiCatalogRouteImport.update({
+  id: '/.well-known/api-catalog',
+  path: '/.well-known/api-catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SiteIndexRoute = SiteIndexRouteImport.update({
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.well-known/api-catalog': typeof DotwellKnownApiCatalogRoute
   '/about': typeof SiteAboutRoute
   '/api-key': typeof SiteApiKeyRoute
   '/contact': typeof SiteContactRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.well-known/api-catalog': typeof DotwellKnownApiCatalogRoute
   '/about': typeof SiteAboutRoute
   '/api-key': typeof SiteApiKeyRoute
   '/contact': typeof SiteContactRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/_site': typeof SiteRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.well-known/api-catalog': typeof DotwellKnownApiCatalogRoute
   '/_site/about': typeof SiteAboutRoute
   '/_site/api-key': typeof SiteApiKeyRoute
   '/_site/contact': typeof SiteContactRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/'
     | '/llms.txt'
     | '/sitemap.xml'
+    | '/.well-known/api-catalog'
     | '/about'
     | '/api-key'
     | '/contact'
@@ -304,6 +314,7 @@ export interface FileRouteTypes {
   to:
     | '/llms.txt'
     | '/sitemap.xml'
+    | '/.well-known/api-catalog'
     | '/about'
     | '/api-key'
     | '/contact'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/_site'
     | '/llms.txt'
     | '/sitemap.xml'
+    | '/.well-known/api-catalog'
     | '/_site/about'
     | '/_site/api-key'
     | '/_site/contact'
@@ -365,6 +377,7 @@ export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  DotwellKnownApiCatalogRoute: typeof DotwellKnownApiCatalogRoute
   EmbedCountryRoute: typeof EmbedCountryRoute
   EmbedCountdownRoute: typeof EmbedCountdownRoute
   IcsCountryRoute: typeof IcsCountryRoute
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/api-catalog': {
+      id: '/.well-known/api-catalog'
+      path: '/.well-known/api-catalog'
+      fullPath: '/.well-known/api-catalog'
+      preLoaderRoute: typeof DotwellKnownApiCatalogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_site/': {
@@ -627,6 +647,7 @@ const rootRouteChildren: RootRouteChildren = {
   SiteRoute: SiteRouteWithChildren,
   LlmsDottxtRoute: LlmsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  DotwellKnownApiCatalogRoute: DotwellKnownApiCatalogRoute,
   EmbedCountryRoute: EmbedCountryRoute,
   EmbedCountdownRoute: EmbedCountdownRoute,
   IcsCountryRoute: IcsCountryRoute,
@@ -636,10 +657,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

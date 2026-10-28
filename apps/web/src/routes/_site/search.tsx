@@ -22,9 +22,9 @@ export const Route = createFileRoute('/_site/search')({
   }),
   head: ({ loaderData }) =>
     seo({
-      title: loaderData?.q ? `“${loaderData.q}” holidays ${currentYear} - dates by country | 11holidays` : 'Search holidays | 11holidays',
+      title: loaderData?.q ? `“${loaderData.q}” holidays ${currentYear()} - dates by country | 11holidays` : 'Search holidays | 11holidays',
       description: loaderData?.q
-        ? `When is ${loaderData.q} in ${currentYear}? See ${loaderData.q} dates in every country that observes it.`
+        ? `When is ${loaderData.q} in ${currentYear()}? See ${loaderData.q} dates in every country that observes it.`
         : 'Search holidays and festivals across 230+ countries.',
       path: loaderData?.q ? `/search?q=${encodeURIComponent(loaderData.q)}` : '/search',
       jsonLd: [webPageSchema('/search', 'Search holidays', undefined, 'SearchResultsPage')],
@@ -55,7 +55,7 @@ function SearchPage() {
             'Search holidays'
           )}
         </h1>
-        <p className="text-muted-foreground">Search festivals and public holidays across 230+ countries for {currentYear}.</p>
+        <p className="text-muted-foreground">Search festivals and public holidays across 230+ countries for {currentYear()}.</p>
       </div>
 
       <form
@@ -81,7 +81,7 @@ function SearchPage() {
             <Link
               key={c.code}
               to="/holidays/$country/$slug"
-              params={{ country: c.code.toLowerCase(), slug: String(currentYear) }}
+              params={{ country: c.code.toLowerCase(), slug: String(currentYear()) }}
               className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm hover:border-primary/40"
             >
               <CountryFlag countryCode={c.code} className="h-3.5 w-5 rounded-[2px]" />
@@ -128,7 +128,7 @@ function SearchPage() {
                 ) : (
                   <Link
                     to="/holidays/$country/$slug"
-                    params={{ country: h.country.toLowerCase(), slug: String(currentYear) }}
+                    params={{ country: h.country.toLowerCase(), slug: String(currentYear()) }}
                     className={cls}
                   >
                     {inner}

@@ -77,7 +77,7 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
       } else {
         navigate({
           to: '/holidays/$country/$slug',
-          params: { country: h.country.toLowerCase(), slug: String(currentYear) },
+          params: { country: h.country.toLowerCase(), slug: String(currentYear()) },
         });
       }
     });
@@ -148,7 +148,7 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
                       go(() =>
                         navigate({
                           to: '/holidays/$country/$slug',
-                          params: { country: c.code.toLowerCase(), slug: String(currentYear) },
+                          params: { country: c.code.toLowerCase(), slug: String(currentYear()) },
                         })
                       )
                     }
@@ -156,7 +156,7 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
                   >
                     <CountryFlag countryCode={c.code} className="h-5 w-7 shrink-0 rounded-sm" />
                     <span className="flex-1 truncate font-medium">{c.name}</span>
-                    <span className="text-xs text-muted-foreground">{currentYear} holidays</span>
+                    <span className="text-xs text-muted-foreground">{currentYear()} holidays</span>
                   </CommandPrimitive.Item>
                 ))}
               </CommandPrimitive.Group>

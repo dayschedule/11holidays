@@ -14,7 +14,8 @@ import { currentYear } from '@/lib/holidays-api';
 import { faqSchema, seo, softwareAppSchema } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 import { getWeekend, publicHolidayMap, summarizeYear, weekendLabel } from '@/lib/workdays';
-import { getCountryHolidays, getVisitorCountry } from '@/server/holidays';
+import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
+import { getCountryHolidays } from '@/server/holidays';
 
 const FAQ = [
   {
@@ -40,9 +41,9 @@ export const Route = createFileRoute('/_site/working-days-calculator')({
     country: z.string().length(2).optional().catch(undefined),
     year: z.coerce.number().int().min(2000).max(2100).optional().catch(undefined),
   }),
-  loaderDeps: ({ search }) => ({ country: search.country, year: search.year ?? currentYear }),
+  loaderDeps: ({ search }) => ({ country: search.country, year: search.year ?? currentYear() }),
   loader: async ({ deps }) => {
-    const country = getCountryByCode(deps.country ?? (await getVisitorCountry())) ?? getCountryByCode('US')!;
+    const country = getCountryByCode(deps.country ?? getVisitorCountry()) ?? getCountryByCode('US')!;
     const [current, next] = await Promise.all([
       getCountryHolidays({ data: { code: country.code, year: deps.year } }),
       getCountryHolidays({ data: { code: country.code, year: deps.year + 1 } }),
@@ -51,7 +52,7 @@ export const Route = createFileRoute('/_site/working-days-calculator')({
   },
   head: () =>
     seo({
-      title: `Working Days Calculator ${currentYear} - Business Days Between Two Dates | 11holidays`,
+      title: `Working Days Calculator ${currentYear()} - Business Days Between Two Dates | 11holidays`,
       description:
         'Count working days and business days between two dates, or add working days to a date. Excludes weekends and public holidays for 230+ countries, with working days per month.',
       keywords: [
@@ -59,7 +60,7 @@ export const Route = createFileRoute('/_site/working-days-calculator')({
         'business days calculator',
         'working days between two dates',
         'add business days to date',
-        `working days in ${currentYear}`,
+        `working days in ${currentYear()}`,
         'working days per month',
       ],
       path: '/working-days-calculator',
@@ -78,6 +79,7 @@ export const Route = createFileRoute('/_site/working-days-calculator')({
 function WorkingDaysPage() {
   const { country, year, holidays } = Route.useLoaderData();
   const search = Route.useSearch();
+  useVisitorCountry(country.code, !search.country);
   const navigate = useNavigate({ from: Route.fullPath });
 
   const weekend = getWeekend(country.code);
@@ -129,11 +131,11 @@ function WorkingDaysPage() {
             </p>
           </div>
           <div className="flex gap-1 rounded-full border bg-card p-1">
-            {[currentYear, currentYear + 1].map((y) => (
+            {[currentYear(), currentYear() + 1].map((y) => (
               <Link
                 key={y}
                 from={Route.fullPath}
-                search={{ ...search, year: y === currentYear ? undefined : y }}
+                search={{ ...search, year: y === currentYear() ? undefined : y }}
                 replace
                 resetScroll={false}
                 className={cn('rounded-full px-4 py-1 text-sm font-medium', y === year ? 'bg-primary text-primary-foreground' : 'hover:bg-accent')}

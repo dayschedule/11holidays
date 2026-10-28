@@ -16,7 +16,9 @@
 
 Global [holidays API](https://11holidays.com/) for public holidays, bank holidays and observances from 230+ countries. Use it over plain HTTP, through the npm package, or as free iCal feeds.
 
-**[Website](https://11holidays.com)** · **[API docs](https://11holidays.com/docs/api)** · **[Pricing](https://11holidays.com/pricing)** · **[Get an API key](https://11holidays.com/api-key)** · **[OpenAPI spec](https://api.11holidays.com/v1/openapi.json)** · **[llms.txt](https://11holidays.com/llms.txt)**
+<img width="999" height="741" alt="Holidays API" src="https://github.com/user-attachments/assets/71a0a2f5-ca0b-4db3-8614-af67af3ac875" />
+
+## Installation
 
 ## Contents
 
@@ -183,15 +185,5 @@ For example [`https://11holidays.com/ics/us`](https://11holidays.com/ics/us).
 
 ## Support
 
-- Questions about API keys, billing or access: [contact support](https://11holidays.com/contact).
-- Bugs or questions about the SDK: [open an issue](https://github.com/dayschedule/11holidays/issues).
-
-## Credits
-
-11holidays is built and maintained by [DaySchedule](https://dayschedule.com/), online appointment scheduling software for businesses.
-
-<a href="https://dayschedule.com/"><img src="apps/web/public/img/dayschedule.svg" alt="DaySchedule" height="32"></a>
-
-## License
-
-See [LICENSE](LICENSE).
+- If you have any question related to API key, access etc. [contact support](https://dayschedule.com/contact).
+- Open an issue on Github for question related to SDK

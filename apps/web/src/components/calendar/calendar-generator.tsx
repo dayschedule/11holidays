@@ -33,6 +33,7 @@ import { CountrySelect } from '@/components/country-select';
 import { EmbedCode, type EmbedView } from '@/components/embed-code';
 import { HolidayTypeBadge } from '@/components/holiday-type-badge';
 import { useToday } from '@/hooks/use-today';
+import { captureCalendar, downloadCanvas } from '@/lib/calendar-export';
 import { calendarThemes, generateYearCalendar, getMonthName, type CalendarTheme } from '@/lib/calendar-utils';
 import type { Country } from '@/lib/countries-data';
 import {
@@ -62,8 +63,6 @@ interface CalendarGeneratorProps {
   holidays: Holiday[];
   search: CalendarSearch;
 }
-
-const UNSUPPORTED_COLOR = /oklch|oklab|lab\(|lch\(|color\(/;
 
 export function CalendarGenerator({ country, year, holidays, search }: CalendarGeneratorProps) {
   const navigate = useNavigate();
@@ -148,41 +147,15 @@ export function CalendarGenerator({ country, year, holidays, search }: CalendarG
     setIsDownloading(type);
 
     try {
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import('html2canvas'),
-        import('jspdf'),
-      ]);
+      const canvas = await captureCalendar(calendarRef.current, theme);
 
-      const canvas = await html2canvas(calendarRef.current, {
-        scale: 3,
-        useCORS: true,
-        logging: false,
-        backgroundColor: theme.background,
-        windowWidth: calendarRef.current.scrollWidth,
-        windowHeight: calendarRef.current.scrollHeight,
-        onclone: (clonedDoc) => {
-          // html2canvas cannot parse modern color functions used by the site theme
-          clonedDoc.querySelectorAll<HTMLElement>('*').forEach((el) => {
-            const computed = clonedDoc.defaultView!.getComputedStyle(el);
-            if (UNSUPPORTED_COLOR.test(computed.color)) el.style.color = theme.text;
-            if (UNSUPPORTED_COLOR.test(computed.backgroundColor)) el.style.backgroundColor = 'transparent';
-            if (UNSUPPORTED_COLOR.test(computed.borderTopColor + computed.borderBottomColor + computed.borderLeftColor + computed.borderRightColor))
-              el.style.borderColor = 'transparent';
-            if (UNSUPPORTED_COLOR.test(computed.outlineColor)) el.style.outlineColor = 'transparent';
-            if (UNSUPPORTED_COLOR.test(computed.textDecorationColor)) el.style.textDecorationColor = 'currentColor';
-          });
-        },
-      });
-
-      const imgData = canvas.toDataURL('image/png', 1.0);
       if (type === 'image') {
-        const link = document.createElement('a');
-        link.download = `${fileBase}.png`;
-        link.href = imgData;
-        link.click();
+        downloadCanvas(canvas, `${fileBase}.png`);
         return;
       }
 
+      const { default: jsPDF } = await import('jspdf');
+      const imgData = canvas.toDataURL('image/png', 1.0);
       const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
       const pdf = new jsPDF({ orientation, unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();

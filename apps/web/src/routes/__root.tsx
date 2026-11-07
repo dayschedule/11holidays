@@ -9,7 +9,7 @@ import { serverNow } from '@/hooks/use-today';
 import appCss from '@/styles.css?url';
 
 export const Route = createRootRoute({
-  loader: () => ({ now: serverNow() }),
+  loader: () => ({ now: serverNow(), nowMs: Date.now() }),
   head: () => {
     const { meta } = seo({
       title: `Holidays API & Calendar for ${currentYear()} - 11holidays.com`,

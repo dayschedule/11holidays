@@ -4,12 +4,17 @@ import {
   BadgeDollarSign,
   BookOpen,
   Briefcase,
+  Calculator,
   Calendar,
   CalendarDays,
+  CalendarRange,
   ChevronDown,
+  Clock3,
   Code2,
   Github,
+  Earth,
   Globe2,
+  Hourglass,
   LayoutGrid,
   Menu,
   Palmtree,
@@ -41,6 +46,12 @@ type NavTo =
   | '/calendars'
   | '/widget'
   | '/tools'
+  | '/calendar'
+  | '/world-clock'
+  | '/timezones'
+  | '/time-zone-converter'
+  | '/daylight-saving-time'
+  | '/date-calculator'
   | '/pricing'
   | '/my-calendars'
   | '/api-key'
@@ -68,6 +79,18 @@ const navGroups: NavGroup[] = [
       { to: '/countries', label: 'Countries', description: 'Public holidays for 230+ countries', icon: Globe2 },
       { to: '/search', label: 'Search holidays', description: 'Find a holiday in every country', icon: Search },
     ],
+  },
+  {
+    label: 'Time & Dates',
+    items: [
+      { to: '/calendar', label: 'Calendar', description: 'Printable yearly and monthly calendars', icon: CalendarRange },
+      { to: '/world-clock', label: 'World clock', description: 'Current time in 700+ cities', icon: Earth },
+      { to: '/timezones', label: 'Time zones', description: 'Every zone, offset and abbreviation', icon: Globe2 },
+      { to: '/time-zone-converter', label: 'Time zone converter', description: 'Convert time between cities', icon: Clock3 },
+      { to: '/date-calculator', label: 'Date calculator', description: 'Days between two dates', icon: Calculator },
+      { to: '/daylight-saving-time', label: 'Daylight saving time', description: 'When the clocks change', icon: Hourglass },
+    ],
+    footer: { to: '/tools', label: 'All tools', icon: LayoutGrid },
   },
   {
     label: 'Tools',

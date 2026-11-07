@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { generateCalendarDays, getMonthName, getWeekDays, type CalendarHoliday, type WeekStart } from '@/lib/calendar-utils';
 import { useToday } from '@/hooks/use-today';
@@ -17,17 +18,23 @@ interface MonthGridProps {
   weekStart?: WeekStart;
   highlight?: string;
   className?: string;
+  /** Replaces the plain month name, for example with a link */
+  renderTitle?: (month: number) => ReactNode;
 }
 
 /** Interactive month grid used on web pages (not for printing) */
-export function MonthGrid({ year, month, holidays, weekStart = 'sun', highlight, className }: MonthGridProps) {
+export function MonthGrid({ year, month, holidays, weekStart = 'sun', highlight, className, renderTitle }: MonthGridProps) {
   const today = useToday();
   const days = generateCalendarDays(year, month, holidays, weekStart, today);
 
   return (
     <div className={cn('rounded-2xl border bg-card p-3 shadow-xs', className)}>
       <h3 className="mb-2 px-1 text-sm font-semibold">
-        {getMonthName(month)} <span className="text-muted-foreground">{year}</span>
+        {renderTitle?.(month) ?? (
+          <>
+            {getMonthName(month)} <span className="text-muted-foreground">{year}</span>
+          </>
+        )}
       </h3>
       <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-medium text-muted-foreground">
         {getWeekDays(weekStart, 'narrow').map((d, i) => (
@@ -80,15 +87,17 @@ export function YearGrid({
   year,
   holidays,
   weekStart = 'sun',
+  renderTitle,
 }: {
   year: number;
   holidays: CalendarHoliday[];
   weekStart?: WeekStart;
+  renderTitle?: MonthGridProps['renderTitle'];
 }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 12 }, (_, m) => (
-        <MonthGrid key={m} year={year} month={m} holidays={holidays} weekStart={weekStart} />
+        <MonthGrid key={m} year={year} month={m} holidays={holidays} weekStart={weekStart} renderTitle={renderTitle} />
       ))}
     </div>
   );

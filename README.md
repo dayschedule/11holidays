@@ -177,6 +177,10 @@ For example [`https://11holidays.com/ics/us`](https://11holidays.com/ics/us).
 - [Leave planner](https://11holidays.com/leave-planner): the most days off from your leave budget
 - [Working days calculator](https://11holidays.com/working-days-calculator): business days between two dates, excluding holidays
 - [Countdown](https://11holidays.com/countdown) and [embeddable widget](https://11holidays.com/widget)
+- [Printable calendar](https://11holidays.com/calendar): yearly and monthly calendars with holidays, as PDF or PNG
+- [World clock](https://11holidays.com/world-clock) and [time zones](https://11holidays.com/timezones): current time in 700+ cities and every IANA zone
+- [Time zone converter](https://11holidays.com/time-zone-converter): convert any date and time between cities
+- [Date calculator](https://11holidays.com/date-calculator) and [week number](https://11holidays.com/week-number)
 - [All tools](https://11holidays.com/tools)
 
 ## Support

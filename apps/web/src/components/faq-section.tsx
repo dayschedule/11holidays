@@ -1,6 +1,8 @@
 export interface FaqItem {
   q: string;
   a: string;
+  /** Link shown after the answer */
+  more?: { label: string; href: string };
 }
 
 /** Visible FAQ answers; pair it with `faqSchema` in the route head so the page and JSON-LD match */
@@ -12,7 +14,17 @@ export function FaqSection({ items, title = 'Frequently asked questions' }: { it
         {items.map((f) => (
           <div key={f.q} className="p-4">
             <h3 className="font-semibold">{f.q}</h3>
-            <p className="mt-1.5 text-sm text-muted-foreground">{f.a}</p>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              {f.a}
+              {f.more && (
+                <>
+                  {' '}
+                  <a href={f.more.href} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                    {f.more.label}
+                  </a>
+                </>
+              )}
+            </p>
           </div>
         ))}
       </div>

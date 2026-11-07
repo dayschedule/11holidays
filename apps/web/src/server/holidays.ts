@@ -16,6 +16,7 @@ import {
 } from '@/lib/occassion-api';
 
 const countryCode = z.string().length(2).toUpperCase();
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 export const getCountryHolidays = createServerFn({ method: 'GET' })
   .validator(z.object({ code: countryCode, year: z.number().int().min(2000).max(2100) }))
@@ -64,3 +65,7 @@ export const searchHolidays = createServerFn({ method: 'GET' })
 export const getHolidaysToday = createServerFn({ method: 'GET' }).handler(() =>
   fetchHolidaysOnDate(env, format(new Date(), 'yyyy-MM-dd'))
 );
+
+export const getHolidaysOnDate = createServerFn({ method: 'GET' })
+  .validator(z.object({ date: isoDate }))
+  .handler(({ data }) => fetchHolidaysOnDate(env, data.date, 300));

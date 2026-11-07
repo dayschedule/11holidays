@@ -10,7 +10,9 @@ export const holidaySchema = z
       example: `Christmas eve ${new Date().getFullYear()}`,
       description: 'Name of the Holiday',
     }),
-    description: z.string().optional().nullable(),
+    description: z.string().optional().nullable().openapi({
+      description: 'Holiday description, may contain Markdown',
+    }),
     date: z.string().openapi({
       example: `${new Date().getFullYear()}-12-25`,
       description: 'Date of holiday in YYYY-MM-DD format',

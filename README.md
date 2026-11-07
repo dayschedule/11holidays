@@ -1,3 +1,7 @@
+# 11holidays
+
+Global [holidays API](https://11holidays.com/) for public holidays, bank holidays and observances from 230+ countries. Use it over plain HTTP, through the npm package, or as free iCal feeds.
+
 <p align="center">
   <a href="https://11holidays.com/">
     <img src=".github/banner.svg" alt="11holidays: Public Holidays API for 230+ countries" width="100%">
@@ -11,14 +15,6 @@
   <a href="https://11holidays.com/llms.txt"><img src="https://img.shields.io/badge/llms.txt-AI%20ready-2a2238" alt="llms.txt"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/dayschedule/11holidays" alt="License"></a>
 </p>
-
-# 11holidays
-
-Global [holidays API](https://11holidays.com/) for public holidays, bank holidays and observances from 230+ countries. Use it over plain HTTP, through the npm package, or as free iCal feeds.
-
-<img width="999" height="741" alt="Holidays API" src="https://github.com/user-attachments/assets/71a0a2f5-ca0b-4db3-8614-af67af3ac875" />
-
-## Installation
 
 ## Contents
 

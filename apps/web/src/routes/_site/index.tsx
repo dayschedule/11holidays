@@ -308,7 +308,7 @@ function Home() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild className="rounded-full">
-              <Link to="/api-key">Get free API key</Link>
+              <Link to="/api-key">Get API key</Link>
             </Button>
             <Button variant="outline" asChild className="rounded-full">
               <Link to="/pricing">See pricing</Link>

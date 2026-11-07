@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, Copy } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { ArrowRight, Check, Copy } from 'lucide-react';
 
 interface ApiExamplesProps {
   countryCode?: string;
@@ -112,6 +113,12 @@ console.log(response.data);`,
             </TabsContent>
           ))}
         </Tabs>
+        <Link
+          to="/docs/api"
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+        >
+          Learn more in the API docs <ArrowRight className="h-4 w-4" />
+        </Link>
       </CardContent>
     </Card>
   );

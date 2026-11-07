@@ -6,7 +6,9 @@ export const occasionSchema = z.object({
   ref_url: z.string(), // Internal
   name: z.string(),
   image: z.string().nullable(),
-  description: z.string().nullable(),
+  description: z.string().nullable().openapi({
+    description: 'Occasion description, may contain Markdown',
+  }),
   created_at: z.string(),
   updated_at: z.string().nullable(),
 });

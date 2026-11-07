@@ -1,4 +1,3 @@
-import { markdownToText } from '../helper/utility';
 import { Occasion } from '../schema/occasoinSchema';
 
 export const getOccasions = async (
@@ -14,11 +13,8 @@ export const getOccasions = async (
       LIMIT ?, ?`
   ).bind(offset, limit);
 
-  const { results } = await sqlQuery.all<Occasion>();
-  return results.map((occasion) => ({
-    ...occasion,
-    description: markdownToText(occasion.description),
-  }));
+  const { results } = await sqlQuery.all();
+  return results;
 };
 
 export const getOccasionById = async (
@@ -33,8 +29,7 @@ export const getOccasionById = async (
       WHERE occasion_id = ?`
   ).bind(occasionId);
 
-  const occasion = await sqlQuery.first<Occasion>();
-  return occasion && { ...occasion, description: markdownToText(occasion.description) };
+  return await sqlQuery.first<Occasion>();
 };
 
 export const createOccasion = async (

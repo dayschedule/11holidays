@@ -1,6 +1,6 @@
 import { Holiday } from '../schema/holidaySchema';
 import { Occasion } from '../schema/occasoinSchema';
-import { escapeSQL, slugify, markdownToText } from '../helper/utility';
+import { escapeSQL, slugify } from '../helper/utility';
 import { addYears, format, startOfYear } from 'date-fns';
 
 export const getHolidaysByCountry = async (
@@ -26,10 +26,7 @@ export const getHolidaysByCountry = async (
         ORDER BY h.date;`
   ).bind(country.toUpperCase(), start, end);
   const { results } = await sqlQuery.all();
-  return (results as unknown as Array<Holiday>).map((holiday) => ({
-    ...holiday,
-    description: markdownToText(holiday.description),
-  }));
+  return results as unknown as Array<Holiday>;
 };
 
 export const getHolidayById = async (

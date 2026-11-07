@@ -9,6 +9,7 @@ import { useToday } from '@/hooks/use-today';
 import { downloadBlob, type Holiday } from '@/lib/holidays-api';
 import { defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
 import { buildIcs, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ics';
+import { markdownToText } from '@/lib/markdown';
 import { SITE_URL } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 import { AdsBlock } from '@/components/ads-block';
@@ -19,6 +20,7 @@ import { Countdown, FestiveParticles } from '@/components/festive';
 import { MonthGrid } from '@/components/calendar/year-grid';
 import { OccasionsList } from '@/components/occasions-list';
 import { InternalLinksAd } from '@/components/internal-link-ads';
+import { MarkdownContent } from '@/components/markdown-content';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -38,6 +40,7 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
   const theme = getHolidayTheme(occasion.name, country.code) ?? defaultHolidayTheme;
   const code = country.code.toLowerCase();
   const pageUrl = `${SITE_URL}/holidays/${occasion.url}`;
+  const plainDescription = markdownToText(occasion.description);
 
   const now = useToday();
   const today = format(now, 'yyyy-MM-dd');
@@ -51,7 +54,7 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
   const event = next && {
     title: `${occasion.name} (${country.name})`,
     date: next.date,
-    description: occasion.description?.slice(0, 300),
+    description: plainDescription?.slice(0, 300),
     url: pageUrl,
   };
 
@@ -78,7 +81,7 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     eventStatus: 'https://schema.org/EventScheduled',
     location: { '@type': 'Country', name: country.name },
-    description: occasion.description,
+    description: plainDescription,
     image: occasion.image?.url ? [occasion.image.url] : undefined,
     url: pageUrl,
   };
@@ -187,7 +190,7 @@ export function OccasionPageContent({ country, occasion, holidays, upcomingHolid
           {/* About */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold">About {occasion.name}</h2>
-            <p className="whitespace-pre-line text-lg leading-relaxed text-muted-foreground">{occasion.description}</p>
+            <MarkdownContent text={occasion.description} />
             {occasion.image?.url && (
               <figure className="overflow-hidden rounded-2xl border shadow-xs">
                 <img

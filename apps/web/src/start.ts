@@ -1,4 +1,4 @@
-import { createMiddleware, createStart } from '@tanstack/react-start';
+import { createCsrfMiddleware, createMiddleware, createStart } from '@tanstack/react-start';
 import { OPENAPI_URL } from '@/lib/seo';
 
 /** RFC 8288 Link header so agents can discover the API and llms.txt from any page */
@@ -20,6 +20,11 @@ const agentDiscovery = createMiddleware().server(async ({ next }) => {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 });
 
+/** Server functions are same-origin RPC, reject cross-site calls to them */
+const csrfMiddleware = createCsrfMiddleware({
+  filter: (ctx) => ctx.handlerType === 'serverFn',
+});
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [agentDiscovery],
+  requestMiddleware: [csrfMiddleware, agentDiscovery],
 }));

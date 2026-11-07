@@ -21,7 +21,7 @@ function TermsPage() {
         <h1 className="text-4xl font-bold tracking-tight md:text-4xl">
           Terms of Service
         </h1>
-        <p className="text-muted-foreground">Last updated: December 20, 2025</p>
+        <p className="text-muted-foreground">Last updated: November 7, 2026</p>
       </div>
 
       <Card>
@@ -83,10 +83,9 @@ function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-2xl font-semibold">6. Payment and Refunds</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Payment is required for premium plans. We offer a 14-day
-              money-back guarantee for new subscriptions. Refund requests must
-              be submitted within 14 days of purchase. Lifetime plans are
-              subject to the same refund policy.
+              Payment is required for premium plans. Refunds are not available
+              once your API key has been used to fetch or download holiday
+              data. This applies to both yearly and lifetime plans.
             </p>
           </section>
 

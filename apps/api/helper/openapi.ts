@@ -44,7 +44,7 @@ export const errorResponses = <S extends ErrorStatus>(...statuses: S[]) =>
 export const apiDescription = `REST API for public holidays, bank holidays and observances of 230+ countries.
 
 ## Authentication
-Every request needs an API key in the \`Authorization\` header. Get a free key at [11holidays.com/api-key](https://11holidays.com/api-key).
+Every request needs an API key in the \`Authorization\` header. Get a key at [11holidays.com/api-key](https://11holidays.com/api-key).
 
 \`\`\`
 Authorization: Bearer YOUR_API_KEY

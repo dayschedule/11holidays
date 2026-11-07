@@ -30,7 +30,7 @@ Global [holidays API](https://11holidays.com/) for public holidays, bank holiday
 
 ## Get an API key
 
-The REST API needs an API key. [Sign up for a key](https://11holidays.com/api-key), and see [pricing](https://11holidays.com/pricing) for the plans:
+The REST API needs an API key. [Buy a key](https://11holidays.com/api-key), and see [pricing](https://11holidays.com/pricing) for the plans:
 
 | Plan     | Price      | Includes                                                     |
 | -------- | ---------- | ------------------------------------------------------------ |

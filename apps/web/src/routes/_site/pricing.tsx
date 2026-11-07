@@ -6,10 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Check } from 'lucide-react';
+import { BookOpen, Check } from 'lucide-react';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@/components/page-layout';
 import { SITE_URL, seo, webApiSchema } from '@/lib/seo';
+import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/_site/pricing')({
   head: () =>
@@ -31,6 +32,42 @@ export const Route = createFileRoute('/_site/pricing')({
   component: PricingPage,
 });
 
+const MOBILE_FEATURE_COUNT = 4;
+
+const PLANS = [
+  {
+    name: 'Yearly Plan',
+    description: 'Perfect for ongoing projects',
+    price: '$99',
+    period: '/year',
+    features: [
+      'Unlimited API requests',
+      'Access to all 230+ countries',
+      'JSON & CSV download formats',
+      'Historical data access',
+      'Email support',
+      'Regular updates',
+      'Commercial use allowed',
+    ],
+  },
+  {
+    name: 'Lifetime Plan',
+    description: 'One-time payment, forever access',
+    price: '$249',
+    period: '/lifetime',
+    badge: 'Best Value',
+    features: [
+      'All Yearly Plan features',
+      'Lifetime access - pay once',
+      'No recurring payments',
+      'Priority support',
+      'Early access to new features',
+      'Custom integration support',
+      'Future updates included',
+    ],
+  },
+];
+
 function PricingPage() {
   return (
     <PageLayout sidebar={false}>
@@ -43,108 +80,72 @@ function PricingPage() {
         </p>
       </div>
 
-      <div className="max-w-3xl mx-auto">
-        <div className="grid gap-8 md:grid-cols-2">
-          <Card className="relative">
-            <CardHeader>
-              <CardTitle className="text-2xl">Yearly Plan</CardTitle>
-              <CardDescription>Perfect for ongoing projects</CardDescription>
-              <div className="mt-4">
-                <span className="text-5xl font-bold">$99</span>
-                <span className="text-muted-foreground">/year</span>
+      <div className="flex flex-col gap-6">
+        {PLANS.map((plan) => (
+          <Card key={plan.name} className={cn(plan.badge && 'border-primary')}>
+            <CardContent className="grid gap-6 md:grid-cols-[18rem_1fr] md:gap-8">
+              <div className="flex flex-col gap-4 md:border-r md:pr-8">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    {plan.badge && (
+                      <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                        {plan.badge}
+                      </span>
+                    )}
+                  </div>
+                  <CardDescription>{plan.description}</CardDescription>
+                </div>
+                <div>
+                  <span className="text-5xl font-bold">{plan.price}</span>
+                  <span className="text-muted-foreground">{plan.period}</span>
+                </div>
+                <Button className="w-full" size="lg" asChild>
+                  <Link to="/api-key">Buy Now</Link>
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Unlimited API requests</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Access to all 230+ countries</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>JSON & CSV download formats</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Historical data access</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Email support</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Regular updates</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Commercial use allowed</span>
-                </li>
-              </ul>
-              <Button className="w-full" size="lg" asChild>
-                <Link to="/api-key">Buy Now</Link>
-              </Button>
-            </CardContent>
-          </Card>
 
-          <Card className="relative border-primary">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <span className="bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold rounded-full">
-                Best Value
-              </span>
-            </div>
-            <CardHeader>
-              <CardTitle className="text-2xl">Lifetime Plan</CardTitle>
-              <CardDescription>
-                One-time payment, forever access
-              </CardDescription>
-              <div className="mt-4">
-                <span className="text-5xl font-bold">$249</span>
-                <span className="text-muted-foreground">/lifetime</span>
+              <div className="space-y-3 self-center">
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {plan.features.map((feature, index) => (
+                    <li
+                      key={feature}
+                      className={cn(
+                        'items-start',
+                        index < MOBILE_FEATURE_COUNT ? 'flex' : 'hidden sm:flex',
+                      )}
+                    >
+                      <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-sm text-muted-foreground sm:hidden">
+                  +{plan.features.length - MOBILE_FEATURE_COUNT} more included
+                </p>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>All Yearly Plan features</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Lifetime access - pay once</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Priority support</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Early access to new features</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Custom integration support</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>No recurring payments</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Future updates included</span>
-                </li>
-              </ul>
-              <Button className="w-full" size="lg" asChild>
-                <Link to="/api-key">Buy Now</Link>
-              </Button>
             </CardContent>
           </Card>
-        </div>
+        ))}
       </div>
+
+      <Card className="bg-muted/50">
+        <CardHeader>
+          <CardTitle>API Documentation</CardTitle>
+          <CardDescription>
+            See the endpoints, parameters and example responses before you buy.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" asChild>
+            <Link to="/docs/api">
+              <BookOpen className="mr-2 h-4 w-4" />
+              Read the API docs
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-bold">Frequently Asked Questions</h2>
         <div className="grid gap-4 text-left">
@@ -183,9 +184,8 @@ function PricingPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Yes, we offer a 30-day money-back guarantee. If you&apos;re not
-                satisfied with our service, contact us within 14 days for a full
-                refund.
+                Refunds are not available once your API key has been used to
+                fetch or download holiday data.
               </p>
             </CardContent>
           </Card>

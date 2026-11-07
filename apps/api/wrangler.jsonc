@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "name": "api",
+  "name": "11holidays-api",
   "main": "index.ts",
   "compatibility_date": "2025-12-20",
   "keep_vars": true,

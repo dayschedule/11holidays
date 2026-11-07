@@ -4,6 +4,7 @@ import { HolidayPageContent } from '@/components/holiday-page-content';
 import { OccasionPageContent } from '@/components/occasion-page-content';
 import { getCountryByCode } from '@/lib/countries-data';
 import { currentYear, holidayKind } from '@/lib/holidays-api';
+import { markdownToText } from '@/lib/markdown';
 import { faqSchema, holidayDatasetSchema, holidayListSchema, seo, webPageSchema } from '@/lib/seo';
 import { getCountryHolidays, getOccasionPage } from '@/server/holidays';
 
@@ -80,10 +81,11 @@ export const Route = createFileRoute('/_site/holidays/$country/$slug')({
     const { occasion, dates } = loaderData;
     const thisYear = new Date().getFullYear();
     const upcomingDates = dates.filter((d) => Number(d.date.slice(0, 4)) >= thisYear).slice(0, 3);
+    const plainDescription = markdownToText(occasion.description);
     const description =
-      occasion.description && occasion.description.length > 160
-        ? `${occasion.description.slice(0, 157)}...`
-        : occasion.description;
+      plainDescription && plainDescription.length > 160
+        ? `${plainDescription.slice(0, 157)}...`
+        : plainDescription;
 
     return seo({
       title: `${occasion.name} in ${country.name} | Dates, History & Countdown`,

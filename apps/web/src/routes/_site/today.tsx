@@ -10,6 +10,7 @@ import { getCountryName } from '@/lib/countries-data';
 import { holidayKind, occasionParams, type HolidaySearchResult } from '@/lib/holidays-api';
 import { faqSchema, seo, webPageSchema } from '@/lib/seo';
 import { getHolidaysOnDate } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const FAQ = [
   {
@@ -30,7 +31,7 @@ export const Route = createFileRoute('/_site/today')({
     const date = localDate();
     return { date, holidays: await getHolidaysOnDate({ data: { date } }) };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=600' }),
+  headers: () => cacheHeaders(CACHE.daily),
   head: () =>
     seo({
       title: `What Day Is It Today? Today's Date, Week Number & Holidays | 11holidays`,

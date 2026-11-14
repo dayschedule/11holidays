@@ -49,11 +49,11 @@ export const getZoneBySlug = (slug: string) => bySlug.get(slug);
 /** Accepts canonical names and aliases such as "Asia/Calcutta" */
 export const getZone = (name: string) => byName.get(name);
 
-export const isDaylightTime = (zone: Zone, date: Date) => offsetMinutes(date, zone.name) > zone.std;
-
 /** "EST" or "EDT" for the date; empty for zones that only have a numeric abbreviation */
-export const zoneAbbreviation = (zone: Zone, date: Date) =>
-  (isDaylightTime(zone, date) ? zone.dstAbbr : zone.abbr) || '';
+export const zoneAbbreviation = (zone: Zone, date: Date) => abbreviationAtOffset(zone, offsetMinutes(date, zone.name));
+
+/** Same as zoneAbbreviation, for an offset that is already known */
+export const abbreviationAtOffset = (zone: Zone, offset: number) => (offset > zone.std ? zone.dstAbbr : zone.abbr) || '';
 
 export const ZONE_REGIONS = ['Africa', 'Antarctica', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'] as const;
 

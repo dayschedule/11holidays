@@ -29,6 +29,7 @@ import {
 } from '@/lib/time';
 import { getZone, zoneAbbreviation, zoneSlug } from '@/lib/timezones';
 import { getCityPage } from '@/server/time';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 export const Route = createFileRoute('/_site/time/$city')({
   loader: async ({ params }) => {
@@ -37,7 +38,7 @@ export const Route = createFileRoute('/_site/time/$city')({
     if (page.kind === 'alias') throw redirect({ to: '/time/$city', params: { city: page.alias }, statusCode: 301 });
     return page;
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ loaderData, params }) => {
     if (!loaderData) return {};
     const { city, country, zoneLabel, faq } = loaderData;

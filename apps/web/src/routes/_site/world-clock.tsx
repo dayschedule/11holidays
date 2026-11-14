@@ -14,6 +14,7 @@ import { dayscheduleUrl } from '@/lib/dayschedule';
 import { faqSchema, seo, SITE_URL, softwareAppSchema } from '@/lib/seo';
 import { browserTimeZone, dayPhase, formatDifference, formatOffset, formatShortDate, offsetMinutes, zonedParts } from '@/lib/time';
 import { cn } from '@/lib/utils';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const FAQ = [
   {
@@ -37,7 +38,7 @@ const FAQ = [
 
 export const Route = createFileRoute('/_site/world-clock')({
   validateSearch: z.object({ cities: z.string().max(400).optional().catch(undefined) }),
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ match }) =>
     seo({
       title: 'World Clock - Current Time in Cities Around the World | 11holidays',

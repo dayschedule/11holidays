@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute, useHydrated } from '@tanstack/react-router';
 import { Search } from 'lucide-react';
 import { FaqSection } from '@/components/faq-section';
 import { PageLayout } from '@/components/page-layout';
@@ -9,9 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useHour12, useNow } from '@/hooks/use-now';
 import { dayscheduleUrl } from '@/lib/dayschedule';
 import { faqSchema, seo, webPageSchema } from '@/lib/seo';
-import { formatClock, formatOffset, offsetMinutes, zonedParts } from '@/lib/time';
-import { getZone, zoneAbbreviation, ZONE_ABBREVIATIONS, ZONE_REGIONS, ZONES } from '@/lib/timezones';
+import { formatClock, formatOffset, offsetMinutes, partsAtOffset } from '@/lib/time';
+import { abbreviationAtOffset, getZone, ZONE_ABBREVIATIONS, ZONE_REGIONS, ZONES } from '@/lib/timezones';
 import { cn } from '@/lib/utils';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const FAQ = [
   {
@@ -34,6 +35,12 @@ const FAQ = [
 ];
 
 export const Route = createFileRoute('/_site/timezones/')({
+  // Offsets the page is rendered with. The browser hydrates with these, then switches to its own:
+  // browsers and the server can ship different time zone data (America/Winnipeg differed in 2026)
+  loader: () => {
+    const now = Date.now();
+    return { offsets: Object.fromEntries(ZONES.map((z) => [z.name, offsetMinutes(now, z.name)])) };
+  },
   head: () =>
     seo({
       title: 'Time Zones of the World - Current Time, UTC Offsets & Abbreviations | 11holidays',
@@ -43,12 +50,14 @@ export const Route = createFileRoute('/_site/timezones/')({
       path: '/timezones',
       jsonLd: [webPageSchema('/timezones', 'Time zones of the world', undefined, 'CollectionPage'), faqSchema(FAQ)],
     }),
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   component: TimezonesPage,
 });
 
 function TimezonesPage() {
   const now = useNow(30_000);
+  const hydrated = useHydrated();
+  const { offsets } = Route.useLoaderData();
   const [hour12] = useHour12();
   const [query, setQuery] = useState('');
   const [region, setRegion] = useState<string>('All');
@@ -57,11 +66,14 @@ function TimezonesPage() {
   const hourKey = Math.floor(now.getTime() / 3_600_000);
   const sorted = useMemo(
     () =>
-      ZONES.map((zone) => ({ zone, offset: offsetMinutes(now, zone.name) })).sort(
+      ZONES.map((zone) => ({
+        zone,
+        offset: hydrated ? offsetMinutes(now, zone.name) : (offsets[zone.name] ?? offsetMinutes(now, zone.name)),
+      })).sort(
         (a, b) => a.offset - b.offset || a.zone.name.localeCompare(b.zone.name)
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hourKey]
+    [hourKey, hydrated]
   );
 
   const q = query.trim().toLowerCase();
@@ -137,8 +149,8 @@ function TimezonesPage() {
                   {zone.cities.slice(0, 3).join(', ')}
                 </TableCell>
                 <TableCell className="tabular-nums">{formatOffset(offset)}</TableCell>
-                <TableCell className="hidden text-muted-foreground sm:table-cell">{zoneAbbreviation(zone, now) || '–'}</TableCell>
-                <TableCell className="text-right font-medium tabular-nums">{formatClock(zonedParts(now, zone.name), hour12)}</TableCell>
+                <TableCell className="hidden text-muted-foreground sm:table-cell">{abbreviationAtOffset(zone, offset) || '–'}</TableCell>
+                <TableCell className="text-right font-medium tabular-nums">{formatClock(partsAtOffset(now, offset), hour12)}</TableCell>
               </TableRow>
             ))}
             {rows.length === 0 && (

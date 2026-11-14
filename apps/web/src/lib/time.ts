@@ -62,6 +62,23 @@ export function zonedParts(date: Date | number, timeZone: string): ZonedParts {
   return parts;
 }
 
+/**
+ * Wall-clock parts at a known UTC offset. Unlike zonedParts this reads no time zone data, so it
+ * renders the same on the server and in any browser.
+ */
+export function partsAtOffset(date: Date | number, offset: number): ZonedParts {
+  const t = new Date((typeof date === 'number' ? date : date.getTime()) + offset * MINUTE);
+  return {
+    year: t.getUTCFullYear(),
+    month: t.getUTCMonth() + 1,
+    day: t.getUTCDate(),
+    hour: t.getUTCHours(),
+    minute: t.getUTCMinutes(),
+    second: t.getUTCSeconds(),
+    weekday: t.getUTCDay(),
+  };
+}
+
 /** Minutes ahead of UTC at this instant, for example 330 for India */
 export function offsetMinutes(date: Date | number, timeZone: string) {
   const ms = typeof date === 'number' ? date : date.getTime();

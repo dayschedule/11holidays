@@ -13,6 +13,7 @@ import { buildCalendarHolidays, calendarSearchSchema, toQueryString } from '@/li
 import { getHolidayTheme } from '@/lib/holiday-themes';
 import { seo, SITE_URL } from '@/lib/seo';
 import { getCountryHolidays } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const embedSearchSchema = calendarSearchSchema.extend({
   view: z.enum(['upcoming', 'list', 'month', 'year']).optional().catch(undefined),
@@ -34,7 +35,7 @@ export const Route = createFileRoute('/embed/$country')({
     }
     return { country, year: deps.year, holidays };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=900, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.embed),
   head: ({ loaderData }) =>
     seo({
       title: loaderData ? `${loaderData.country.name} holidays widget` : 'Holidays widget',

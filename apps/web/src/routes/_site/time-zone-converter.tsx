@@ -27,6 +27,7 @@ import {
   zonedParts,
   zonedToUtc,
 } from '@/lib/time';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const FAQ = [
   {
@@ -63,7 +64,7 @@ export const Route = createFileRoute('/_site/time-zone-converter')({
     to: z.string().max(400).optional().catch(undefined),
     at: z.string().regex(DATE_TIME).optional().catch(undefined),
   }),
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ match }) =>
     seo({
       title: 'Time Zone Converter - Convert Time Between Cities | 11holidays',

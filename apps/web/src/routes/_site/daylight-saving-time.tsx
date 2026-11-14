@@ -11,6 +11,7 @@ import { dayscheduleUrl } from '@/lib/dayschedule';
 import { faqSchema, seo, webPageSchema } from '@/lib/seo';
 import { formatClock, formatDuration, formatOffset, formatShortDate, offsetChanges, zonedParts, type OffsetChange } from '@/lib/time';
 import { getZone } from '@/lib/timezones';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 /** One zone per set of rules people ask about */
 const REGIONS: { region: string; zones: { label: string; zone: string }[] }[] = [
@@ -78,7 +79,7 @@ function faqFor(year: number) {
 
 export const Route = createFileRoute('/_site/daylight-saving-time')({
   validateSearch: z.object({ year: z.coerce.number().int().min(2000).max(2100).optional().catch(undefined) }),
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ match }) => {
     const year = match.search.year ?? currentYear();
     return seo({

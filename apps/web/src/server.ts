@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { createStartHandler, createServerEntry, defaultStreamHandler } from '@tanstack/react-start/server';
-import { EDGE_CACHE_HEADER } from '@/lib/cache';
+import { EDGE_CACHE_HEADER } from './lib/cache';
 
 /**
  * Edge cache for SSR pages and GET server functions, built on the Workers Cache API.

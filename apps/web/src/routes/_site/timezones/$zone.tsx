@@ -1,4 +1,4 @@
-import { Link, createFileRoute, notFound } from '@tanstack/react-router';
+import { Link, createFileRoute, notFound, useHydrated } from '@tanstack/react-router';
 import { ArrowRight } from 'lucide-react';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { CountryFlag } from '@/components/country-flag';
@@ -18,19 +18,35 @@ import {
   formatShortDate,
   offsetChanges,
   offsetMinutes,
-  zonedParts,
+  partsAtOffset,
 } from '@/lib/time';
-import { isDaylightTime, zoneAbbreviation, type Zone } from '@/lib/timezones';
+import { abbreviationAtOffset, type Zone } from '@/lib/timezones';
 import { getZonePage } from '@/server/time';
 import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const displayName = (zone: Zone) => zone.name.replace(/_/g, ' ');
 
+const COMPARE = ['UTC', 'America/New_York', 'Europe/London', 'Asia/Kolkata', 'Asia/Tokyo'];
+
+/**
+ * Everything on the page that comes from time zone data. The server sends its snapshot and the
+ * browser hydrates with it, then recomputes: browsers and the server can ship different time zone
+ * data (America/Winnipeg differed in 2026), and a mismatch breaks hydration.
+ */
+function zoneSnapshot(zoneName: string, ms: number) {
+  const year = new Date(ms).getUTCFullYear();
+  return {
+    offset: offsetMinutes(ms, zoneName),
+    changes: [...offsetChanges(zoneName, year), ...offsetChanges(zoneName, year + 1)],
+    compare: Object.fromEntries(COMPARE.map((other) => [other, offsetMinutes(ms, other)])) as Record<string, number>,
+  };
+}
+
 export const Route = createFileRoute('/_site/timezones/$zone')({
   loader: async ({ params }) => {
     const page = await getZonePage({ data: { slug: params.zone } });
     if (!page) throw notFound();
-    return page;
+    return { ...page, tz: zoneSnapshot(page.zone.name, Date.now()) };
   },
   headers: () => cacheHeaders(CACHE.page),
   head: ({ loaderData, params }) => {
@@ -38,7 +54,7 @@ export const Route = createFileRoute('/_site/timezones/$zone')({
     const { zone, faq } = loaderData;
     const name = displayName(zone);
     const path = `/timezones/${params.zone}`;
-    const offset = formatOffset(offsetMinutes(new Date(), zone.name));
+    const offset = formatOffset(loaderData.tz.offset);
     return seo({
       title: `${name} Time Zone - Current Time, UTC Offset & DST | 11holidays`,
       description: `Current time in ${name} (${zone.label}), ${offset}. See its abbreviation, daylight saving dates, main cities and how it compares with other time zones.`,
@@ -50,20 +66,18 @@ export const Route = createFileRoute('/_site/timezones/$zone')({
   component: ZonePage,
 });
 
-const COMPARE = ['UTC', 'America/New_York', 'Europe/London', 'Asia/Kolkata', 'Asia/Tokyo'];
-
 function ZonePage() {
-  const { zone, faq } = Route.useLoaderData();
+  const { zone, faq, tz: serverTz } = Route.useLoaderData();
   const now = useNow(10_000);
+  const hydrated = useHydrated();
   const [hour12] = useHour12();
 
-  const parts = zonedParts(now, zone.name);
-  const offset = offsetMinutes(now, zone.name);
-  const year = now.getUTCFullYear();
-  const changes = [...offsetChanges(zone.name, year), ...offsetChanges(zone.name, year + 1)];
+  const tz = hydrated ? zoneSnapshot(zone.name, now.getTime()) : serverTz;
+  const { offset, changes } = tz;
+  const parts = partsAtOffset(now, offset);
   const hasDst = changes.length > 0;
   const name = displayName(zone);
-  const abbreviation = zoneAbbreviation(zone, now);
+  const abbreviation = abbreviationAtOffset(zone, offset);
   const cities = citiesInZone(zone.name).slice(0, 18);
 
   return (
@@ -94,7 +108,7 @@ function ZonePage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="UTC offset" value={formatOffset(offset)} />
         <StatCard label="Abbreviation" value={abbreviation || '–'} />
-        <StatCard label="Daylight saving" value={hasDst ? (isDaylightTime(zone, now) ? 'In effect' : 'Not now') : 'None'} />
+        <StatCard label="Daylight saving" value={hasDst ? (offset > zone.std ? 'In effect' : 'Not now') : 'None'} />
         <StatCard label="Region" value={zone.continent} hint={zone.countryName} />
       </div>
 
@@ -105,7 +119,7 @@ function ZonePage() {
             {changes.map((c) => (
               <li key={c.at.toISOString()} className="flex flex-wrap items-center justify-between gap-2 p-3">
                 <span className="font-medium">
-                  {formatShortDate(zonedParts(c.at, zone.name))} {c.at.getUTCFullYear()}
+                  {formatShortDate(partsAtOffset(c.at, c.to))} {c.at.getUTCFullYear()}
                 </span>
                 <span className="text-muted-foreground">
                   Clocks go {c.to > c.from ? 'forward' : 'back'} {formatDuration(c.to - c.from)}: {formatOffset(c.from)} to{' '}
@@ -121,12 +135,13 @@ function ZonePage() {
         <h2 className="text-2xl font-bold">Compared with other time zones</h2>
         <ul className="divide-y rounded-2xl border bg-card text-sm shadow-xs">
           {COMPARE.filter((other) => other !== zone.name).map((other) => {
-            const difference = offsetMinutes(now, other) - offset;
+            const otherOffset = tz.compare[other] ?? 0;
+            const difference = otherOffset - offset;
             return (
               <li key={other} className="flex items-center justify-between gap-3 p-3">
                 <span className="font-medium">{other.replace(/_/g, ' ')}</span>
                 <span className="text-muted-foreground">{formatDifference(difference)}</span>
-                <span className="w-24 text-right font-medium tabular-nums">{formatClock(zonedParts(now, other), hour12)}</span>
+                <span className="w-24 text-right font-medium tabular-nums">{formatClock(partsAtOffset(now, otherOffset), hour12)}</span>
               </li>
             );
           })}

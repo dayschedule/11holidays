@@ -27,11 +27,23 @@ const footerColumns = [
     ],
   },
   {
+    title: 'Time & Dates',
+    links: [
+      { to: '/calendar', label: 'Calendar' },
+      { to: '/world-clock', label: 'World clock' },
+      { to: '/timezones', label: 'Time zones' },
+      { to: '/time-zone-converter', label: 'Time zone converter' },
+      { to: '/daylight-saving-time', label: 'Daylight saving time' },
+      { to: '/today', label: "Today's date" },
+    ],
+  },
+  {
     title: 'Tools',
     links: [
       { to: '/countdown', label: 'Countdown timer' },
       { to: '/leave-planner', label: 'Leave planner' },
       { to: '/working-days-calculator', label: 'Working days calculator' },
+      { to: '/date-calculator', label: 'Date calculator' },
       { to: '/calendars', label: 'Calendar maker' },
       { to: '/widget', label: 'Embeddable widget' },
       { to: '/my-calendars', label: 'My saved calendars' },
@@ -67,8 +79,8 @@ function SiteLayout() {
       </main>
       <PopularCountries />
       <footer className="no-print w-full border-t bg-card/50">
-        <div className="mx-auto grid w-full max-w-[1200px] grid-cols-2 gap-x-6 gap-y-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:gap-10 md:px-6 lg:px-8">
-          <div className="col-span-2 space-y-3 md:col-span-1">
+        <div className="mx-auto grid w-full max-w-[1200px] grid-cols-2 gap-x-6 gap-y-10 px-4 py-12 lg:grid-cols-[1.4fr_repeat(5,1fr)] md:grid-cols-3 md:gap-10 md:px-6 lg:px-8">
+          <div className="col-span-2 space-y-3 md:col-span-3 lg:col-span-1">
             <Logo />
             <p className="max-w-xs text-sm text-muted-foreground">
               Public holidays for 230+ countries, printable calendars and a

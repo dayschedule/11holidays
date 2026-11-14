@@ -19,23 +19,36 @@ import { Route as SiteApiKeyRouteImport } from './routes/_site/api-key'
 import { Route as SiteContactRouteImport } from './routes/_site/contact'
 import { Route as SiteCountdownRouteImport } from './routes/_site/countdown'
 import { Route as SiteCountriesRouteImport } from './routes/_site/countries'
+import { Route as SiteDateCalculatorRouteImport } from './routes/_site/date-calculator'
+import { Route as SiteDaylightSavingTimeRouteImport } from './routes/_site/daylight-saving-time'
 import { Route as SiteLeavePlannerRouteImport } from './routes/_site/leave-planner'
 import { Route as SiteMyCalendarsRouteImport } from './routes/_site/my-calendars'
 import { Route as SitePricingRouteImport } from './routes/_site/pricing'
 import { Route as SiteSearchRouteImport } from './routes/_site/search'
 import { Route as SiteTermsRouteImport } from './routes/_site/terms'
+import { Route as SiteTimeZoneConverterRouteImport } from './routes/_site/time-zone-converter'
+import { Route as SiteTodayRouteImport } from './routes/_site/today'
 import { Route as SiteToolsRouteImport } from './routes/_site/tools'
+import { Route as SiteWeekNumberRouteImport } from './routes/_site/week-number'
 import { Route as SiteWidgetRouteImport } from './routes/_site/widget'
 import { Route as SiteWorkingDaysCalculatorRouteImport } from './routes/_site/working-days-calculator'
+import { Route as SiteWorldClockRouteImport } from './routes/_site/world-clock'
+import { Route as SiteYearProgressRouteImport } from './routes/_site/year-progress'
 import { Route as EmbedCountryRouteImport } from './routes/embed/$country'
 import { Route as EmbedCountdownRouteImport } from './routes/embed/countdown'
 import { Route as IcsCountryRouteImport } from './routes/ics.$country'
+import { Route as SiteCalendarIndexRouteImport } from './routes/_site/calendar/index'
 import { Route as SiteCalendarsIndexRouteImport } from './routes/_site/calendars/index'
 import { Route as SiteCalendarsCountryRouteImport } from './routes/_site/calendars/$country'
 import { Route as SiteDocsApiRouteImport } from './routes/_site/docs/api'
 import { Route as SiteHolidaysIndexRouteImport } from './routes/_site/holidays/index'
 import { Route as SiteLongWeekendsCountryRouteImport } from './routes/_site/long-weekends/$country'
+import { Route as SiteTimeCityRouteImport } from './routes/_site/time/$city'
+import { Route as SiteTimezonesIndexRouteImport } from './routes/_site/timezones/index'
+import { Route as SiteTimezonesZoneRouteImport } from './routes/_site/timezones/$zone'
 import { Route as SiteUpcomingHolidaysCountryRouteImport } from './routes/_site/upcoming-holidays/$country'
+import { Route as SiteCalendarYearIndexRouteImport } from './routes/_site/calendar/$year/index'
+import { Route as SiteCalendarYearMonthRouteImport } from './routes/_site/calendar/$year/$month'
 import { Route as SiteHolidaysCountryIndexRouteImport } from './routes/_site/holidays/$country/index'
 import { Route as SiteHolidaysCountrySlugRouteImport } from './routes/_site/holidays/$country/$slug'
 
@@ -88,6 +101,16 @@ const SiteCountriesRoute = SiteCountriesRouteImport.update({
   path: '/countries',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteDateCalculatorRoute = SiteDateCalculatorRouteImport.update({
+  id: '/date-calculator',
+  path: '/date-calculator',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteDaylightSavingTimeRoute = SiteDaylightSavingTimeRouteImport.update({
+  id: '/daylight-saving-time',
+  path: '/daylight-saving-time',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteLeavePlannerRoute = SiteLeavePlannerRouteImport.update({
   id: '/leave-planner',
   path: '/leave-planner',
@@ -113,9 +136,24 @@ const SiteTermsRoute = SiteTermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteTimeZoneConverterRoute = SiteTimeZoneConverterRouteImport.update({
+  id: '/time-zone-converter',
+  path: '/time-zone-converter',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteTodayRoute = SiteTodayRouteImport.update({
+  id: '/today',
+  path: '/today',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteToolsRoute = SiteToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteWeekNumberRoute = SiteWeekNumberRouteImport.update({
+  id: '/week-number',
+  path: '/week-number',
   getParentRoute: () => SiteRoute,
 } as any)
 const SiteWidgetRoute = SiteWidgetRouteImport.update({
@@ -129,6 +167,16 @@ const SiteWorkingDaysCalculatorRoute =
     path: '/working-days-calculator',
     getParentRoute: () => SiteRoute,
   } as any)
+const SiteWorldClockRoute = SiteWorldClockRouteImport.update({
+  id: '/world-clock',
+  path: '/world-clock',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteYearProgressRoute = SiteYearProgressRouteImport.update({
+  id: '/year-progress',
+  path: '/year-progress',
+  getParentRoute: () => SiteRoute,
+} as any)
 const EmbedCountryRoute = EmbedCountryRouteImport.update({
   id: '/embed/$country',
   path: '/embed/$country',
@@ -143,6 +191,11 @@ const IcsCountryRoute = IcsCountryRouteImport.update({
   id: '/ics/$country',
   path: '/ics/$country',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SiteCalendarIndexRoute = SiteCalendarIndexRouteImport.update({
+  id: '/calendar/',
+  path: '/calendar/',
+  getParentRoute: () => SiteRoute,
 } as any)
 const SiteCalendarsIndexRoute = SiteCalendarsIndexRouteImport.update({
   id: '/calendars/',
@@ -169,12 +222,37 @@ const SiteLongWeekendsCountryRoute = SiteLongWeekendsCountryRouteImport.update({
   path: '/long-weekends/$country',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteTimeCityRoute = SiteTimeCityRouteImport.update({
+  id: '/time/$city',
+  path: '/time/$city',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteTimezonesIndexRoute = SiteTimezonesIndexRouteImport.update({
+  id: '/timezones/',
+  path: '/timezones/',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteTimezonesZoneRoute = SiteTimezonesZoneRouteImport.update({
+  id: '/timezones/$zone',
+  path: '/timezones/$zone',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteUpcomingHolidaysCountryRoute =
   SiteUpcomingHolidaysCountryRouteImport.update({
     id: '/upcoming-holidays/$country',
     path: '/upcoming-holidays/$country',
     getParentRoute: () => SiteRoute,
   } as any)
+const SiteCalendarYearIndexRoute = SiteCalendarYearIndexRouteImport.update({
+  id: '/calendar/$year/',
+  path: '/calendar/$year/',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteCalendarYearMonthRoute = SiteCalendarYearMonthRouteImport.update({
+  id: '/calendar/$year/$month',
+  path: '/calendar/$year/$month',
+  getParentRoute: () => SiteRoute,
+} as any)
 const SiteHolidaysCountryIndexRoute =
   SiteHolidaysCountryIndexRouteImport.update({
     id: '/holidays/$country/',
@@ -197,24 +275,37 @@ export interface FileRoutesByFullPath {
   '/contact': typeof SiteContactRoute
   '/countdown': typeof SiteCountdownRoute
   '/countries': typeof SiteCountriesRoute
+  '/date-calculator': typeof SiteDateCalculatorRoute
+  '/daylight-saving-time': typeof SiteDaylightSavingTimeRoute
   '/leave-planner': typeof SiteLeavePlannerRoute
   '/my-calendars': typeof SiteMyCalendarsRoute
   '/pricing': typeof SitePricingRoute
   '/search': typeof SiteSearchRoute
   '/terms': typeof SiteTermsRoute
+  '/time-zone-converter': typeof SiteTimeZoneConverterRoute
+  '/today': typeof SiteTodayRoute
   '/tools': typeof SiteToolsRoute
+  '/week-number': typeof SiteWeekNumberRoute
   '/widget': typeof SiteWidgetRoute
   '/working-days-calculator': typeof SiteWorkingDaysCalculatorRoute
+  '/world-clock': typeof SiteWorldClockRoute
+  '/year-progress': typeof SiteYearProgressRoute
   '/embed/$country': typeof EmbedCountryRoute
   '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
   '/calendars/$country': typeof SiteCalendarsCountryRoute
   '/docs/api': typeof SiteDocsApiRoute
   '/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
+  '/time/$city': typeof SiteTimeCityRoute
+  '/timezones/$zone': typeof SiteTimezonesZoneRoute
   '/upcoming-holidays/$country': typeof SiteUpcomingHolidaysCountryRoute
+  '/calendar/': typeof SiteCalendarIndexRoute
   '/calendars/': typeof SiteCalendarsIndexRoute
   '/holidays/': typeof SiteHolidaysIndexRoute
+  '/timezones/': typeof SiteTimezonesIndexRoute
+  '/calendar/$year/$month': typeof SiteCalendarYearMonthRoute
   '/holidays/$country/$slug': typeof SiteHolidaysCountrySlugRoute
+  '/calendar/$year/': typeof SiteCalendarYearIndexRoute
   '/holidays/$country/': typeof SiteHolidaysCountryIndexRoute
 }
 export interface FileRoutesByTo {
@@ -226,14 +317,21 @@ export interface FileRoutesByTo {
   '/contact': typeof SiteContactRoute
   '/countdown': typeof SiteCountdownRoute
   '/countries': typeof SiteCountriesRoute
+  '/date-calculator': typeof SiteDateCalculatorRoute
+  '/daylight-saving-time': typeof SiteDaylightSavingTimeRoute
   '/leave-planner': typeof SiteLeavePlannerRoute
   '/my-calendars': typeof SiteMyCalendarsRoute
   '/pricing': typeof SitePricingRoute
   '/search': typeof SiteSearchRoute
   '/terms': typeof SiteTermsRoute
+  '/time-zone-converter': typeof SiteTimeZoneConverterRoute
+  '/today': typeof SiteTodayRoute
   '/tools': typeof SiteToolsRoute
+  '/week-number': typeof SiteWeekNumberRoute
   '/widget': typeof SiteWidgetRoute
   '/working-days-calculator': typeof SiteWorkingDaysCalculatorRoute
+  '/world-clock': typeof SiteWorldClockRoute
+  '/year-progress': typeof SiteYearProgressRoute
   '/embed/$country': typeof EmbedCountryRoute
   '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
@@ -241,10 +339,16 @@ export interface FileRoutesByTo {
   '/calendars/$country': typeof SiteCalendarsCountryRoute
   '/docs/api': typeof SiteDocsApiRoute
   '/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
+  '/time/$city': typeof SiteTimeCityRoute
+  '/timezones/$zone': typeof SiteTimezonesZoneRoute
   '/upcoming-holidays/$country': typeof SiteUpcomingHolidaysCountryRoute
+  '/calendar': typeof SiteCalendarIndexRoute
   '/calendars': typeof SiteCalendarsIndexRoute
   '/holidays': typeof SiteHolidaysIndexRoute
+  '/timezones': typeof SiteTimezonesIndexRoute
+  '/calendar/$year/$month': typeof SiteCalendarYearMonthRoute
   '/holidays/$country/$slug': typeof SiteHolidaysCountrySlugRoute
+  '/calendar/$year': typeof SiteCalendarYearIndexRoute
   '/holidays/$country': typeof SiteHolidaysCountryIndexRoute
 }
 export interface FileRoutesById {
@@ -258,14 +362,21 @@ export interface FileRoutesById {
   '/_site/contact': typeof SiteContactRoute
   '/_site/countdown': typeof SiteCountdownRoute
   '/_site/countries': typeof SiteCountriesRoute
+  '/_site/date-calculator': typeof SiteDateCalculatorRoute
+  '/_site/daylight-saving-time': typeof SiteDaylightSavingTimeRoute
   '/_site/leave-planner': typeof SiteLeavePlannerRoute
   '/_site/my-calendars': typeof SiteMyCalendarsRoute
   '/_site/pricing': typeof SitePricingRoute
   '/_site/search': typeof SiteSearchRoute
   '/_site/terms': typeof SiteTermsRoute
+  '/_site/time-zone-converter': typeof SiteTimeZoneConverterRoute
+  '/_site/today': typeof SiteTodayRoute
   '/_site/tools': typeof SiteToolsRoute
+  '/_site/week-number': typeof SiteWeekNumberRoute
   '/_site/widget': typeof SiteWidgetRoute
   '/_site/working-days-calculator': typeof SiteWorkingDaysCalculatorRoute
+  '/_site/world-clock': typeof SiteWorldClockRoute
+  '/_site/year-progress': typeof SiteYearProgressRoute
   '/embed/$country': typeof EmbedCountryRoute
   '/embed/countdown': typeof EmbedCountdownRoute
   '/ics/$country': typeof IcsCountryRoute
@@ -273,10 +384,16 @@ export interface FileRoutesById {
   '/_site/calendars/$country': typeof SiteCalendarsCountryRoute
   '/_site/docs/api': typeof SiteDocsApiRoute
   '/_site/long-weekends/$country': typeof SiteLongWeekendsCountryRoute
+  '/_site/time/$city': typeof SiteTimeCityRoute
+  '/_site/timezones/$zone': typeof SiteTimezonesZoneRoute
   '/_site/upcoming-holidays/$country': typeof SiteUpcomingHolidaysCountryRoute
+  '/_site/calendar/': typeof SiteCalendarIndexRoute
   '/_site/calendars/': typeof SiteCalendarsIndexRoute
   '/_site/holidays/': typeof SiteHolidaysIndexRoute
+  '/_site/timezones/': typeof SiteTimezonesIndexRoute
+  '/_site/calendar/$year/$month': typeof SiteCalendarYearMonthRoute
   '/_site/holidays/$country/$slug': typeof SiteHolidaysCountrySlugRoute
+  '/_site/calendar/$year/': typeof SiteCalendarYearIndexRoute
   '/_site/holidays/$country/': typeof SiteHolidaysCountryIndexRoute
 }
 export interface FileRouteTypes {
@@ -291,24 +408,37 @@ export interface FileRouteTypes {
     | '/contact'
     | '/countdown'
     | '/countries'
+    | '/date-calculator'
+    | '/daylight-saving-time'
     | '/leave-planner'
     | '/my-calendars'
     | '/pricing'
     | '/search'
     | '/terms'
+    | '/time-zone-converter'
+    | '/today'
     | '/tools'
+    | '/week-number'
     | '/widget'
     | '/working-days-calculator'
+    | '/world-clock'
+    | '/year-progress'
     | '/embed/$country'
     | '/embed/countdown'
     | '/ics/$country'
     | '/calendars/$country'
     | '/docs/api'
     | '/long-weekends/$country'
+    | '/time/$city'
+    | '/timezones/$zone'
     | '/upcoming-holidays/$country'
+    | '/calendar/'
     | '/calendars/'
     | '/holidays/'
+    | '/timezones/'
+    | '/calendar/$year/$month'
     | '/holidays/$country/$slug'
+    | '/calendar/$year/'
     | '/holidays/$country/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -320,14 +450,21 @@ export interface FileRouteTypes {
     | '/contact'
     | '/countdown'
     | '/countries'
+    | '/date-calculator'
+    | '/daylight-saving-time'
     | '/leave-planner'
     | '/my-calendars'
     | '/pricing'
     | '/search'
     | '/terms'
+    | '/time-zone-converter'
+    | '/today'
     | '/tools'
+    | '/week-number'
     | '/widget'
     | '/working-days-calculator'
+    | '/world-clock'
+    | '/year-progress'
     | '/embed/$country'
     | '/embed/countdown'
     | '/ics/$country'
@@ -335,10 +472,16 @@ export interface FileRouteTypes {
     | '/calendars/$country'
     | '/docs/api'
     | '/long-weekends/$country'
+    | '/time/$city'
+    | '/timezones/$zone'
     | '/upcoming-holidays/$country'
+    | '/calendar'
     | '/calendars'
     | '/holidays'
+    | '/timezones'
+    | '/calendar/$year/$month'
     | '/holidays/$country/$slug'
+    | '/calendar/$year'
     | '/holidays/$country'
   id:
     | '__root__'
@@ -351,14 +494,21 @@ export interface FileRouteTypes {
     | '/_site/contact'
     | '/_site/countdown'
     | '/_site/countries'
+    | '/_site/date-calculator'
+    | '/_site/daylight-saving-time'
     | '/_site/leave-planner'
     | '/_site/my-calendars'
     | '/_site/pricing'
     | '/_site/search'
     | '/_site/terms'
+    | '/_site/time-zone-converter'
+    | '/_site/today'
     | '/_site/tools'
+    | '/_site/week-number'
     | '/_site/widget'
     | '/_site/working-days-calculator'
+    | '/_site/world-clock'
+    | '/_site/year-progress'
     | '/embed/$country'
     | '/embed/countdown'
     | '/ics/$country'
@@ -366,10 +516,16 @@ export interface FileRouteTypes {
     | '/_site/calendars/$country'
     | '/_site/docs/api'
     | '/_site/long-weekends/$country'
+    | '/_site/time/$city'
+    | '/_site/timezones/$zone'
     | '/_site/upcoming-holidays/$country'
+    | '/_site/calendar/'
     | '/_site/calendars/'
     | '/_site/holidays/'
+    | '/_site/timezones/'
+    | '/_site/calendar/$year/$month'
     | '/_site/holidays/$country/$slug'
+    | '/_site/calendar/$year/'
     | '/_site/holidays/$country/'
   fileRoutesById: FileRoutesById
 }
@@ -455,6 +611,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteCountriesRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/date-calculator': {
+      id: '/_site/date-calculator'
+      path: '/date-calculator'
+      fullPath: '/date-calculator'
+      preLoaderRoute: typeof SiteDateCalculatorRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/daylight-saving-time': {
+      id: '/_site/daylight-saving-time'
+      path: '/daylight-saving-time'
+      fullPath: '/daylight-saving-time'
+      preLoaderRoute: typeof SiteDaylightSavingTimeRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/leave-planner': {
       id: '/_site/leave-planner'
       path: '/leave-planner'
@@ -490,11 +660,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteTermsRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/time-zone-converter': {
+      id: '/_site/time-zone-converter'
+      path: '/time-zone-converter'
+      fullPath: '/time-zone-converter'
+      preLoaderRoute: typeof SiteTimeZoneConverterRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/today': {
+      id: '/_site/today'
+      path: '/today'
+      fullPath: '/today'
+      preLoaderRoute: typeof SiteTodayRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/tools': {
       id: '/_site/tools'
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof SiteToolsRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/week-number': {
+      id: '/_site/week-number'
+      path: '/week-number'
+      fullPath: '/week-number'
+      preLoaderRoute: typeof SiteWeekNumberRouteImport
       parentRoute: typeof SiteRoute
     }
     '/_site/widget': {
@@ -509,6 +700,20 @@ declare module '@tanstack/react-router' {
       path: '/working-days-calculator'
       fullPath: '/working-days-calculator'
       preLoaderRoute: typeof SiteWorkingDaysCalculatorRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/world-clock': {
+      id: '/_site/world-clock'
+      path: '/world-clock'
+      fullPath: '/world-clock'
+      preLoaderRoute: typeof SiteWorldClockRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/year-progress': {
+      id: '/_site/year-progress'
+      path: '/year-progress'
+      fullPath: '/year-progress'
+      preLoaderRoute: typeof SiteYearProgressRouteImport
       parentRoute: typeof SiteRoute
     }
     '/embed/$country': {
@@ -531,6 +736,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ics/$country'
       preLoaderRoute: typeof IcsCountryRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_site/calendar/': {
+      id: '/_site/calendar/'
+      path: '/calendar'
+      fullPath: '/calendar/'
+      preLoaderRoute: typeof SiteCalendarIndexRouteImport
+      parentRoute: typeof SiteRoute
     }
     '/_site/calendars/': {
       id: '/_site/calendars/'
@@ -567,11 +779,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteLongWeekendsCountryRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/time/$city': {
+      id: '/_site/time/$city'
+      path: '/time/$city'
+      fullPath: '/time/$city'
+      preLoaderRoute: typeof SiteTimeCityRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/timezones/': {
+      id: '/_site/timezones/'
+      path: '/timezones'
+      fullPath: '/timezones/'
+      preLoaderRoute: typeof SiteTimezonesIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/timezones/$zone': {
+      id: '/_site/timezones/$zone'
+      path: '/timezones/$zone'
+      fullPath: '/timezones/$zone'
+      preLoaderRoute: typeof SiteTimezonesZoneRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/_site/upcoming-holidays/$country': {
       id: '/_site/upcoming-holidays/$country'
       path: '/upcoming-holidays/$country'
       fullPath: '/upcoming-holidays/$country'
       preLoaderRoute: typeof SiteUpcomingHolidaysCountryRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/calendar/$year/': {
+      id: '/_site/calendar/$year/'
+      path: '/calendar/$year'
+      fullPath: '/calendar/$year/'
+      preLoaderRoute: typeof SiteCalendarYearIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/calendar/$year/$month': {
+      id: '/_site/calendar/$year/$month'
+      path: '/calendar/$year/$month'
+      fullPath: '/calendar/$year/$month'
+      preLoaderRoute: typeof SiteCalendarYearMonthRouteImport
       parentRoute: typeof SiteRoute
     }
     '/_site/holidays/$country/': {
@@ -597,22 +844,35 @@ interface SiteRouteChildren {
   SiteContactRoute: typeof SiteContactRoute
   SiteCountdownRoute: typeof SiteCountdownRoute
   SiteCountriesRoute: typeof SiteCountriesRoute
+  SiteDateCalculatorRoute: typeof SiteDateCalculatorRoute
+  SiteDaylightSavingTimeRoute: typeof SiteDaylightSavingTimeRoute
   SiteLeavePlannerRoute: typeof SiteLeavePlannerRoute
   SiteMyCalendarsRoute: typeof SiteMyCalendarsRoute
   SitePricingRoute: typeof SitePricingRoute
   SiteSearchRoute: typeof SiteSearchRoute
   SiteTermsRoute: typeof SiteTermsRoute
+  SiteTimeZoneConverterRoute: typeof SiteTimeZoneConverterRoute
+  SiteTodayRoute: typeof SiteTodayRoute
   SiteToolsRoute: typeof SiteToolsRoute
+  SiteWeekNumberRoute: typeof SiteWeekNumberRoute
   SiteWidgetRoute: typeof SiteWidgetRoute
   SiteWorkingDaysCalculatorRoute: typeof SiteWorkingDaysCalculatorRoute
+  SiteWorldClockRoute: typeof SiteWorldClockRoute
+  SiteYearProgressRoute: typeof SiteYearProgressRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteCalendarsCountryRoute: typeof SiteCalendarsCountryRoute
   SiteDocsApiRoute: typeof SiteDocsApiRoute
   SiteLongWeekendsCountryRoute: typeof SiteLongWeekendsCountryRoute
+  SiteTimeCityRoute: typeof SiteTimeCityRoute
+  SiteTimezonesZoneRoute: typeof SiteTimezonesZoneRoute
   SiteUpcomingHolidaysCountryRoute: typeof SiteUpcomingHolidaysCountryRoute
+  SiteCalendarIndexRoute: typeof SiteCalendarIndexRoute
   SiteCalendarsIndexRoute: typeof SiteCalendarsIndexRoute
   SiteHolidaysIndexRoute: typeof SiteHolidaysIndexRoute
+  SiteTimezonesIndexRoute: typeof SiteTimezonesIndexRoute
+  SiteCalendarYearMonthRoute: typeof SiteCalendarYearMonthRoute
   SiteHolidaysCountrySlugRoute: typeof SiteHolidaysCountrySlugRoute
+  SiteCalendarYearIndexRoute: typeof SiteCalendarYearIndexRoute
   SiteHolidaysCountryIndexRoute: typeof SiteHolidaysCountryIndexRoute
 }
 
@@ -622,22 +882,35 @@ const SiteRouteChildren: SiteRouteChildren = {
   SiteContactRoute: SiteContactRoute,
   SiteCountdownRoute: SiteCountdownRoute,
   SiteCountriesRoute: SiteCountriesRoute,
+  SiteDateCalculatorRoute: SiteDateCalculatorRoute,
+  SiteDaylightSavingTimeRoute: SiteDaylightSavingTimeRoute,
   SiteLeavePlannerRoute: SiteLeavePlannerRoute,
   SiteMyCalendarsRoute: SiteMyCalendarsRoute,
   SitePricingRoute: SitePricingRoute,
   SiteSearchRoute: SiteSearchRoute,
   SiteTermsRoute: SiteTermsRoute,
+  SiteTimeZoneConverterRoute: SiteTimeZoneConverterRoute,
+  SiteTodayRoute: SiteTodayRoute,
   SiteToolsRoute: SiteToolsRoute,
+  SiteWeekNumberRoute: SiteWeekNumberRoute,
   SiteWidgetRoute: SiteWidgetRoute,
   SiteWorkingDaysCalculatorRoute: SiteWorkingDaysCalculatorRoute,
+  SiteWorldClockRoute: SiteWorldClockRoute,
+  SiteYearProgressRoute: SiteYearProgressRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteCalendarsCountryRoute: SiteCalendarsCountryRoute,
   SiteDocsApiRoute: SiteDocsApiRoute,
   SiteLongWeekendsCountryRoute: SiteLongWeekendsCountryRoute,
+  SiteTimeCityRoute: SiteTimeCityRoute,
+  SiteTimezonesZoneRoute: SiteTimezonesZoneRoute,
   SiteUpcomingHolidaysCountryRoute: SiteUpcomingHolidaysCountryRoute,
+  SiteCalendarIndexRoute: SiteCalendarIndexRoute,
   SiteCalendarsIndexRoute: SiteCalendarsIndexRoute,
   SiteHolidaysIndexRoute: SiteHolidaysIndexRoute,
+  SiteTimezonesIndexRoute: SiteTimezonesIndexRoute,
+  SiteCalendarYearMonthRoute: SiteCalendarYearMonthRoute,
   SiteHolidaysCountrySlugRoute: SiteHolidaysCountrySlugRoute,
+  SiteCalendarYearIndexRoute: SiteCalendarYearIndexRoute,
   SiteHolidaysCountryIndexRoute: SiteHolidaysCountryIndexRoute,
 }
 

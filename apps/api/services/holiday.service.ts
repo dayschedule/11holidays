@@ -1,17 +1,12 @@
 import { Holiday } from '../schema/holidaySchema';
 import { Occasion } from '../schema/occasoinSchema';
 import { escapeSQL, slugify } from '../helper/utility';
-import { addYears, format, startOfYear } from 'date-fns';
 
 export const getHolidaysByCountry = async (
   env: CloudflareBindings,
   country: string,
   year: number
 ): Promise<Array<Holiday>> => {
-  const baseDate = new Date(year, 0, 1);
-  const start = format(startOfYear(baseDate), 'yyyy-MM-dd');
-  const end = format(addYears(startOfYear(baseDate), 1), 'yyyy-MM-dd');
-
   const session = env.DB.withSession();
   const sqlQuery = session.prepare(
     `
@@ -20,11 +15,10 @@ export const getHolidaysByCountry = async (
         FROM Holidays as h
         Left Join Occasions as o
         ON h.occasion_id = o.occasion_id
-        WHERE h.country = ?
-        AND h.date >= ?
-        AND h.date < ?
+        WHERE h.year = ?
+        AND h.country = ?
         ORDER BY h.date;`
-  ).bind(country.toUpperCase(), start, end);
+  ).bind(year, country.toUpperCase());
   const { results } = await sqlQuery.all();
   return results as unknown as Array<Holiday>;
 };
@@ -50,8 +44,8 @@ export const createHoliday = async (
 ): Promise<number> => {
   const { meta } = await env.DB.prepare(
     `
-        INSERT INTO Holidays (date, occasion_id, type, country) 
-        VALUES (?, ?, ?, ?)`
+        INSERT INTO Holidays (date, year, occasion_id, type, country) 
+        VALUES (?1, CAST(strftime('%Y', ?1) AS INTEGER), ?2, ?3, ?4)`
   )
     .bind(data.date, data.occasion_id, data.type, data.country)
     .run();
@@ -67,8 +61,10 @@ export const updateHoliday = async (
   const { success } = await env.DB.prepare(
     `
         UPDATE Holidays 
-        SET date = ?, occasion_id = ?, type = ?, country_id = ? 
-        WHERE holiday_id = ?`
+        SET date = ?1, year = CAST(strftime('%Y', ?1) AS INTEGER),
+          occasion_id = ?2, type = ?3, country = ?4,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE holiday_id = ?5`
   )
     .bind(data.date, data.occasion_id, data.type, data.country, holidayId)
     .run();

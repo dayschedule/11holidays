@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { WorkingDaysCalculator } from '@/components/working-days-calculator';
 import { getCountryByCode } from '@/lib/countries-data';
 import { currentYear } from '@/lib/holidays-api';
+import { dayscheduleUrl } from '@/lib/dayschedule';
 import { faqSchema, seo, softwareAppSchema } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 import { getWeekend, publicHolidayMap, summarizeYear, weekendLabel } from '@/lib/workdays';
@@ -33,6 +34,11 @@ const FAQ = [
   {
     q: 'Can I change the weekend days?',
     a: 'Yes. Each country starts with its official weekend, for example Saturday and Sunday in the US or Friday and Saturday in Saudi Arabia. Toggle any day for shift work or a six-day week.',
+  },
+  {
+    q: 'How do I stop customers booking me on public holidays?',
+    a: 'In DaySchedule you can block holidays or change your hours on specific dates with date overrides, so those days are not offered on your booking page.',
+    more: { label: 'Read about availability schedules', href: dayscheduleUrl('/docs/availability-schedules') },
   },
 ];
 

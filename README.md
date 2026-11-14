@@ -1,3 +1,7 @@
+# 11holidays
+
+Global [holidays API](https://11holidays.com/) for public holidays, bank holidays and observances from 230+ countries. Use it over plain HTTP, through the npm package, or as free iCal feeds.
+
 <p align="center">
   <a href="https://11holidays.com/">
     <img src=".github/banner.svg" alt="11holidays: Public Holidays API for 230+ countries" width="100%">
@@ -11,14 +15,6 @@
   <a href="https://11holidays.com/llms.txt"><img src="https://img.shields.io/badge/llms.txt-AI%20ready-2a2238" alt="llms.txt"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/dayschedule/11holidays" alt="License"></a>
 </p>
-
-# 11holidays
-
-Global [holidays API](https://11holidays.com/) for public holidays, bank holidays and observances from 230+ countries. Use it over plain HTTP, through the npm package, or as free iCal feeds.
-
-<img width="999" height="741" alt="Holidays API" src="https://github.com/user-attachments/assets/71a0a2f5-ca0b-4db3-8614-af67af3ac875" />
-
-## Installation
 
 ## Contents
 
@@ -181,6 +177,10 @@ For example [`https://11holidays.com/ics/us`](https://11holidays.com/ics/us).
 - [Leave planner](https://11holidays.com/leave-planner): the most days off from your leave budget
 - [Working days calculator](https://11holidays.com/working-days-calculator): business days between two dates, excluding holidays
 - [Countdown](https://11holidays.com/countdown) and [embeddable widget](https://11holidays.com/widget)
+- [Printable calendar](https://11holidays.com/calendar): yearly and monthly calendars with holidays, as PDF or PNG
+- [World clock](https://11holidays.com/world-clock) and [time zones](https://11holidays.com/timezones): current time in 700+ cities and every IANA zone
+- [Time zone converter](https://11holidays.com/time-zone-converter): convert any date and time between cities
+- [Date calculator](https://11holidays.com/date-calculator) and [week number](https://11holidays.com/week-number)
 - [All tools](https://11holidays.com/tools)
 
 ## Support

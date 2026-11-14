@@ -34,6 +34,20 @@ Countries are identified by ISO 3166-1 alpha-2 codes in lowercase (\`us\`, \`in\
 - [Working days calculator](${SITE_URL}/working-days-calculator): business days between two dates and working days per month, excluding public holidays. \`?country={code}&year={year}\`
 - [Leave planner](${SITE_URL}/leave-planner): bridges public holidays and weekends to get the most days off from a leave budget. \`?country={code}&year={year}&leaves={1-40}\`
 - Countdown widget: \`${SITE_URL}/embed/countdown?holiday={code}/{holiday-slug}\` as an iframe
+- [Date calculator](${SITE_URL}/date-calculator): days between two dates, or add and subtract from a date
+- [Week number](${SITE_URL}/week-number): current ISO week and all weeks of a year. \`?year={year}\`
+- [Year progress](${SITE_URL}/year-progress): how much of the year, quarter, month and day has passed
+- [Today](${SITE_URL}/today): today's date, day of the year and holidays around the world
+
+## Calendars and time zones
+
+- Printable year calendar: \`${SITE_URL}/calendar/{year}\`, for example [${SITE_URL}/calendar/${currentYear()}](${SITE_URL}/calendar/${currentYear()}). Add \`?country={code}\` for that country's holidays.
+- Printable month calendar: \`${SITE_URL}/calendar/{year}/{month}\` with the month in lowercase, for example \`/calendar/${currentYear()}/january\`
+- [World clock](${SITE_URL}/world-clock): \`?cities={slug},{slug}\`
+- Current time in a city: \`${SITE_URL}/time/{city-slug}\`, for example [${SITE_URL}/time/tokyo](${SITE_URL}/time/tokyo)
+- [Time zones](${SITE_URL}/timezones): every IANA zone. One zone: \`${SITE_URL}/timezones/{zone}\` with the IANA name in lowercase and dashes, for example \`/timezones/america-new-york\`
+- [Time zone converter](${SITE_URL}/time-zone-converter): \`?from={city-slug}&to={slug},{slug}&at={YYYY-MM-DDTHH:mm}\`
+- [Daylight saving time](${SITE_URL}/daylight-saving-time): clock change dates. \`?year={year}\`
 
 ## Data feeds (free, no key)
 

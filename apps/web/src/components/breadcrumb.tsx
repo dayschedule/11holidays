@@ -4,8 +4,9 @@ import { SITE_URL } from '@/lib/seo';
 
 type BreadcrumbItem =
   | { label: string; to?: undefined }
-  | { label: string; to: '/' | '/countries' | '/holidays' | '/calendars' | '/my-calendars' | '/widget' }
-  | { label: string; to: '/holidays/$country'; params: { country: string } };
+  | { label: string; to: '/' | '/countries' | '/holidays' | '/calendars' | '/my-calendars' | '/widget' | '/world-clock' | '/timezones' | '/tools' }
+  | { label: string; to: '/holidays/$country'; params: { country: string } }
+  | { label: string; to: '/calendar/$year'; params: { year: string } };
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
@@ -23,7 +24,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
       name: item.label,
       ...(item.to && {
         item: new URL(
-          router.buildLocation(item.to === '/holidays/$country' ? { to: item.to, params: item.params } : { to: item.to }).href,
+          router.buildLocation('params' in item ? ({ to: item.to, params: item.params } as never) : { to: item.to }).href,
           SITE_URL
         ).toString(),
       }),
@@ -40,6 +41,10 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
             {index > 0 && <ChevronRight className="h-3.5 w-3.5" />}
 
             {item.to === '/holidays/$country' ? (
+              <Link to={item.to} params={item.params} className="transition-colors hover:text-primary">
+                {item.label}
+              </Link>
+            ) : item.to === '/calendar/$year' ? (
               <Link to={item.to} params={item.params} className="transition-colors hover:text-primary">
                 {item.label}
               </Link>

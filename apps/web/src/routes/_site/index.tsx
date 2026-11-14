@@ -260,6 +260,23 @@ function Home() {
             link={<Link to="/api-key" className="stretched" aria-label="Open tool" />}
           />
         </div>
+        <nav aria-label="Date and time tools" className="flex flex-wrap gap-2 text-sm">
+          {(
+            [
+              ['/calendar', 'Printable calendar'],
+              ['/world-clock', 'World clock'],
+              ['/timezones', 'Time zones'],
+              ['/time-zone-converter', 'Time zone converter'],
+              ['/daylight-saving-time', 'Daylight saving time'],
+              ['/date-calculator', 'Date calculator'],
+              ['/week-number', 'Week number'],
+            ] as const
+          ).map(([to, label]) => (
+            <Link key={to} to={to} className="rounded-full border bg-card px-3 py-1.5 font-medium shadow-xs transition hover:border-primary/40 hover:text-primary">
+              {label}
+            </Link>
+          ))}
+        </nav>
       </section>
 
       {/* Countries */}

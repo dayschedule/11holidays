@@ -1,4 +1,4 @@
-import { addYears, format, parseISO, startOfYear } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 export interface Holiday {
   holiday_id: number;
@@ -32,11 +32,6 @@ export async function fetchHolidays(
   countryCode: string,
   year: number
 ): Promise<HolidaysResponse> {
-  // Use start - end date to utilize sql index for better query performance
-  const baseDate = new Date(year, 0, 1);
-  const start = format(startOfYear(baseDate), 'yyyy-MM-dd');
-  const end = format(addYears(startOfYear(baseDate), 1), 'yyyy-MM-dd');
-
   // query executes on either primary database or a read replica for low latency
   const session = env.DB.withSession();
   const sqlQuery = session.prepare(
@@ -50,11 +45,10 @@ export async function fetchHolidays(
         FROM Holidays as h
         Left Join Occasions as o
         ON h.occasion_id = o.occasion_id
-        WHERE h.country = ?
-        AND h.date >= ?
-        AND h.date < ?
+        WHERE h.year = ?
+        AND h.country = ?
         ORDER BY h.date;`
-  ).bind(countryCode, start, end);
+  ).bind(year, countryCode);
 
   const { results } = await sqlQuery.all<Holiday>();
 

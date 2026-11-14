@@ -16,6 +16,7 @@ import { getCountryByCode } from '@/lib/countries-data';
 import { defaultHolidayTheme, getHolidayTheme } from '@/lib/holiday-themes';
 import { occasionParams } from '@/lib/holidays-api';
 import { googleCalendarUrl } from '@/lib/ics';
+import { dayscheduleUrl } from '@/lib/dayschedule';
 import { faqSchema, seo, SITE_URL, softwareAppSchema } from '@/lib/seo';
 import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
 import { getUpcomingOccasions } from '@/server/holidays';
@@ -32,6 +33,11 @@ const FAQ = [
   {
     q: 'Which time zone does the countdown use?',
     a: "The countdown runs in the viewer's own time zone, so an event at 09:00 counts down to 09:00 local time wherever it is opened.",
+  },
+  {
+    q: 'How do I get guests to save the date?',
+    a: 'Share the countdown, and add an add to calendar link or QR code so the event lands in their calendar.',
+    more: { label: 'Open the event link generator', href: dayscheduleUrl('/tools/event-link-generator') },
   },
 ];
 

@@ -22,6 +22,7 @@ import {
 } from '@/lib/time';
 import { isDaylightTime, zoneAbbreviation, type Zone } from '@/lib/timezones';
 import { getZonePage } from '@/server/time';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const displayName = (zone: Zone) => zone.name.replace(/_/g, ' ');
 
@@ -31,7 +32,7 @@ export const Route = createFileRoute('/_site/timezones/$zone')({
     if (!page) throw notFound();
     return page;
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ loaderData, params }) => {
     if (!loaderData) return {};
     const { zone, faq } = loaderData;

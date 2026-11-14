@@ -4,6 +4,7 @@ import { getCountryByCode } from '@/lib/countries-data';
 import { fetchHolidays, holidayKind } from '@/lib/holidays-api';
 import { buildIcs } from '@/lib/ics';
 import { SITE_URL } from '@/lib/seo';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 /**
  * Subscribable iCal feed: /ics/in (current + next year) or /ics/in?year=2027.
@@ -43,7 +44,7 @@ export const Route = createFileRoute('/ics/$country')({
           headers: {
             'Content-Type': 'text/calendar; charset=utf-8',
             'Content-Disposition': `inline; filename="${country.code.toLowerCase()}-holidays.ics"`,
-            'Cache-Control': 'public, max-age=21600',
+            ...cacheHeaders(CACHE.file),
           },
         });
       },

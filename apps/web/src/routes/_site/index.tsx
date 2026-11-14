@@ -14,8 +14,10 @@ import { FEATURED_FESTIVALS, defaultHolidayTheme, getHolidayTheme } from '@/lib/
 import { seo, softwareAppSchema, webApiSchema, webPageSchema } from '@/lib/seo';
 import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
 import { getHolidaysToday, getUpcomingOccasions } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 export const Route = createFileRoute('/_site/')({
+  headers: () => cacheHeaders(CACHE.daily),
   loader: async () => {
     const code = getVisitorCountry();
     const [upcoming, today] = await Promise.all([

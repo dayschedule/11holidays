@@ -12,6 +12,7 @@ import { faqSchema, seo, webPageSchema } from '@/lib/seo';
 import { formatClock, formatOffset, offsetMinutes, zonedParts } from '@/lib/time';
 import { getZone, zoneAbbreviation, ZONE_ABBREVIATIONS, ZONE_REGIONS, ZONES } from '@/lib/timezones';
 import { cn } from '@/lib/utils';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const FAQ = [
   {
@@ -43,7 +44,7 @@ export const Route = createFileRoute('/_site/timezones/')({
       path: '/timezones',
       jsonLd: [webPageSchema('/timezones', 'Time zones of the world', undefined, 'CollectionPage'), faqSchema(FAQ)],
     }),
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   component: TimezonesPage,
 });
 

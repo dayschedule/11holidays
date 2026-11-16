@@ -19,6 +19,7 @@ import { seo, webPageSchema } from '@/lib/seo';
 import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
 import { getWeekend, publicHolidayMap, summarizeRange } from '@/lib/workdays';
 import { getCountryHolidays } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 export const Route = createFileRoute('/_site/calendar/$year/$month')({
   validateSearch: yearCalendarSearch,
@@ -30,7 +31,7 @@ export const Route = createFileRoute('/_site/calendar/$year/$month')({
     const { holidays } = await getCountryHolidays({ data: { code: country.code, year } });
     return { year, month, country, holidays };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ params, match }) => {
     const name = params.month.charAt(0).toUpperCase() + params.month.slice(1).toLowerCase();
     const path = `/calendar/${params.year}/${params.month.toLowerCase()}`;

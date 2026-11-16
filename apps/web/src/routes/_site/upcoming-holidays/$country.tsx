@@ -15,8 +15,10 @@ import { getCountryBySlug } from '@/lib/countries-data';
 import { getHolidayTheme } from '@/lib/holiday-themes';
 import { holidayListSchema, seo } from '@/lib/seo';
 import { getCountryHolidays, getUpcomingOccasions } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 export const Route = createFileRoute('/_site/upcoming-holidays/$country')({
+  headers: () => cacheHeaders(CACHE.daily),
   loader: async ({ params }) => {
     const country = getCountryBySlug(params.country);
     if (!country) throw notFound();

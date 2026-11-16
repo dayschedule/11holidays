@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { COUNTRIES_WITH_SLUG } from '@/lib/countries-data';
 import { currentYear } from '@/lib/holidays-api';
 import { API_URL, SITE_URL } from '@/lib/seo';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 /** Plain-text guide for AI agents and LLMs, see https://llmstxt.org */
 function buildLlmsTxt() {
@@ -87,7 +88,7 @@ export const Route = createFileRoute('/llms.txt')({
         new Response(buildLlmsTxt(), {
           headers: {
             'Content-Type': 'text/plain; charset=utf-8',
-            'Cache-Control': 'public, max-age=86400',
+            ...cacheHeaders(CACHE.file),
           },
         }),
     },

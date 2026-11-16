@@ -13,6 +13,7 @@ import { getCountryByCode } from '@/lib/countries-data';
 import { currentYear } from '@/lib/holidays-api';
 import { holidayListSchema, seo } from '@/lib/seo';
 import { getCountryOccasions } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 export const Route = createFileRoute('/_site/holidays/$country/')({
   validateSearch: z.object({ search: z.string().optional().catch(undefined) }),
@@ -22,7 +23,7 @@ export const Route = createFileRoute('/_site/holidays/$country/')({
     const occasions = await getCountryOccasions({ data: { code: country.code } });
     return { country, occasions };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ loaderData, params }) =>
     loaderData
       ? seo({

@@ -20,6 +20,7 @@ import { dayscheduleUrl } from '@/lib/dayschedule';
 import { faqSchema, seo, SITE_URL, softwareAppSchema } from '@/lib/seo';
 import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
 import { getUpcomingOccasions } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const FAQ = [
   {
@@ -42,6 +43,7 @@ const FAQ = [
 ];
 
 export const Route = createFileRoute('/_site/countdown')({
+  headers: () => cacheHeaders(CACHE.daily),
   validateSearch: z.object({
     title: z.string().max(80).optional().catch(undefined),
     date: z.string().regex(COUNTDOWN_DATE).optional().catch(undefined),

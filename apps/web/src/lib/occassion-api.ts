@@ -134,17 +134,48 @@ export async function fetchUpcomingOccasions(
   countryCode: string,
   limit = 8
 ) {
-  const holidays = await fetchOccasionByCountry(env, countryCode);
+  // Search this year and next, so late in the year the list continues into January instead of
+  // falling back to dates that have already passed
+  const now = new Date();
+  const year = now.getFullYear();
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  try {
+    const { results } = await env.DB.withSession()
+      .prepare(`
+        SELECT
+          o.occasion_id,
+          o.url,
+          o.name,
+          o.image,
+          h.date,
+          h.country,
+          o.updated_at
+        FROM Occasions AS o
+        JOIN Holidays AS h
+          ON o.occasion_id = h.occasion_id
+        WHERE
+          h.country = ?
+          AND h.year IN (?, ?)
+          AND h.date >= ?
+          AND o.description IS NOT NULL
+        ORDER BY h.date
+        LIMIT ?
+      `)
+      // Extra rows so an occasion listed in both years can be dropped below
+      .bind(countryCode, year, year + 1, format(now, 'yyyy-MM-dd'), limit * 2)
+      .all<Occasion>();
 
-  const upcoming = holidays
-    .filter((holiday) => holiday.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(0, limit);
-
-  return upcoming.length
-    ? upcoming
-    : holidays.sort((a, b) => a.date.localeCompare(b.date)).slice(0, limit);
+    const seen = new Set<number>();
+    return results
+      .filter((x) => !seen.has(x.occasion_id) && seen.add(x.occasion_id))
+      .slice(0, limit)
+      .map((x) => ({
+        ...x,
+        image: x.image ? (JSON.parse(x.image as unknown as string) as OccasionImage) : null,
+      }));
+  } catch (error) {
+    console.error('Error fetching upcoming occasions:', error);
+    return [];
+  }
 }
 

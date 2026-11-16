@@ -1,4 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
+import { CACHE } from '@/lib/cache';
+import { cacheFor } from '@/server/cache-middleware';
 import { env } from 'cloudflare:workers';
 import { z } from 'zod';
 import { CITY_SLUG_ALIASES, countryNameOf, getCityBySlug, type City } from '@/lib/cities';
@@ -38,6 +40,7 @@ function cityFaq(city: City, country: string) {
 }
 
 export const getCityPage = createServerFn({ method: 'GET' })
+  .middleware([cacheFor(CACHE.data)])
   .validator(z.object({ slug: z.string().min(1).max(80) }))
   .handler(async ({ data }) => {
     const alias = CITY_SLUG_ALIASES[data.slug];
@@ -73,6 +76,7 @@ function zoneFaq(zone: Zone) {
 }
 
 export const getZonePage = createServerFn({ method: 'GET' })
+  .middleware([cacheFor(CACHE.data)])
   .validator(z.object({ slug: z.string().min(1).max(80) }))
   .handler(({ data }) => {
     const zone = getZoneBySlug(data.slug);

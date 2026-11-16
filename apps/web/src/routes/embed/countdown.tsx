@@ -9,6 +9,7 @@ import { getHolidayTheme } from '@/lib/holiday-themes';
 import { occasionParams } from '@/lib/holidays-api';
 import { seo, SITE_URL } from '@/lib/seo';
 import { getOccasionPage } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 export const Route = createFileRoute('/embed/countdown')({
   validateSearch: z.object({
@@ -46,7 +47,7 @@ export const Route = createFileRoute('/embed/countdown')({
       link: `${SITE_URL}/countdown`,
     };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=900, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.embed),
   head: ({ loaderData }) => seo({ title: loaderData ? `${loaderData.title} countdown` : 'Countdown', noindex: true }),
   component: EmbedCountdown,
 });

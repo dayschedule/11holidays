@@ -29,6 +29,7 @@ import { faqSchema, seo, webPageSchema } from '@/lib/seo';
 import { getVisitorCountry, useVisitorCountry } from '@/lib/visitor-country';
 import { getWeekend, publicHolidayMap, summarizeYear } from '@/lib/workdays';
 import { getCountryHolidays } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 function faqFor(year: number) {
   const facts = yearFacts(year);
@@ -68,7 +69,7 @@ export const Route = createFileRoute('/_site/calendar/$year/')({
     const { holidays } = await getCountryHolidays({ data: { code: country.code, year } });
     return { year, country, holidays };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ params, match }) => {
     const { year } = params;
     return seo({

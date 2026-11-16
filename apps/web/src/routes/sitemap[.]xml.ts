@@ -7,6 +7,7 @@ import { fetchOccasions } from '@/lib/occassion-api';
 import { currentYear } from '@/lib/holidays-api';
 import { SITE_URL } from '@/lib/seo';
 import { ZONES } from '@/lib/timezones';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 function toXml(paths: string[]) {
   const urls = paths.map((p) => `<url><loc>${SITE_URL}${p.replace(/&/g, "&amp;")}</loc></url>`).join('');
@@ -66,7 +67,7 @@ export const Route = createFileRoute('/sitemap.xml')({
         return new Response(xml, {
           headers: {
             'Content-Type': 'application/xml; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600',
+            ...cacheHeaders(CACHE.file),
           },
         });
       },

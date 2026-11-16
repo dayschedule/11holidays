@@ -7,6 +7,7 @@ import { currentYear, holidayKind } from '@/lib/holidays-api';
 import { markdownToText } from '@/lib/markdown';
 import { faqSchema, holidayDatasetSchema, holidayListSchema, seo, webPageSchema } from '@/lib/seo';
 import { getCountryHolidays, getOccasionPage } from '@/server/holidays';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 const longDate = (date: string) => format(parseISO(date), 'EEEE, MMMM d, yyyy');
 
@@ -36,7 +37,7 @@ export const Route = createFileRoute('/_site/holidays/$country/$slug')({
     if (!page) throw notFound();
     return { kind: 'occasion' as const, country, ...page };
   },
-  headers: () => ({ 'Cache-Control': 'public, max-age=300, s-maxage=3600' }),
+  headers: () => cacheHeaders(CACHE.page),
   head: ({ loaderData, params }) => {
     if (!loaderData) return {};
     const { country } = loaderData;

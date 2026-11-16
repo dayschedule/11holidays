@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { API_URL, OPENAPI_URL, SITE_URL } from '@/lib/seo';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 
 /** API discovery for agents and tooling, see RFC 9727 (application/linkset+json) */
 const apiCatalog = {
@@ -21,7 +22,7 @@ export const Route = createFileRoute('/.well-known/api-catalog')({
         new Response(JSON.stringify(apiCatalog, null, 2), {
           headers: {
             'Content-Type': 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
-            'Cache-Control': 'public, max-age=86400',
+            ...cacheHeaders(CACHE.file),
             'Access-Control-Allow-Origin': '*',
           },
         }),

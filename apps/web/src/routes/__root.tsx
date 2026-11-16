@@ -6,10 +6,13 @@ import { NotFound } from '@/components/not-found';
 import { OPENAPI_URL, organizationSchema, seo, websiteSchema } from '@/lib/seo';
 import { currentYear } from '@/lib/holidays-api';
 import { serverNow } from '@/hooks/use-today';
+import { CACHE, cacheHeaders } from '@/lib/cache';
 import appCss from '@/styles.css?url';
 
 export const Route = createRootRoute({
   loader: () => ({ now: serverNow(), nowMs: Date.now() }),
+  // Default for every page, routes override it
+  headers: () => cacheHeaders(CACHE.page),
   head: () => {
     const { meta } = seo({
       title: `Holidays API & Calendar for ${currentYear()} - 11holidays.com`,
